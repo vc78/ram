@@ -1,0 +1,46 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - link "Back to home" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - img [ref=e6]
+      - text: Back to home
+    - generic [ref=e8]:
+      - img "SIID FLASH Logo" [ref=e10]
+      - generic [ref=e11]:
+        - heading "Welcome Back" [level=2] [ref=e12]
+        - paragraph [ref=e13]: Sign in to continue building your dreams
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]: Full Name
+          - textbox "Full Name" [active] [ref=e17]:
+            - /placeholder: John Doe
+        - generic [ref=e18]:
+          - generic [ref=e19]: Email
+          - textbox "Email" [ref=e20]:
+            - /placeholder: you@example.com
+            - text: e2e-ui-1766908400167@example.com
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - generic [ref=e23]: Password
+            - link "Forgot?" [ref=e24] [cursor=pointer]:
+              - /url: /forgot-password
+          - generic [ref=e25]:
+            - textbox "Password" [ref=e26]:
+              - /placeholder: ••••••••
+              - text: Password123
+            - button "Show password" [ref=e27]:
+              - img
+        - generic [ref=e29]:
+          - checkbox "Remember my email" [ref=e30]
+          - checkbox
+          - text: Remember my email
+        - button "Sign In" [ref=e31]
+      - generic [ref=e32]:
+        - text: Don't have an account?
+        - link "Sign up" [ref=e33] [cursor=pointer]:
+          - /url: /signup
+  - alert [ref=e34]
+```

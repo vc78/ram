@@ -1,0 +1,4 @@
+id,email,attempt_time,ip_address,reason,created_at
+3,invalid@example.com,2026-02-02 12:00:00,192.168.1.206,User not found,2026-02-03 13:20:18
+2,user@example.com,2026-01-25 09:10:00,192.168.1.201,Invalid password,2026-02-03 13:20:18
+1,admin@example.com,2026-01-25 08:25:00,192.168.1.200,Invalid password,2026-02-03 13:20:18

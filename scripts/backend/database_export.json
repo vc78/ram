@@ -1,0 +1,120 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin",
+      "email": "admin@example.com",
+      "password_hash": "$pbkdf2-sha256$29000$c.69dw7hPEdo7Z0T4rxXKg$0uYnhLZPPeMSu7E67qGETnTUjC0omWg.4QO9WhmYyZA",
+      "role": "admin",
+      "created_at": "2026-01-25 07:13:26.274221"
+    },
+    {
+      "id": 2,
+      "name": "Demo User",
+      "email": "user@example.com",
+      "password_hash": "$pbkdf2-sha256$29000$6L03RghBiJGSkrJWypmTsg$T6m733IetOdWmw3g88qJpXzDLufAZ6c3VUvuNmFjd28",
+      "role": "user",
+      "created_at": "2026-01-25 07:13:26.313841"
+    },
+    {
+      "id": 3,
+      "name": "VENKAT  CHOWDARY BODDULURI",
+      "email": "venkatchowdary78@gmail.com",
+      "password_hash": "$pbkdf2-sha256$29000$836PUQph7H0vRUgJQehdKw$YMZLAek1LsEFnT1rEtLKxX5ktY4kRA7zZfzUaYqHmOM",
+      "role": "user",
+      "created_at": "2026-01-25 07:17:30.698630"
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "name": "Demo Project",
+      "description": "Demo project created by seed",
+      "status": "planning",
+      "budget": null,
+      "deadline": null,
+      "created_at": "2026-01-25 07:13:26.401403"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 1,
+      "title": "Senior Architect",
+      "department": "Architecture",
+      "location": "Remote",
+      "salary_min": null,
+      "salary_max": null,
+      "currency": "INR",
+      "description": "Lead projects and mentor team",
+      "created_at": "2026-01-25 07:13:26.329609"
+    },
+    {
+      "id": 2,
+      "title": "Project Manager",
+      "department": "Management",
+      "location": "Remote",
+      "salary_min": null,
+      "salary_max": null,
+      "currency": "INR",
+      "description": "Manage project lifecycle",
+      "created_at": "2026-01-25 07:13:26.342143"
+    }
+  ],
+  "applications": [
+    {
+      "id": 1,
+      "job_id": 1,
+      "name": "Applicant One",
+      "email": "applicant@example.com",
+      "phone": null,
+      "resume_url": null,
+      "cover_letter": null,
+      "status": "pending",
+      "created_at": "2026-01-25 07:13:26.360856"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "project_id": 1,
+      "title": "Initial Planning",
+      "description": "Setup initial project plan",
+      "status": "todo",
+      "assignee_name": null,
+      "due_date": null,
+      "created_at": "2026-01-25 07:13:26.414866"
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "to_user": "admin@example.com",
+      "content": "Welcome to the demo!",
+      "created_at": "2026-01-25 07:13:26.438944"
+    }
+  ],
+  "contractors": [
+    {
+      "id": 1,
+      "name": "BuildPro",
+      "specialty": "Construction",
+      "avatar_url": null
+    },
+    {
+      "id": 2,
+      "name": "DesignCo",
+      "specialty": "Interior Design",
+      "avatar_url": null
+    }
+  ],
+  "members": [
+    {
+      "id": 1,
+      "name": "Team Member",
+      "role": "engineer",
+      "email": "member@example.com",
+      "created_at": "2026-01-25 07:13:26.426925"
+    }
+  ]
+}

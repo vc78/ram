@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: siid_flash
+      MYSQL_USER: siid_user
+      MYSQL_PASSWORD: your_secure_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MYSQL_URL: mysql+pymysql://siid_user:your_secure_password@db:3306/siid_flash
+      ALLOWED_ORIGINS: "http://localhost:3000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/app
+    command: /bin/sh -c "python migrate.py && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+volumes:
+  db_data:
