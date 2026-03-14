@@ -1,0 +1,61 @@
+[
+  {
+    "id": "0c3d5d27-d526-4e8b-b1e3-6465604d3fba",
+    "url": "/uploads/Vastu-Layout-apartment-6_3_2026 (1).png",
+    "filename": "Vastu-Layout-apartment-6_3_2026 (1).png",
+    "format": "png",
+    "uploadedAt": "2026-03-06T10:43:21.563Z",
+    "date": "2026-03-06",
+    "tags": [
+      "Foundation"
+    ],
+    "comments": "",
+    "uploadedBy": "VENKAT  CHOWDARY BODDULURI",
+    "size": 70483
+  },
+  {
+    "id": "e5f9d1ea-00e5-426a-89e2-085322268358",
+    "url": "/uploads/Vastu-Layout-apartment-6_3_2026.png",
+    "filename": "Vastu-Layout-apartment-6_3_2026.png",
+    "format": "png",
+    "uploadedAt": "2026-03-12T13:40:22.728Z",
+    "date": "2026-03-12",
+    "tags": [
+      "Foundation",
+      "Auto-Analyzed",
+      "Foundation & Excavation",
+      "Safety Flag"
+    ],
+    "location": {
+      "latitude": 17.500323629988834,
+      "longitude": 78.39383496711082,
+      "address": "Lat: 17.500324, Lng: 78.393835"
+    },
+    "comments": "none",
+    "uploadedBy": "VENKAT  CHOWDARY BODDULURI",
+    "size": 70483,
+    "mlAnalysis": {
+      "progress": 45,
+      "phase": "Foundation & Excavation",
+      "confidenceScore": 93.5,
+      "safetyViolations": [
+        {
+          "type": "ppe_missing_helmet",
+          "description": "Warning: 1 worker(s) detected without safety helmets in zone B.",
+          "severity": "high"
+        },
+        {
+          "type": "edge_protection",
+          "description": "Incomplete edge protection along the eastern perimeter.",
+          "severity": "medium"
+        }
+      ],
+      "autoTags": [
+        "Auto-Analyzed",
+        "Foundation & Excavation",
+        "Safety Flag"
+      ],
+      "description": "Visual analysis of Vastu-Layout-apartment-6_3_2026.png indicates 45% completion of the Foundation & Excavation stage. OSHA violations detected."
+    }
+  }
+]

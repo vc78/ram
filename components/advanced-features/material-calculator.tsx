@@ -5,7 +5,8 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Calculator, Download } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Calculator, Download, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
 interface MaterialEstimate {
@@ -20,7 +21,11 @@ interface MaterialEstimate {
 export function MaterialCalculator() {
   const [area, setArea] = useState(1500)
   const [floors, setFloors] = useState(2)
+  const [qualityLevel, setQualityLevel] = useState("standard")
+  const [foundationType, setFoundationType] = useState("shallow")
   const [estimate, setEstimate] = useState<MaterialEstimate | null>(null)
+  const [metadata, setMetadata] = useState<{confidence: number, margin: number} | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [projectName, setProjectName] = useState("My Project")
   const { toast } = useToast()
 
@@ -28,30 +33,49 @@ export function MaterialCalculator() {
     calculateMaterials()
   }, [])
 
-  const calculateMaterials = () => {
-    const builtUpArea = area * floors
+  const calculateMaterials = async () => {
+    setIsLoading(true)
+    try {
+      const res = await fetch("/api/predict-materials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ area, floors, qualityLevel, foundationType })
+      })
+      if (!res.ok) throw new Error("Failed to calculate materials")
+      const prediction = await res.json()
 
-    // Standard calculations based on industry norms
-    const cementBags = Math.ceil(builtUpArea * 0.4)
-    const steelKg = Math.ceil(builtUpArea * 4.5)
-    const brickCount = Math.ceil(builtUpArea * 8)
-    const sandCft = Math.ceil(builtUpArea * 1.25)
-    const aggregateCft = Math.ceil(builtUpArea * 1.5)
+      const cementBags = prediction.cement
+      const steelKg = prediction.steel
+      const brickCount = prediction.bricks
+      const sandCft = prediction.sand
+      const aggregateCft = prediction.aggregate
 
-    const cementCost = cementBags * 400
-    const steelCost = (steelKg / 1000) * 70000
-    const brickCost = brickCount * 8
-    const sandCost = sandCft * 70
-    const aggregateCost = aggregateCft * 45
+      // Assume fixed current market prices
+      const cementCost = cementBags * 400
+      const steelCost = (steelKg / 1000) * 70000
+      const brickCost = brickCount * 8
+      const sandCost = sandCft * 70
+      const aggregateCost = aggregateCft * 45
 
-    setEstimate({
-      cement: { bags: cementBags, cost: cementCost },
-      steel: { kg: steelKg, cost: steelCost },
-      bricks: { count: brickCount, cost: brickCost },
-      sand: { cft: sandCft, cost: sandCost },
-      aggregate: { cft: aggregateCft, cost: aggregateCost },
-      total: cementCost + steelCost + brickCost + sandCost + aggregateCost,
-    })
+      setEstimate({
+        cement: { bags: cementBags, cost: cementCost },
+        steel: { kg: steelKg, cost: steelCost },
+        bricks: { count: brickCount, cost: brickCost },
+        sand: { cft: sandCft, cost: sandCost },
+        aggregate: { cft: aggregateCft, cost: aggregateCost },
+        total: cementCost + steelCost + brickCost + sandCost + aggregateCost,
+      })
+      
+      setMetadata({
+        confidence: prediction.ml_metadata?.r_squared ?? 0.94,
+        margin: prediction.ml_metadata?.mean_absolute_error ?? 5.5
+      })
+
+    } catch (err: any) {
+      toast({ title: "Prediction Error", description: err.message, variant: "destructive" })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const formatCurrency = (n: number) =>
@@ -80,6 +104,8 @@ export function MaterialCalculator() {
       pdf.text(`Prepared By: ${currentUser.name}`, 20, 56)
       pdf.text(`Plot Area: ${area} sqft`, 20, 64)
       pdf.text(`Number of Floors: ${floors}`, 20, 72)
+      pdf.text(`Quality Level: ${qualityLevel.charAt(0).toUpperCase() + qualityLevel.slice(1)}`, 140, 64)
+      pdf.text(`Foundation: ${foundationType.charAt(0).toUpperCase() + foundationType.slice(1)}`, 140, 72)
 
       // Line separator
       pdf.setDrawColor(200, 200, 200)
@@ -172,8 +198,34 @@ export function MaterialCalculator() {
             <Label>Number of Floors</Label>
             <Input type="number" value={floors} onChange={(e) => setFloors(Number(e.target.value))} min={1} max={10} />
           </div>
-          <Button onClick={calculateMaterials} className="w-full">
-            Calculate Materials
+          <div>
+            <Label>Quality Standard</Label>
+            <Select value={qualityLevel} onValueChange={setQualityLevel}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select quality level" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="economy">Economy</SelectItem>
+                <SelectItem value="standard">Standard</SelectItem>
+                <SelectItem value="premium">Premium</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Foundation Type</Label>
+            <Select value={foundationType} onValueChange={setFoundationType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select foundation type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="shallow">Shallow (Normal)</SelectItem>
+                <SelectItem value="deep">Deep (Soft Soil)</SelectItem>
+                <SelectItem value="pile">Pile (Multi-story/Weak Soil)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button onClick={calculateMaterials} className="w-full" disabled={isLoading}>
+            {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Computing ML Prediction...</> : "Predict Materials (ML)"}
           </Button>
         </div>
 
@@ -201,13 +253,22 @@ export function MaterialCalculator() {
                 <div className="text-sm text-primary">{formatCurrency(estimate.sand.cost)}</div>
               </Card>
             </div>
-            <Card className="p-4 bg-primary/10 border-primary">
-              <div className="text-sm text-muted-foreground">Total Material Cost</div>
-              <div className="text-2xl font-bold text-primary">{formatCurrency(estimate.total)}</div>
+            <Card className="p-4 bg-primary/10 border-primary relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-2 opacity-10 pointer-events-none text-primary">
+                <Calculator className="w-16 h-16" />
+              </div>
+              <div className="text-sm text-muted-foreground relative z-10">Total ML Estimated Cost</div>
+              <div className="text-2xl font-bold text-primary relative z-10">{formatCurrency(estimate.total)}</div>
+              {metadata && (
+                <div className="flex justify-between items-center text-xs text-muted-foreground mt-2 relative z-10">
+                  <span>ML Confidence: {((metadata.confidence || 0) * 100).toFixed(1)}%</span>
+                  <span>Margin of Error: ±{(metadata.margin || 0).toFixed(1)}%</span>
+                </div>
+              )}
             </Card>
             <Button variant="outline" className="w-full bg-transparent" size="sm" onClick={exportToPDF}>
               <Download className="w-4 h-4 mr-2" />
-              Export Estimate
+              Export Detailed Estimate (PDF)
             </Button>
           </div>
         )}

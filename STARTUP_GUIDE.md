@@ -2,6 +2,8 @@
 
 ## Quick Start
 
+> **Note:** if `npm install` fails with a zod peer-dependency error, bump the `zod` version in `package.json` to `^3.25.76` (already patched) or run with `--legacy-peer-deps`.
+
 ### 1. Start the Backend Server
 ```bash
 cd scripts/backend
@@ -14,10 +16,12 @@ cd scripts/backend
 venv\Scripts\python run.py
 ```
 
-The backend should be running on `http://127.0.0.1:8002`
+The backend should be running on `http://127.0.0.1:8002` (or a different port if you set the `BACKEND_PORT` environment variable).
 
 ### 2. Start the Frontend Server  
 ```bash
+# install dependencies
+npm install
 npm run dev
 ```
 
@@ -78,8 +82,8 @@ venv\Scripts\pip install -r requirements.txt --force-reinstall
 - Try stopping and restarting both frontend and backend
 
 ### Port already in use
-- Frontend: If 3000 is used, it automatically tries 3001
-- Backend: Change port in `run.py` or `start.sh` if needed
+- Frontend: If 3000 is used, it automatically tries 3001. You can also specify a different port via `PORT=3002 npm run dev`.
+- Backend: The script now reads `BACKEND_PORT` (default 8002). Export a different value or kill the process occupying the port (e.g. `npx kill-port 8002`).
 
 ### Database errors
 - Delete `test.db` files to reset:
@@ -87,6 +91,25 @@ venv\Scripts\pip install -r requirements.txt --force-reinstall
   rm test.db scripts/backend/test.db
   ```
 - Database will be recreated on next startup
+
+### Clean install problems
+If `npm install` continues to fail after fixing package versions, remove previous modules and lockfile then reinstall.
+
+**Windows** (cmd or PowerShell):
+```powershell
+rmdir /s /q node_modules
+del package-lock.json
+# optionally: del pnpm-lock.yaml
+npm install --legacy-peer-deps
+```
+
+**macOS/Linux**:
+```bash
+rm -rf node_modules package-lock.json pnpm-lock.yaml
+npm install --legacy-peer-deps
+```
+
+This ensures you’re running with the updated `package.json` and bypasses peer dependency conflicts.
 
 ## Key Files Modified
 - `app/login/page.tsx` - Removed name field, simplified validation

@@ -51,4 +51,3 @@ export function validateSession(): boolean {
   // Check if user object has all required fields
   return !!(user.email && user.name)
 }
-// </CHANGE>

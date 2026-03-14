@@ -1,0 +1,101 @@
+prompt,category,style,location,image_url
+"photorealistic interior design Mediterranean style for a New York project, high detail, professional rendering",interior,Mediterranean,New York,/images/modern-minimalist-design.jpg
+"photorealistic exterior design Mediterranean style for a Tokyo project, high detail, professional rendering",exterior,Mediterranean,Tokyo,/images/garden-landscape-project.jpg
+"photorealistic plumbing design Modern Scandinavian style for a Dubai project, high detail, professional rendering",plumbing,Modern Scandinavian,Dubai,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic architectural design Neo-classical style for a Tokyo project, high detail, professional rendering",architectural,Neo-classical,Tokyo,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic exterior design Mediterranean style for a London project, high detail, professional rendering",exterior,Mediterranean,London,/images/garden-landscape-project.jpg
+"photorealistic architectural design Modern Scandinavian style for a Mumbai project, high detail, professional rendering",architectural,Modern Scandinavian,Mumbai,/images/modern-villa-project.jpg
+"photorealistic electrical design Modern Scandinavian style for a London project, high detail, professional rendering",electrical,Modern Scandinavian,London,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic architectural design Contemporary style for a Tokyo project, high detail, professional rendering",architectural,Contemporary,Tokyo,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic plumbing design Tropical Minimal style for a Tokyo project, high detail, professional rendering",plumbing,Tropical Minimal,Tokyo,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic electrical design Modern Scandinavian style for a Tokyo project, high detail, professional rendering",electrical,Modern Scandinavian,Tokyo,/images/structural-engineering-simulation-3d.jpg
+"photorealistic architectural design Industrial Loft style for a Sydney project, high detail, professional rendering",architectural,Industrial Loft,Sydney,/images/modern-villa-project.jpg
+"photorealistic architectural design Industrial Loft style for a New York project, high detail, professional rendering",architectural,Industrial Loft,New York,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic structural design Neo-classical style for a London project, high detail, professional rendering",structural,Neo-classical,London,/images/building-foundation-concrete-construction.jpg
+"photorealistic architectural design Neo-classical style for a London project, high detail, professional rendering",architectural,Neo-classical,London,/images/modern-villa-project.jpg
+"photorealistic architectural design Mediterranean style for a New York project, high detail, professional rendering",architectural,Mediterranean,New York,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic plumbing design Mediterranean style for a Dubai project, high detail, professional rendering",plumbing,Mediterranean,Dubai,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic architectural design Contemporary style for a Sydney project, high detail, professional rendering",architectural,Contemporary,Sydney,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic exterior design Industrial Loft style for a London project, high detail, professional rendering",exterior,Industrial Loft,London,/images/modern-villa-project.jpg
+"photorealistic structural design Contemporary style for a Mumbai project, high detail, professional rendering",structural,Contemporary,Mumbai,/images/structural-engineering-simulation-3d.jpg
+"photorealistic architectural design Industrial Loft style for a New York project, high detail, professional rendering",architectural,Industrial Loft,New York,/images/modern-villa-project.jpg
+"photorealistic interior design Mediterranean style for a Tokyo project, high detail, professional rendering",interior,Mediterranean,Tokyo,/images/modern-minimalist-design.jpg
+"photorealistic plumbing design Tropical Minimal style for a Sydney project, high detail, professional rendering",plumbing,Tropical Minimal,Sydney,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic architectural design Neo-classical style for a Sydney project, high detail, professional rendering",architectural,Neo-classical,Sydney,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic structural design Tropical Minimal style for a Tokyo project, high detail, professional rendering",structural,Tropical Minimal,Tokyo,/images/building-foundation-concrete-construction.jpg
+"photorealistic architectural design Mediterranean style for a London project, high detail, professional rendering",architectural,Mediterranean,London,/images/modern-villa-project.jpg
+"photorealistic plumbing design Neo-classical style for a Mumbai project, high detail, professional rendering",plumbing,Neo-classical,Mumbai,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic electrical design Neo-classical style for a Tokyo project, high detail, professional rendering",electrical,Neo-classical,Tokyo,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic plumbing design Contemporary style for a Mumbai project, high detail, professional rendering",plumbing,Contemporary,Mumbai,/images/plumbing-system-diagram-water-supply-drainage-pipe.jpg
+"photorealistic architectural design Modern Scandinavian style for a Dubai project, high detail, professional rendering",architectural,Modern Scandinavian,Dubai,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic architectural design Industrial Loft style for a Sydney project, high detail, professional rendering",architectural,Industrial Loft,Sydney,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic interior design Industrial Loft style for a New York project, high detail, professional rendering",interior,Industrial Loft,New York,/images/interior-design-3d-walkthrough.jpg
+"photorealistic exterior design Contemporary style for a Dubai project, high detail, professional rendering",exterior,Contemporary,Dubai,/images/garden-landscape-project.jpg
+"photorealistic plumbing design Industrial Loft style for a London project, high detail, professional rendering",plumbing,Industrial Loft,London,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic architectural design Contemporary style for a Mumbai project, high detail, professional rendering",architectural,Contemporary,Mumbai,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic electrical design Mediterranean style for a Dubai project, high detail, professional rendering",electrical,Mediterranean,Dubai,/images/structural-engineering-simulation-3d.jpg
+"photorealistic structural design Neo-classical style for a London project, high detail, professional rendering",structural,Neo-classical,London,/images/building-foundation-concrete-construction.jpg
+"photorealistic structural design Tropical Minimal style for a London project, high detail, professional rendering",structural,Tropical Minimal,London,/images/building-foundation-concrete-construction.jpg
+"photorealistic structural design Neo-classical style for a Mumbai project, high detail, professional rendering",structural,Neo-classical,Mumbai,/images/building-foundation-concrete-construction.jpg
+"photorealistic interior design Neo-classical style for a New York project, high detail, professional rendering",interior,Neo-classical,New York,/images/modern-minimalist-design.jpg
+"photorealistic electrical design Contemporary style for a London project, high detail, professional rendering",electrical,Contemporary,London,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic structural design Modern Scandinavian style for a Sydney project, high detail, professional rendering",structural,Modern Scandinavian,Sydney,/images/structural-engineering-simulation-3d.jpg
+"photorealistic exterior design Contemporary style for a Sydney project, high detail, professional rendering",exterior,Contemporary,Sydney,/images/garden-landscape-project.jpg
+"photorealistic architectural design Industrial Loft style for a Dubai project, high detail, professional rendering",architectural,Industrial Loft,Dubai,/images/modern-villa-project.jpg
+"photorealistic electrical design Modern Scandinavian style for a Dubai project, high detail, professional rendering",electrical,Modern Scandinavian,Dubai,/images/structural-engineering-simulation-3d.jpg
+"photorealistic architectural design Contemporary style for a New York project, high detail, professional rendering",architectural,Contemporary,New York,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic interior design Modern Scandinavian style for a Sydney project, high detail, professional rendering",interior,Modern Scandinavian,Sydney,/images/modern-minimalist-design.jpg
+"photorealistic structural design Modern Scandinavian style for a Dubai project, high detail, professional rendering",structural,Modern Scandinavian,Dubai,/images/structural-engineering-simulation-3d.jpg
+"photorealistic exterior design Neo-classical style for a Tokyo project, high detail, professional rendering",exterior,Neo-classical,Tokyo,/images/modern-villa-project.jpg
+"photorealistic plumbing design Tropical Minimal style for a Tokyo project, high detail, professional rendering",plumbing,Tropical Minimal,Tokyo,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic structural design Modern Scandinavian style for a London project, high detail, professional rendering",structural,Modern Scandinavian,London,/images/building-foundation-concrete-construction.jpg
+"photorealistic exterior design Industrial Loft style for a Dubai project, high detail, professional rendering",exterior,Industrial Loft,Dubai,/images/garden-landscape-project.jpg
+"photorealistic plumbing design Contemporary style for a Sydney project, high detail, professional rendering",plumbing,Contemporary,Sydney,/images/plumbing-system-diagram-water-supply-drainage-pipe.jpg
+"photorealistic structural design Neo-classical style for a Tokyo project, high detail, professional rendering",structural,Neo-classical,Tokyo,/images/building-foundation-concrete-construction.jpg
+"photorealistic electrical design Neo-classical style for a Sydney project, high detail, professional rendering",electrical,Neo-classical,Sydney,/images/structural-engineering-simulation-3d.jpg
+"photorealistic electrical design Contemporary style for a Sydney project, high detail, professional rendering",electrical,Contemporary,Sydney,/images/structural-engineering-simulation-3d.jpg
+"photorealistic exterior design Tropical Minimal style for a London project, high detail, professional rendering",exterior,Tropical Minimal,London,/images/garden-landscape-project.jpg
+"photorealistic structural design Modern Scandinavian style for a London project, high detail, professional rendering",structural,Modern Scandinavian,London,/images/structural-engineering-simulation-3d.jpg
+"photorealistic electrical design Tropical Minimal style for a London project, high detail, professional rendering",electrical,Tropical Minimal,London,/images/structural-engineering-simulation-3d.jpg
+"photorealistic exterior design Mediterranean style for a Sydney project, high detail, professional rendering",exterior,Mediterranean,Sydney,/images/modern-villa-project.jpg
+"photorealistic exterior design Neo-classical style for a Tokyo project, high detail, professional rendering",exterior,Neo-classical,Tokyo,/images/garden-landscape-project.jpg
+"photorealistic architectural design Industrial Loft style for a New York project, high detail, professional rendering",architectural,Industrial Loft,New York,/images/modern-villa-project.jpg
+"photorealistic plumbing design Modern Scandinavian style for a New York project, high detail, professional rendering",plumbing,Modern Scandinavian,New York,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic plumbing design Industrial Loft style for a Tokyo project, high detail, professional rendering",plumbing,Industrial Loft,Tokyo,/images/plumbing-system-diagram-water-supply-drainage-pipe.jpg
+"photorealistic exterior design Tropical Minimal style for a Tokyo project, high detail, professional rendering",exterior,Tropical Minimal,Tokyo,/images/modern-villa-project.jpg
+"photorealistic architectural design Industrial Loft style for a London project, high detail, professional rendering",architectural,Industrial Loft,London,/images/modern-villa-project.jpg
+"photorealistic exterior design Industrial Loft style for a Dubai project, high detail, professional rendering",exterior,Industrial Loft,Dubai,/images/modern-villa-project.jpg
+"photorealistic structural design Neo-classical style for a London project, high detail, professional rendering",structural,Neo-classical,London,/images/building-foundation-concrete-construction.jpg
+"photorealistic structural design Mediterranean style for a Dubai project, high detail, professional rendering",structural,Mediterranean,Dubai,/images/structural-engineering-simulation-3d.jpg
+"photorealistic interior design Contemporary style for a New York project, high detail, professional rendering",interior,Contemporary,New York,/images/modern-minimalist-design.jpg
+"photorealistic architectural design Industrial Loft style for a London project, high detail, professional rendering",architectural,Industrial Loft,London,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic plumbing design Contemporary style for a New York project, high detail, professional rendering",plumbing,Contemporary,New York,/images/plumbing-system-diagram-water-supply-drainage-pipe.jpg
+"photorealistic architectural design Tropical Minimal style for a Dubai project, high detail, professional rendering",architectural,Tropical Minimal,Dubai,/images/modern-villa-project.jpg
+"photorealistic interior design Neo-classical style for a New York project, high detail, professional rendering",interior,Neo-classical,New York,/images/interior-design-3d-walkthrough.jpg
+"photorealistic exterior design Mediterranean style for a New York project, high detail, professional rendering",exterior,Mediterranean,New York,/images/modern-villa-project.jpg
+"photorealistic plumbing design Mediterranean style for a Tokyo project, high detail, professional rendering",plumbing,Mediterranean,Tokyo,/images/plumbing-system-diagram-water-supply-drainage-pipe.jpg
+"photorealistic exterior design Industrial Loft style for a New York project, high detail, professional rendering",exterior,Industrial Loft,New York,/images/garden-landscape-project.jpg
+"photorealistic structural design Tropical Minimal style for a New York project, high detail, professional rendering",structural,Tropical Minimal,New York,/images/structural-engineering-simulation-3d.jpg
+"photorealistic interior design Industrial Loft style for a London project, high detail, professional rendering",interior,Industrial Loft,London,/images/modern-minimalist-design.jpg
+"photorealistic interior design Industrial Loft style for a London project, high detail, professional rendering",interior,Industrial Loft,London,/images/interior-design-3d-walkthrough.jpg
+"photorealistic interior design Industrial Loft style for a New York project, high detail, professional rendering",interior,Industrial Loft,New York,/images/interior-design-3d-walkthrough.jpg
+"photorealistic interior design Modern Scandinavian style for a Sydney project, high detail, professional rendering",interior,Modern Scandinavian,Sydney,/images/modern-minimalist-design.jpg
+"photorealistic architectural design Neo-classical style for a Mumbai project, high detail, professional rendering",architectural,Neo-classical,Mumbai,/images/modern-villa-project.jpg
+"photorealistic plumbing design Industrial Loft style for a New York project, high detail, professional rendering",plumbing,Industrial Loft,New York,/images/plumbing-system-diagram-water-supply-drainage-pipe.jpg
+"photorealistic exterior design Mediterranean style for a Mumbai project, high detail, professional rendering",exterior,Mediterranean,Mumbai,/images/modern-villa-project.jpg
+"photorealistic plumbing design Mediterranean style for a London project, high detail, professional rendering",plumbing,Mediterranean,London,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic plumbing design Mediterranean style for a New York project, high detail, professional rendering",plumbing,Mediterranean,New York,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic plumbing design Tropical Minimal style for a London project, high detail, professional rendering",plumbing,Tropical Minimal,London,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic electrical design Industrial Loft style for a Mumbai project, high detail, professional rendering",electrical,Industrial Loft,Mumbai,/images/structural-engineering-simulation-3d.jpg
+"photorealistic structural design Tropical Minimal style for a Tokyo project, high detail, professional rendering",structural,Tropical Minimal,Tokyo,/images/building-foundation-concrete-construction.jpg
+"photorealistic structural design Contemporary style for a Tokyo project, high detail, professional rendering",structural,Contemporary,Tokyo,/images/structural-engineering-simulation-3d.jpg
+"photorealistic exterior design Industrial Loft style for a New York project, high detail, professional rendering",exterior,Industrial Loft,New York,/images/garden-landscape-project.jpg
+"photorealistic plumbing design Contemporary style for a Dubai project, high detail, professional rendering",plumbing,Contemporary,Dubai,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic interior design Industrial Loft style for a Sydney project, high detail, professional rendering",interior,Industrial Loft,Sydney,/images/interior-design-3d-walkthrough.jpg
+"photorealistic interior design Modern Scandinavian style for a Mumbai project, high detail, professional rendering",interior,Modern Scandinavian,Mumbai,/images/interior-design-3d-walkthrough.jpg
+"photorealistic exterior design Contemporary style for a Dubai project, high detail, professional rendering",exterior,Contemporary,Dubai,/images/garden-landscape-project.jpg
+"photorealistic electrical design Tropical Minimal style for a Sydney project, high detail, professional rendering",electrical,Tropical Minimal,Sydney,/images/electrical-plumbing-hvac-installation.jpg
+"photorealistic interior design Industrial Loft style for a Dubai project, high detail, professional rendering",interior,Industrial Loft,Dubai,/images/interior-design-3d-walkthrough.jpg
+"photorealistic architectural design Mediterranean style for a New York project, high detail, professional rendering",architectural,Mediterranean,New York,/images/architectural-floor-plan-blueprint.jpg
+"photorealistic plumbing design Neo-classical style for a Dubai project, high detail, professional rendering",plumbing,Neo-classical,Dubai,/images/plumbing-system-diagram-water-supply-drainage-pipe.jpg
+"photorealistic plumbing design Industrial Loft style for a Dubai project, high detail, professional rendering",plumbing,Industrial Loft,Dubai,/images/plumbing-system-diagram-water-supply-drainage-pipe.jpg

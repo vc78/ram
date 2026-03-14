@@ -28,6 +28,8 @@ import {
   ChevronUp,
   Copy,
   Save,
+  BrainCircuit,
+  Loader2,
 } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { useTranslation } from "@/lib/i18n/translations"
@@ -173,6 +175,31 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
   const [showArchived, setShowArchived] = useState(false)
   const [editingPhase, setEditingPhase] = useState<TimelinePhase | null>(null)
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [isPredicting, setIsPredicting] = useState(false)
+
+  // ML Feature: Predict Schedule Risks 
+  const predictScheduleRisks = async () => {
+    setIsPredicting(true)
+    try {
+      const res = await fetch("/api/predict-schedule-risks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phases })
+      })
+      if (!res.ok) throw new Error("Failed to predict risks")
+      
+      const result = await res.json()
+      setPhases(result.enhanced_phases)
+      toast({
+        title: "ML Risk Analysis Complete",
+        description: `Schedule Health: ${result.system_health}`,
+      })
+    } catch (err: any) {
+      toast({ title: "Analysis Failed", description: err.message, variant: "destructive" })
+    } finally {
+      setIsPredicting(false)
+    }
+  }
 
   // Feature 1: Calculate overall project progress
   const calculateOverallProgress = () => {
@@ -434,6 +461,10 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
         </div>
 
         <div className="flex gap-2 flex-wrap">
+          <Button variant="outline" size="sm" onClick={predictScheduleRisks} disabled={isPredicting} className="bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary">
+            {isPredicting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <BrainCircuit className="w-4 h-4 mr-2" />}
+            Analyze Risks (ML)
+          </Button>
           <Button variant="outline" size="sm" onClick={exportToJSON}>
             <Save className="w-4 h-4 mr-2" />
             Save JSON
@@ -568,6 +599,21 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
 
                 {/* Progress Bar */}
                 {phase.status !== "upcoming" && <Progress value={phase.progress} className="mt-3 h-2" />}
+
+                {/* ML Risk Insights Summary */}
+                {(phase as any).ml_risk_score !== undefined && (
+                  <div className="mt-3 flex items-center gap-4 text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
+                    <span className="flex items-center gap-1">
+                      <BrainCircuit className="w-3 h-3 text-primary" /> Risk Score: {(phase as any).ml_risk_score}%
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-primary" /> Est. Delay: {(phase as any).expected_delay_days} Days
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <BarChart3 className="w-3 h-3 text-primary" /> Confidence: {((phase as any).prediction_confidence * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                )}
 
                 {/* Expanded Content - Feature 23: Detailed phase information */}
                 {expandedPhase === phase.id && (

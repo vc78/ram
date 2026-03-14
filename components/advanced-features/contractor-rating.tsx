@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Star, MapPin, Clock, CheckCircle2, MessageSquare, Phone } from "lucide-react"
+import { Star, MapPin, Clock, CheckCircle2, MessageSquare, Phone, Activity, Bot, TrendingUp, TrendingDown, RefreshCcw } from "lucide-react"
 
 interface Contractor {
   id: string
@@ -19,6 +20,12 @@ interface Contractor {
   verified: boolean
   hourlyRate: string
   avatar?: string
+  mlMetrics: {
+    reliabilityScore: number // 0-100
+    riskLevel: "Low" | "Medium" | "High"
+    predictedDelay: string
+    onBudgetProbability: number
+  }
 }
 
 const MOCK_CONTRACTORS: Contractor[] = [
@@ -33,6 +40,12 @@ const MOCK_CONTRACTORS: Contractor[] = [
     responseTime: "< 2 hours",
     verified: true,
     hourlyRate: "₹800/day",
+    mlMetrics: {
+      reliabilityScore: 94,
+      riskLevel: "Low",
+      predictedDelay: "< 2 days",
+      onBudgetProbability: 88,
+    }
   },
   {
     id: "2",
@@ -45,6 +58,12 @@ const MOCK_CONTRACTORS: Contractor[] = [
     responseTime: "< 1 hour",
     verified: true,
     hourlyRate: "₹1,200/day",
+    mlMetrics: {
+      reliabilityScore: 98,
+      riskLevel: "Low",
+      predictedDelay: "None",
+      onBudgetProbability: 95,
+    }
   },
   {
     id: "3",
@@ -57,12 +76,48 @@ const MOCK_CONTRACTORS: Contractor[] = [
     responseTime: "< 4 hours",
     verified: true,
     hourlyRate: "₹600/day",
+    mlMetrics: {
+      reliabilityScore: 76,
+      riskLevel: "Medium",
+      predictedDelay: "+ 5 days",
+      onBudgetProbability: 62,
+    }
   },
 ]
 
 export function ContractorRating() {
-  const [contractors] = useState<Contractor[]>(MOCK_CONTRACTORS)
-  const [sortBy, setSortBy] = useState<"rating" | "reviews" | "projects">("rating")
+  const [contractors, setContractors] = useState<Contractor[]>(MOCK_CONTRACTORS)
+  const [sortBy, setSortBy] = useState<"rating" | "reviews" | "projects" | "mlScore">("mlScore")
+  const [isAiLoading, setIsAiLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadPredictions() {
+      try {
+        const res = await fetch("/api/predict-contractor", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contractors: MOCK_CONTRACTORS })
+        })
+        const data = await res.json()
+        if (data.success && data.predictions) {
+          // Merge predictions
+          const updated = [...MOCK_CONTRACTORS].map(c => {
+            const prediction = data.predictions.find((p: any) => p.id === c.id)
+            if (prediction) {
+              return { ...c, mlMetrics: prediction.mlMetrics }
+            }
+            return c
+          })
+          setContractors(updated)
+        }
+      } catch (e) {
+        console.error("Failed to load ML predictions", e)
+      } finally {
+        setIsAiLoading(false)
+      }
+    }
+    loadPredictions()
+  }, [])
 
   const sortedContractors = [...contractors].sort((a, b) => {
     switch (sortBy) {
@@ -72,6 +127,8 @@ export function ContractorRating() {
         return b.reviews - a.reviews
       case "projects":
         return b.completedProjects - a.completedProjects
+      case "mlScore":
+        return (b.mlMetrics?.reliabilityScore || 0) - (a.mlMetrics?.reliabilityScore || 0)
       default:
         return 0
     }
@@ -89,6 +146,7 @@ export function ContractorRating() {
           onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
           className="text-sm border rounded-md px-3 py-1.5 bg-background"
         >
+          <option value="mlScore">AI Recommended</option>
           <option value="rating">Highest Rated</option>
           <option value="reviews">Most Reviews</option>
           <option value="projects">Most Projects</option>
@@ -138,9 +196,62 @@ export function ContractorRating() {
                   </div>
                   <div>{contractor.completedProjects} projects</div>
                 </div>
+
+                {/* ML Predictive Analytics Section */}
+                <div className="mt-3 pt-3 border-t">
+                  <div className="flex items-center gap-1.5 mb-2 text-xs font-semibold text-purple-600">
+                    <Bot className="w-3.5 h-3.5" />
+                    AI PROJECTION ENGINE
+                    <span className="text-[10px] text-muted-foreground/50 ml-auto font-mono">Logistic Regression (Sigmoid)</span>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                    {isAiLoading ? (
+                      <>
+                        <Skeleton className="h-14 w-full rounded-md" />
+                        <Skeleton className="h-14 w-full rounded-md" />
+                        <Skeleton className="h-14 w-full rounded-md" />
+                        <Skeleton className="h-14 w-full rounded-md" />
+                      </>
+                    ) : (
+                      <>
+                        <div className="bg-muted p-2 rounded-md">
+                          <div className="text-muted-foreground mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Reliability Score</div>
+                          <div className="font-medium flex items-center gap-1">
+                            <Activity className="w-3 h-3 text-blue-500" />
+                            {contractor.mlMetrics?.reliabilityScore || 0}/100
+                          </div>
+                        </div>
+                        <div className="bg-muted p-2 rounded-md">
+                          <div className="text-muted-foreground mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Risk Level</div>
+                          <div className={`font-medium flex items-center gap-1 ${
+                            contractor.mlMetrics?.riskLevel === 'High' ? 'text-red-600' :
+                            contractor.mlMetrics?.riskLevel === 'Medium' ? 'text-amber-600' : 'text-emerald-600'
+                          }`}>
+                            {contractor.mlMetrics?.riskLevel || "Unknown"}
+                          </div>
+                        </div>
+                        <div className="bg-muted p-2 rounded-md">
+                          <div className="text-muted-foreground mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">On-Budget Prob.</div>
+                          <div className="font-medium flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3 text-green-500" />
+                            {contractor.mlMetrics?.onBudgetProbability || 0}%
+                          </div>
+                        </div>
+                        <div className="bg-muted p-2 rounded-md">
+                          <div className="text-muted-foreground mb-0.5 whitespace-nowrap overflow-hidden text-ellipsis">Pred. Delay</div>
+                          <div className="font-medium flex items-center gap-1 text-slate-700">
+                            <RefreshCcw className="w-3 h-3 text-orange-500" />
+                            {contractor.mlMetrics?.predictedDelay || "Unknown"}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+
               </div>
 
-              <div className="text-right">
+              <div className="text-right flex flex-col items-end gap-2 ml-4 self-center md:self-start">
                 <div className="font-semibold text-primary mb-2">{contractor.hourlyRate}</div>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm">
@@ -149,7 +260,6 @@ export function ContractorRating() {
                   <Button variant="outline" size="sm">
                     <Phone className="w-4 h-4" />
                   </Button>
-                  <Button size="sm">Hire</Button>
                 </div>
               </div>
             </div>

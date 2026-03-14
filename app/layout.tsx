@@ -20,10 +20,10 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "SIID FLASH - Smart Intelligent Infrastructure Design",
+  title: "SIID  - Smart Innovation And  Infrastructure Design",
   description:
     "Transform your dreams into reality with AI-powered architectural design and seamless contractor connections",
-  generator: "SIID FLASH",
+  generator: "SIID ",
 }
 
 export default function RootLayout({

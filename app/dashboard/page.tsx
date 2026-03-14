@@ -12,6 +12,8 @@ import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { LanguageSelector } from "@/components/language-selector"
+import { useLanguage } from "@/contexts/language-context"
+import { useTranslation } from "@/lib/i18n/translations"
 import {
   Plus,
   Home,
@@ -47,6 +49,8 @@ import {
 export default function DashboardPage() {
   const router = useRouter()
   const user = getCurrentUser()
+  const { language } = useLanguage()
+  const t: any = useTranslation(language)
   const [activeTab, setActiveTab] = useState("overview")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [taskOpen, setTaskOpen] = useState(false)
@@ -67,7 +71,7 @@ export default function DashboardPage() {
       progress: 35,
       budget: "₹150,000",
       deadline: "May 2024",
-      image: "/images/modern-minimalist-design.jpg",
+      image: "/images/modern-villa-project.jpg",
     },
     {
       id: 2,
@@ -107,7 +111,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-4">
                   <Link href="/" className="text-2xl font-bold text-primary flex items-center gap-2">
                     <Home className="w-6 h-6" />
-                    <span>SIID FLASH</span>
+                    <span>SIID</span>
                   </Link>
                   <Badge variant="secondary" className="hidden sm:inline-flex">
                     Dashboard
@@ -167,7 +171,7 @@ export default function DashboardPage() {
                     }`}
                 >
                   <LayoutDashboard className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">Overview</span>
+                  <span className="text-sm font-medium">{t.overview}</span>
                 </button>
 
                 <button
@@ -178,7 +182,7 @@ export default function DashboardPage() {
                     }`}
                 >
                   <FolderOpen className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">My Projects</span>
+                  <span className="text-sm font-medium">{t.myProjects}</span>
                 </button>
 
                 <button
@@ -189,7 +193,7 @@ export default function DashboardPage() {
                     }`}
                 >
                   <Calculator className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">Tools</span>
+                  <span className="text-sm font-medium">{t.tools}</span>
                 </button>
 
                 <Link href="/3d-generator">
@@ -207,7 +211,7 @@ export default function DashboardPage() {
                     }`}
                 >
                   <Calendar className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">Timeline</span>
+                  <span className="text-sm font-medium">{t.timeline}</span>
                 </button>
 
                 <button
@@ -218,7 +222,7 @@ export default function DashboardPage() {
                     }`}
                 >
                   <FileText className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">Documents</span>
+                  <span className="text-sm font-medium">{t.documents}</span>
                 </button>
 
                 <Link href="/dashboard/contractors">
@@ -245,7 +249,7 @@ export default function DashboardPage() {
                 <Link href="/dashboard/settings">
                   <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
                     <Settings className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm font-medium">Settings</span>
+                    <span className="text-sm font-medium">{t.settings}</span>
                   </button>
                 </Link>
               </nav>
@@ -275,7 +279,7 @@ export default function DashboardPage() {
                 onClick={handleLogout}
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm font-medium">Logout</span>
+                <span className="text-sm font-medium">{t.logout}</span>
               </Button>
             </div>
           </aside>
@@ -284,7 +288,7 @@ export default function DashboardPage() {
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.name}!</h1>
+                  <h1 className="text-3xl font-bold mb-2">{t.welcomeBack}, {user?.name}!</h1>
                   <p className="text-muted-foreground">{"Here's what's happening with your projects"}</p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -336,7 +340,9 @@ export default function DashboardPage() {
                           </div>
                         </Card>
                       ))}
-                      {/* <WeatherWidget location={user?.location || "Hyderabad"} /> */}
+
+                      {/* Weather summary card */}
+                      <WeatherWidget location={user?.location || "Hyderabad"} />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -467,10 +473,10 @@ export default function DashboardPage() {
                     </div>
                     */}
 
-                    {/* <div className="grid lg:grid-cols-2 gap-6">
+                    <div className="grid lg:grid-cols-2 gap-6 mt-8">
                       <NotificationCenter />
                       <ProjectMilestones />
-                    </div> */}
+                    </div>
                   </>
                 </ErrorBoundary>
               )}
@@ -584,7 +590,7 @@ export default function DashboardPage() {
                   onClick={() => {
                     const tasks = JSON.parse(localStorage.getItem("globalTasks") || "[]")
                     tasks.unshift({ id: crypto.randomUUID(), title: newTaskTitle, at: Date.now() })
-                    localStorage.setItem("globalTasks", JSON.stringify(tasks))
+                    localStorage.setItem("globalTasks", JSON.unshift(tasks))
                     setTaskOpen(false)
                     setNewTaskTitle("")
                   }}

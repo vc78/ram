@@ -6,19 +6,24 @@ import { Card } from "@/components/ui/card"
 
 const videos = [
   {
-    src: "https://cdn.pixabay.com/video/2023/05/02/160690-822906092_large.mp4",
+    src: "/images/stu.mp4",
     title: "AI-Driven Floor Plans",
     poster: "/images/ai-floor-plan-generation-architectural.jpg",
   },
   {
-    src: "https://cdn.pixabay.com/video/2022/11/07/138448-768947568_large.mp4",
+    src: "/images/iron.mp4",
     title: "Structural Simulation",
     poster: "/images/structural-engineering-simulation-3d.jpg",
   },
   {
-    src: "https://cdn.pixabay.com/video/2022/08/01/126095-735766893_large.mp4",
+    src: "/images/int.mp4",
     title: "Interior Walkthrough",
     poster: "/images/interior-design-3d-walkthrough.jpg",
+  },
+  {
+    src: "/images/ext.mp4",
+    title: "Exterior Walkthrough",
+    poster: "/images/x.jpg",
   },
 ]
 
@@ -29,7 +34,7 @@ export default function VideoCarousel() {
   React.useEffect(() => {
     autoRef.current = window.setInterval(() => {
       setActive((prev) => (prev + 1) % videos.length)
-    }, 6000)
+    }, 15000)
     return () => {
       if (autoRef.current) window.clearInterval(autoRef.current)
     }

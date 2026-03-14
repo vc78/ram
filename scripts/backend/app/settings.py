@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     JWT_SECRET: str = "test-jwt-secret"
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    ALLOWED_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:3003", "https://*.vercel.app"]
+    ALLOWED_ORIGINS: List[str] = ["http://localhost:3001", "http://localhost:3003", "https://*.vercel.app"]
 
     class Config:
         env_file = ".env"

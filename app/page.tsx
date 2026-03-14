@@ -44,37 +44,38 @@ export default function LandingPage() {
 
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  const videos = [
-    {
-      title: "Platform Overview",
-      description: "Complete walkthrough of SIID features and capabilities",
-      thumbnail: "/modern-architectural-design-software-dashboard-int.jpg",
-      videoSrc: "https://cdn.pixabay.com/video/2022/11/07/138448-768947568_large.mp4",
-      poster: "/modern-architectural-design-software-dashboard-int.jpg",
-    },
-    {
-      title: "AI Design Generation",
-      description: "Watch AI create architectural plans in seconds",
-      thumbnail: "/ai-generating-architectural-floor-plans-and-3d-bui.jpg",
-      videoSrc: "https://cdn.pixabay.com/video/2023/05/02/160690-822906092_large.mp4",
-      poster: "/ai-generating-architectural-floor-plans-and-3d-bui.jpg",
-    },
-    {
-      title: "Contractor Connection",
-      description: "Connect with verified contractors seamlessly",
-      thumbnail: "/contractor-marketplace-with-verified-construction-.jpg",
-      videoSrc: "https://cdn.pixabay.com/video/2022/08/01/126095-735766893_large.mp4",
-      poster: "/contractor-marketplace-with-verified-construction-.jpg",
-    },
-    {
-      title: "Project Management",
-      description: "Track your project from design to completion",
-      thumbnail: "/project-management-dashboard-with-timeline-and-tas.jpg",
-      videoSrc: "https://cdn.pixabay.com/video/2021/08/04/84353-583944595_large.mp4",
-      poster: "/project-management-dashboard-with-timeline-and-tas.jpg",
-    },
-  ]
+  /*
+    const videos = [
+      {
+        title: "Platform Overview",
+        description: "Complete walkthrough of SIID features and capabilities",
+        thumbnail: "/modern-architectural-design-software-dashboard-int.jpg",
+        videoSrc: "/images/stu.mp4",
+        poster: "/modern-architectural-design-software-dashboard-int.jpg",
+      },
+      {
+        title: "AI Design Generation",
+        description: "Watch AI create architectural plans in seconds",
+        thumbnail: "/ai-generating-architectural-floor-plans-and-3d-bui.jpg",
+        videoSrc: "https://cdn.pixabay.com/video/2023/05/02/160690-822906092_large.mp4",
+        poster: "/ai-generating-architectural-floor-plans-and-3d-bui.jpg",
+      },
+      {
+        title: "Contractor Connection",
+        description: "Connect with verified contractors seamlessly",
+        thumbnail: "/contractor-marketplace-with-verified-construction-.jpg",
+        videoSrc: "https://cdn.pixabay.com/video/2022/08/01/126095-735766893_large.mp4",
+        poster: "/contractor-marketplace-with-verified-construction-.jpg",
+      },
+      {
+        title: "Project Management",
+        description: "Track your project from design to completion",
+        thumbnail: "/project-management-dashboard-with-timeline-and-tas.jpg",
+        videoSrc: "https://cdn.pixabay.com/video/2021/08/04/84353-583944595_large.mp4",
+        poster: "/project-management-dashboard-with-timeline-and-tas.jpg",
+      },
+    ]
+    */
   const videosUI = [
     {
       id: 1,
@@ -83,7 +84,7 @@ export default function LandingPage() {
       thumbnail: "/modern-architectural-design-software-dashboard-int.jpg",
       duration: "3:45",
       poster: "/modern-architectural-design-software-dashboard-int.jpg",
-      videoUrl: "#",
+      videoSrc: "/images/stu.mp4",
     },
     {
       id: 2,
@@ -92,7 +93,7 @@ export default function LandingPage() {
       thumbnail: "/ai-generating-architectural-floor-plans.jpg",
       duration: "2:30",
       poster: "/ai-generating-architectural-floor-plans.jpg",
-      videoUrl: "#",
+      videoSrc: "/images/stu.mp4",
     },
     {
       id: 3,
@@ -101,7 +102,7 @@ export default function LandingPage() {
       thumbnail: "/contractor-marketplace-professionals.jpg",
       duration: "4:12",
       poster: "/contractor-marketplace-professionals.jpg",
-      videoUrl: "#",
+      videoSrc: "/images/iron.mp4",
     },
     {
       id: 4,
@@ -110,7 +111,7 @@ export default function LandingPage() {
       thumbnail: "/project-management-dashboard-timeline.jpg",
       duration: "5:20",
       poster: "/project-management-dashboard-timeline.jpg",
-      videoUrl: "#",
+      videoSrc: "/images/ext.mp4",
     },
   ]
 
@@ -252,11 +253,11 @@ export default function LandingPage() {
             <Card className="glass-effect elevation-lg p-6 md:p-8 border border-border/70 bg-background/70 animate-scale-in">
               <div className="grid grid-cols-2 gap-4">
                 <div className="rounded-lg p-4 outline-primary bg-background/60">
-                  <div className="text-2xl font-bold text-primary mb-1">500+</div>
+                  <div className="text-2xl font-bold text-primary mb-1">50+</div>
                   <div className="text-xs text-muted-foreground">Projects Completed</div>
                 </div>
                 <div className="rounded-lg p-4 outline-accent bg-background/60">
-                  <div className="text-2xl font-bold text-accent mb-1">200+</div>
+                  <div className="text-2xl font-bold text-accent mb-1">20+</div>
                   <div className="text-xs text-muted-foreground">Verified Contractors</div>
                 </div>
                 <div className="rounded-lg p-4 outline-primary bg-background/60">
@@ -394,11 +395,11 @@ export default function LandingPage() {
         </div>
       )}
 
-      {/* Previous Projects Examples Section */}
-      {/* Our Previous Projects - Construction Route Map */}
+
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
+
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Previous Projects</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Explore comprehensive designs from architectural plans to final execution
@@ -406,7 +407,7 @@ export default function LandingPage() {
           </div>
 
           <div className="space-y-16">
-            {/* Modern Luxury Villa */}
+
             <div>
               <h3 className="text-2xl font-bold mb-2">Modern Luxury Villa</h3>
               <p className="text-muted-foreground mb-8">Complete residential design with visual layout integration</p>
@@ -498,6 +499,7 @@ export default function LandingPage() {
                 </Card>
               </div>
             </div>
+
 
             {/* Corporate Office Complex */}
             <div>
@@ -592,18 +594,18 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </div >
+      </section >
 
       {/* add progress analytics section before the Features or Vision section for more dynamics */}
-      <section className="py-16 bg-muted">
+      < section className="py-16 bg-muted" >
         <div className="container mx-auto px-4">
           <ProgressAnalytics />
         </div>
-      </section>
+      </section >
       {/* ... existing code ... */}
 
-      <section className="py-20 bg-muted">
+      < section className="py-20 bg-muted" >
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             <BudgetEstimator />
@@ -611,10 +613,10 @@ export default function LandingPage() {
             <InsightsSearch />
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-background">
+      < section id="features" className="py-20 bg-background" >
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto mb-8">
             <LiveTicker />
@@ -658,7 +660,7 @@ export default function LandingPage() {
             </Card>
           </div>
         </div>
-      </section>
+      </section >
 
       <section className="py-16 bg-muted">
         <div className="container mx-auto px-4">
@@ -1033,6 +1035,6 @@ export default function LandingPage() {
         </div>
       </footer>
       <HomeAssistant />
-    </div>
+    </div >
   )
 }

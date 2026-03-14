@@ -7,7 +7,7 @@ import OptimizedImage from "@/components/optimized-image"
 import BlogListClient from "@/components/blog-list-client"
 
 export const metadata = {
-  title: "SIID FLASH Blog",
+  title: "SIID Blog",
   description: "Insights, tips, and stories about design, construction, and building your dreams",
 }
 
@@ -19,7 +19,7 @@ export default function BlogPage() {
       author: "Sarah Johnson",
       date: "Jan 15, 2025",
       category: "Design Tips",
-      image: "/images/modern-minimalist-design.jpg",
+      image: "/images/modern-villa-project.jpg",
     },
     {
       title: "How AI is Revolutionizing Architectural Design",
@@ -27,7 +27,7 @@ export default function BlogPage() {
       author: "Michael Chen",
       date: "Jan 10, 2025",
       category: "Technology",
-      image: "/images/architectural-floor-plan-blueprint.jpg",
+      image: "/images/ai-floor-plan-generation-architectural.jpg",
     },
     {
       title: "Choosing the Right Contractor: A Complete Guide",
@@ -35,7 +35,7 @@ export default function BlogPage() {
       author: "Priya Sharma",
       date: "Jan 5, 2025",
       category: "Contractors",
-      image: "/images/default-contractor-logo.jpg",
+      image: "/images/building-foundation-concrete-construction.jpg",
     },
     {
       title: "Sustainable Building Materials for 2025",
@@ -43,7 +43,7 @@ export default function BlogPage() {
       author: "David Kumar",
       date: "Dec 28, 2024",
       category: "Sustainability",
-      image: "/images/garden-landscape-project.jpg",
+      image: "/images/eco-friendly-design.jpg",
     },
     {
       title: "Budget Estimation: What You Need to Know",
@@ -51,7 +51,7 @@ export default function BlogPage() {
       author: "Lisa Anderson",
       date: "Dec 20, 2024",
       category: "Finance",
-      image: "/images/office-renovation-project.jpg",
+      image: "/images/building-permit-approval-documents.jpg",
     },
     {
       title: "Smart Home Integration in Modern Design",
@@ -70,7 +70,7 @@ export default function BlogPage() {
           <Link href="/" className="flex items-center gap-2">
             <OptimizedImage
               src="/images/siid-flash-logo.png"
-              alt="SIID FLASH Logo"
+              alt="SIID Logo"
               className="h-12 w-auto object-contain"
             />
           </Link>
@@ -86,7 +86,7 @@ export default function BlogPage() {
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">SIID FLASH Blog</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">SIID Blog</h1>
             <p className="text-xl text-muted-foreground">
               Insights, tips, and stories about design, construction, and building your dreams
             </p>

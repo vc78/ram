@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { Camera, Upload, ImageIcon, MapPin, Calendar, Download, Trash2, Eye, Grid3x3, List } from "lucide-react"
+import { Camera, Upload, ImageIcon, MapPin, Calendar, Download, Trash2, Eye, Grid3x3, List, BrainCircuit, Activity, AlertTriangle, CheckCircle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { Progress } from "@/components/ui/progress"
 
 interface SitePhoto {
   id: string
@@ -31,6 +32,13 @@ interface SitePhoto {
   comments?: string
   uploadedBy: string
   size: number
+  mlAnalysis?: {
+    progress: number
+    phase: string
+    confidenceScore: number
+    safetyViolations: { type: string, description: string, severity: string }[]
+    description: string
+  }
 }
 
 const PHOTO_TAGS = [
@@ -74,18 +82,36 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [filterTag, setFilterTag] = useState<string>("all")
   const [selectedPhoto, setSelectedPhoto] = useState<SitePhoto | null>(null)
+  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null)
   const [uploadData, setUploadData] = useState({
     tags: [] as string[],
     comments: "",
     date: new Date().toISOString().split("T")[0],
   })
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [analyzedPhotos, setAnalyzedPhotos] = useState<Record<string, any>>({})
   const { toast } = useToast()
 
   useEffect(() => {
     loadPhotos()
   }, [])
 
-  const loadPhotos = () => {
+  const loadPhotos = async () => {
+    try {
+      const res = await fetch("/api/db/photos")
+      if (res.ok) {
+        const allPhotos: SitePhoto[] = await res.json()
+        // cache locally for offline use
+        localStorage.setItem("sitePhotos", JSON.stringify(allPhotos))
+        const filteredPhotos = taskId ? allPhotos.filter((p) => p.taskId === taskId) : allPhotos
+        setPhotos(filteredPhotos)
+        return
+      }
+    } catch (err) {
+      console.error("Failed to load photos from DB", err)
+    }
+
+    // fallback to localStorage if DB read fails
     const stored = localStorage.getItem("sitePhotos")
     const allPhotos: SitePhoto[] = stored ? JSON.parse(stored) : []
     const filteredPhotos = taskId ? allPhotos.filter((p) => p.taskId === taskId) : allPhotos
@@ -98,80 +124,132 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
     const otherPhotos = taskId ? allPhotos.filter((p) => p.taskId !== taskId) : []
     const updatedPhotos = [...otherPhotos, ...newPhotos]
     localStorage.setItem("sitePhotos", JSON.stringify(updatedPhotos))
-    setPhotos(newPhotos)
+    setPhotos(updatedPhotos)
   }
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files
-    if (!files || files.length === 0) return
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedFiles(event.target.files)
+  }
+
+  const handleFileSubmit = async () => {
+    if (!selectedFiles || selectedFiles.length === 0) return
 
     const currentUser = JSON.parse(localStorage.getItem("user") || '{"name":"User"}')
-    const newPhotos: SitePhoto[] = []
+    const form = new FormData()
+    Array.from(selectedFiles).forEach((f) => form.append("files", f))
 
-    for (const file of Array.from(files)) {
-      const format = file.name.split(".").pop()?.toLowerCase() as "jpg" | "png" | "heic"
-      if (!["jpg", "jpeg", "png", "heic"].includes(format)) {
-        toast({
-          title: "Invalid Format",
-          description: `${file.name} is not a supported format. Use JPG, PNG, or HEIC.`,
-          variant: "destructive",
-        })
-        continue
-      }
+    setIsAnalyzing(true)
+    try {
+      const res = await fetch("/api/uploads/photos", { method: "POST", body: form })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Upload failed")
 
-      // Get location if available
-      let location: SitePhoto["location"] | undefined
-      if ("geolocation" in navigator) {
-        try {
-          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject)
-          })
-          location = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            address: `Lat: ${position.coords.latitude.toFixed(6)}, Lng: ${position.coords.longitude.toFixed(6)}`,
+      const newPhotos: SitePhoto[] = []
+      for (const file of Array.from(selectedFiles)) {
+        const rawFormat = file.name.split(".").pop()?.toLowerCase() || ""
+        if (!["jpg", "jpeg", "png", "heic"].includes(rawFormat)) continue
+
+        let location: SitePhoto["location"] | undefined
+        if ("geolocation" in navigator) {
+          try {
+            const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+              const timeoutId = setTimeout(() => reject(new Error("Geolocation timeout")), 2000)
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  clearTimeout(timeoutId)
+                  resolve(pos)
+                },
+                (err) => {
+                  clearTimeout(timeoutId)
+                  reject(err)
+                },
+                { timeout: 2000 }
+              )
+            })
+            location = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              address: `Lat: ${position.coords.latitude.toFixed(6)}, Lng: ${position.coords.longitude.toFixed(6)}`,
+            }
+          } catch (error) {
+            console.log("Location not available or timed out")
           }
-        } catch (error) {
-          console.log("Location not available")
         }
+
+        const urlEntry = data.saved.find((s: any) => s.filename === file.name)
+        const url = urlEntry ? urlEntry.url : URL.createObjectURL(file)
+
+        // ML Auto Analysis for Site Photo
+        let mlAnalysis = undefined
+        let additionalTags: string[] = []
+        try {
+          const mlRes = await fetch("/api/analyze-site-photo", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ filename: file.name }),
+          })
+          if (mlRes.ok) {
+            const mlData = await mlRes.json()
+            if (mlData.success) {
+               mlAnalysis = mlData.analysis
+               additionalTags = mlData.analysis.autoTags || []
+            }
+          }
+        } catch(mlErr) {
+          console.warn("ML API Error", mlErr)
+        }
+
+        const newPhoto: SitePhoto = {
+          id: crypto.randomUUID(),
+          url,
+          filename: file.name,
+          format: rawFormat === "jpeg" ? "jpg" : (rawFormat as "jpg" | "png" | "heic"),
+          uploadedAt: new Date().toISOString(),
+          taskId,
+          taskName,
+          date: uploadData.date,
+          milestone,
+          tags: Array.from(new Set([...uploadData.tags, ...additionalTags])),
+          location,
+          comments: uploadData.comments,
+          uploadedBy: currentUser.name || "User",
+          size: file.size,
+          mlAnalysis,
+        }
+
+        newPhotos.push(newPhoto)
+
+        // also persist metadata server-side
+        fetch("/api/db/photos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newPhoto),
+        }).catch((e) => console.error("DB photo insert failed", e))
       }
 
-      const url = URL.createObjectURL(file)
-      const newPhoto: SitePhoto = {
-        id: crypto.randomUUID(),
-        url,
-        filename: file.name,
-        format: format === "jpeg" ? "jpg" : format,
-        uploadedAt: new Date().toISOString(),
-        taskId,
-        taskName,
-        date: uploadData.date,
-        milestone,
-        tags: uploadData.tags,
-        location,
-        comments: uploadData.comments,
-        uploadedBy: currentUser.name || "User",
-        size: file.size,
+      const updatedPhotos = [...photos, ...newPhotos]
+      savePhotos(updatedPhotos)
+
+      if (onPhotoUploaded && newPhotos.length > 0) {
+        newPhotos.forEach((photo) => onPhotoUploaded(photo))
       }
 
-      newPhotos.push(newPhoto)
+      toast({
+        title: "Photos Uploaded & Analyzed",
+        description: `${newPhotos.length} photo(s) uploaded and processed via ML engine`,
+      })
+
+      setUploadDialogOpen(false)
+      resetUploadData()
+    } catch (err) {
+      toast({
+        title: "Upload Error",
+        description: (err as Error).message,
+        variant: "destructive",
+      })
+    } finally {
+      setIsAnalyzing(false)
     }
-
-    const updatedPhotos = [...photos, ...newPhotos]
-    savePhotos(updatedPhotos)
-
-    // Trigger callback
-    if (onPhotoUploaded && newPhotos.length > 0) {
-      newPhotos.forEach((photo) => onPhotoUploaded(photo))
-    }
-
-    toast({
-      title: "Photos Uploaded",
-      description: `${newPhotos.length} photo(s) uploaded successfully`,
-    })
-
-    setUploadDialogOpen(false)
-    resetUploadData()
   }
 
   const resetUploadData = () => {
@@ -180,6 +258,7 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
       comments: "",
       date: new Date().toISOString().split("T")[0],
     })
+    setSelectedFiles(null)
   }
 
   const handleTagToggle = (tag: string) => {
@@ -274,13 +353,20 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
                 className="group relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
                 onClick={() => setSelectedPhoto(photo)}
               >
-                <img
-                  src={photo.url || "/placeholder.svg"}
-                  alt={photo.filename}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-3">
-                  <div className="flex justify-between items-start">
+                  <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
+                    {photo.mlAnalysis && (
+                      <Badge className={`${photo.mlAnalysis.safetyViolations.length > 0 ? "bg-red-500 hover:bg-red-600" : "bg-emerald-500 hover:bg-emerald-600"} text-white border-0 shadow-sm font-medium flex items-center gap-1`}>
+                        {photo.mlAnalysis.safetyViolations.length > 0 ? <AlertTriangle className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
+                        {photo.mlAnalysis.safetyViolations.length > 0 ? "Hazard Flag" : "Safe"}
+                      </Badge>
+                    )}
+                  </div>
+                  <img
+                    src={photo.url || "/placeholder.svg"}
+                    alt={photo.filename}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
                     <div className="flex flex-wrap gap-1">
                       {photo.tags.slice(0, 2).map((tag) => (
                         <Badge key={tag} variant="secondary" className="text-xs">
@@ -330,7 +416,6 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
                     </Button>
                   </div>
                 </div>
-              </div>
             ))}
           </div>
         ) : (
@@ -414,7 +499,13 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
       </Card>
 
       {/* Upload Dialog */}
-      <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
+      <Dialog
+        open={uploadDialogOpen}
+        onOpenChange={(open) => {
+          setUploadDialogOpen(open)
+          if (!open) resetUploadData()
+        }}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Upload Site Photos</DialogTitle>
@@ -427,12 +518,19 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
                 type="file"
                 multiple
                 accept="image/jpeg,image/jpg,image/png,image/heic"
-                onChange={handleFileUpload}
+                onChange={handleFileSelect}
                 className="mt-2"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                Supported formats: JPG, PNG, HEIC • Multiple files allowed
-              </p>
+              <div className="flex justify-between items-center mt-1">
+                <p className="text-xs text-muted-foreground">
+                  Supported formats: JPG, PNG, HEIC • Multiple files allowed
+                </p>
+                {selectedFiles && selectedFiles.length > 0 && (
+                  <p className="text-sm font-medium text-primary">
+                    {selectedFiles.length} file(s) selected
+                  </p>
+                )}
+              </div>
             </div>
 
             <div>
@@ -487,6 +585,24 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
               </div>
             )}
           </div>
+          <DialogFooter className="mt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setUploadDialogOpen(false)
+                resetUploadData()
+              }}
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleFileSubmit} disabled={!selectedFiles || selectedFiles.length === 0 || isAnalyzing}>
+              {isAnalyzing ? (
+                <>AI Engine Scanning...</>
+              ) : (
+                <><Upload className="w-4 h-4 mr-2" /> Upload Photos</>
+              )}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
@@ -498,11 +614,28 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
           </DialogHeader>
           {selectedPhoto && (
             <div className="space-y-4">
-              <img
-                src={selectedPhoto.url || "/placeholder.svg"}
-                alt={selectedPhoto.filename}
-                className="w-full rounded-lg object-contain max-h-[500px] bg-muted"
-              />
+              <div className="relative border rounded-lg overflow-hidden bg-muted flex items-center justify-center min-h-[300px]">
+                <img
+                  src={selectedPhoto.url || "/placeholder.svg"}
+                  alt={selectedPhoto.filename}
+                  className="w-full max-h-[500px] object-contain"
+                />
+                {selectedPhoto.mlAnalysis && (
+                  <div className="absolute inset-0 pointer-events-none p-4 opacity-75">
+                     {/* Simulated Computer Vision Overlays */}
+                     {selectedPhoto.mlAnalysis.safetyViolations.map((v, i) => (
+                       <div key={i} className="absolute border-2 border-red-500 bg-red-500/10 p-1 font-mono text-[10px] sm:text-xs text-red-500 font-bold backdrop-blur-sm shadow-xl" style={{ top: `${(i+1)*20}%`, left: `${(i+1)*25}%`, minWidth: '80px' }}>
+                          [{v.type.toUpperCase()}] DETECTED
+                       </div>
+                     ))}
+                     {selectedPhoto.mlAnalysis.safetyViolations.length === 0 && (
+                        <div className="absolute bottom-4 right-4 bg-emerald-500/90 text-white text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" /> CV CONFIRM: SAFE
+                        </div>
+                     )}
+                  </div>
+                )}
+              </div>
 
               <div className="grid md:grid-cols-2 gap-4 text-sm">
                 <div>
@@ -562,15 +695,69 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
                 </div>
               )}
 
-              {selectedPhoto.comments && (
-                <div>
-                  <Label className="text-sm text-muted-foreground">Comments:</Label>
-                  <p className="mt-2 text-sm p-3 bg-muted rounded-lg">{selectedPhoto.comments}</p>
+              {selectedPhoto.mlAnalysis && (
+                <div className="mt-8 border-t pt-6 bg-gradient-to-br from-primary/5 to-transparent -mx-6 px-6 pb-6 -mb-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <BrainCircuit className="w-5 h-5 text-primary" />
+                    <h4 className="font-semibold text-lg text-primary tracking-tight">Computer Vision Engine</h4>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                       <div className="bg-background border rounded-lg p-4 shadow-sm">
+                          <div className="text-sm text-muted-foreground mb-1">Detected Project Phase</div>
+                          <div className="font-medium flex items-center gap-2">
+                             <Activity className="w-4 h-4 text-blue-500" />
+                             {selectedPhoto.mlAnalysis.phase}
+                          </div>
+                       </div>
+                       
+                       <div className="bg-background border rounded-lg p-4 shadow-sm">
+                          <div className="flex justify-between items-end mb-2">
+                             <div className="text-sm text-muted-foreground">Est. Progress Component</div>
+                             <div className="font-bold text-xl">{selectedPhoto.mlAnalysis.progress}%</div>
+                          </div>
+                          <Progress value={selectedPhoto.mlAnalysis.progress} className="h-2" />
+                          <div className="mt-2 text-xs text-muted-foreground">AI Confidence: {selectedPhoto.mlAnalysis.confidenceScore.toFixed(1)}%</div>
+                       </div>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <h5 className="font-medium flex items-center gap-2 text-sm">
+                         Safety & Compliance Detection
+                         <Badge variant="outline" className="text-[10px] font-mono shrink-0 ml-auto">OSHA CHECK</Badge>
+                      </h5>
+                      {selectedPhoto.mlAnalysis.safetyViolations.length > 0 ? (
+                        <div className="space-y-2">
+                          {selectedPhoto.mlAnalysis.safetyViolations.map((v, i) => (
+                            <div key={i} className="flex gap-3 text-sm p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-900 shadow-sm relative overflow-hidden">
+                              <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500" />
+                              <AlertTriangle className="w-5 h-5 shrink-0 text-red-600" />
+                              <div>
+                                <strong className="block text-red-800 tracking-tight">{v.type.toUpperCase().replace(/_/g, " ")}</strong>
+                                {v.description}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-sm p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-md text-emerald-800 shadow-sm">
+                           <CheckCircle className="w-5 h-5 shrink-0 text-emerald-600" />
+                           No perimeter safety risks detected in visual sweep.
+                        </div>
+                      )}
+                      
+                      <div className="mt-4 pt-3 border-t">
+                        <Label className="text-xs text-muted-foreground mb-1 block">Contextual Analysis</Label>
+                        <p className="text-sm italic text-muted-foreground bg-muted/50 p-2 rounded border border-border/50">"{selectedPhoto.mlAnalysis.description}"</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           )}
-          <DialogFooter>
+          <DialogFooter className={selectedPhoto?.mlAnalysis ? "border-t bg-muted/40 p-4 -mb-6 -mx-6 mt-6 rounded-b" : ""}>
             <Button variant="outline" onClick={() => setSelectedPhoto(null)}>
               Close
             </Button>

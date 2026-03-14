@@ -1,16 +1,23 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
-import { Zap, Sun, Leaf, TrendingDown } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Zap, Sun, Leaf, TrendingDown, Loader2 } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 interface EnergyMetrics {
   monthlyConsumption: number
   monthlyBill: number
   carbonFootprint: number
   efficiencyScore: number
-  recommendations: string[]
+  ai_insights: string[]
+  ml_metadata?: {
+    model: string
+    training_accuracy: string
+  }
 }
 
 export function EnergyAnalyzer() {
@@ -19,50 +26,33 @@ export function EnergyAnalyzer() {
   const [solarPanels, setSolarPanels] = useState(0)
   const [ledPercentage, setLedPercentage] = useState(80)
 
-  const calculateMetrics = (): EnergyMetrics => {
-    // Base consumption: ~10 units per sqft per month for residential
-    let baseConsumption = (area / 100) * 10
+  const [climateZone, setClimateZone] = useState("moderate")
+  const [insulationQuality, setInsulationQuality] = useState("standard")
+  const [metrics, setMetrics] = useState<EnergyMetrics | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast()
 
-    // AC adds ~150 units per unit per month (assuming 8 hours/day)
-    baseConsumption += acUnits * 150
+  useEffect(() => {
+    calculateMetrics()
+  }, []) // Initial load
 
-    // LED savings: ~50% reduction in lighting costs
-    const lightingConsumption = (area / 50) * 30 // Base lighting
-    const ledSavings = lightingConsumption * (ledPercentage / 100) * 0.5
-    baseConsumption -= ledSavings
-
-    // Solar offset: ~30 units per panel per month
-    const solarOffset = solarPanels * 30
-    const netConsumption = Math.max(0, baseConsumption - solarOffset)
-
-    // Bill at ₹7 per unit average
-    const monthlyBill = netConsumption * 7
-
-    // Carbon footprint: ~0.82 kg CO2 per kWh
-    const carbonFootprint = netConsumption * 0.82
-
-    // Efficiency score based on factors
-    let score = 50
-    score += ledPercentage * 0.2
-    score += Math.min(solarPanels * 5, 25)
-    score -= acUnits * 3
-
-    const recommendations: string[] = []
-    if (ledPercentage < 100) recommendations.push("Switch remaining lights to LED for 50% lighting savings")
-    if (solarPanels === 0) recommendations.push("Consider solar panels - 5kW system can offset 150+ units/month")
-    if (acUnits > 2) recommendations.push("Use 5-star rated ACs and set temperature to 24°C for optimal efficiency")
-    if (recommendations.length === 0) recommendations.push("Great job! Your home is energy efficient")
-
-    return {
-      monthlyConsumption: Math.round(netConsumption),
-      monthlyBill: Math.round(monthlyBill),
-      carbonFootprint: Math.round(carbonFootprint),
-      efficiencyScore: Math.min(100, Math.max(0, Math.round(score))),
-      recommendations,
+  const calculateMetrics = async () => {
+    setIsLoading(true)
+    try {
+      const res = await fetch("/api/predict-energy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ area, acUnits, solarPanels, ledPercentage, climateZone, insulationQuality })
+      })
+      if (!res.ok) throw new Error("Failed to predict energy consumption")
+      const result = await res.json()
+      setMetrics(result)
+    } catch (err: any) {
+      toast({ title: "Energy ML Prediction Error", description: err.message, variant: "destructive" })
+    } finally {
+      setIsLoading(false)
     }
   }
-
-  const metrics = calculateMetrics()
 
   const formatCurrency = (n: number) =>
     new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n)
@@ -107,51 +97,95 @@ export function EnergyAnalyzer() {
             </div>
             <Slider value={[ledPercentage]} onValueChange={(v) => setLedPercentage(v[0])} min={0} max={100} step={5} />
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm mb-2 block">Climate Zone</label>
+              <Select value={climateZone} onValueChange={setClimateZone}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="hot">Hot (Cooling heavy)</SelectItem>
+                  <SelectItem value="moderate">Moderate</SelectItem>
+                  <SelectItem value="cold">Cold (Heating heavy)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm mb-2 block">Insulation Quality</label>
+              <Select value={insulationQuality} onValueChange={setInsulationQuality}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="poor">Poor (Older Build)</SelectItem>
+                  <SelectItem value="standard">Standard</SelectItem>
+                  <SelectItem value="premium">Premium (Air-tight)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <Button onClick={calculateMetrics} className="w-full" disabled={isLoading}>
+            {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Simulating Usage...</> : "Predict Energy (ML)"}
+          </Button>
         </div>
 
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <Card className="p-4 bg-muted">
-              <div className="flex items-center gap-2 mb-1">
-                <Zap className="w-4 h-4 text-amber-500" />
-                <span className="text-xs text-muted-foreground">Monthly Usage</span>
+          {metrics && (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <Card className="p-4 bg-muted">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Zap className="w-4 h-4 text-amber-500" />
+                    <span className="text-xs text-muted-foreground">Monthly Usage</span>
+                  </div>
+                  <div className="text-xl font-bold">{metrics.monthlyConsumption} kWh</div>
+                </Card>
+                <Card className="p-4 bg-muted">
+                  <div className="flex items-center gap-2 mb-1">
+                    <TrendingDown className="w-4 h-4 text-green-500" />
+                    <span className="text-xs text-muted-foreground">Monthly Bill</span>
+                  </div>
+                  <div className="text-xl font-bold">{formatCurrency(metrics.monthlyBill)}</div>
+                </Card>
+                <Card className="p-4 bg-muted">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Leaf className="w-4 h-4 text-green-600" />
+                    <span className="text-xs text-muted-foreground">CO2 Footprint</span>
+                  </div>
+                  <div className="text-xl font-bold">{metrics.carbonFootprint} kg</div>
+                </Card>
+                <Card className="p-4 bg-primary/10 border-primary">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Sun className="w-4 h-4 text-primary" />
+                    <span className="text-xs text-muted-foreground">Efficiency Score</span>
+                  </div>
+                  <div className="text-xl font-bold text-primary">{metrics.efficiencyScore}/100</div>
+                </Card>
               </div>
-              <div className="text-xl font-bold">{metrics.monthlyConsumption} kWh</div>
-            </Card>
-            <Card className="p-4 bg-muted">
-              <div className="flex items-center gap-2 mb-1">
-                <TrendingDown className="w-4 h-4 text-green-500" />
-                <span className="text-xs text-muted-foreground">Monthly Bill</span>
-              </div>
-              <div className="text-xl font-bold">{formatCurrency(metrics.monthlyBill)}</div>
-            </Card>
-            <Card className="p-4 bg-muted">
-              <div className="flex items-center gap-2 mb-1">
-                <Leaf className="w-4 h-4 text-green-600" />
-                <span className="text-xs text-muted-foreground">CO2 Footprint</span>
-              </div>
-              <div className="text-xl font-bold">{metrics.carbonFootprint} kg</div>
-            </Card>
-            <Card className="p-4 bg-primary/10 border-primary">
-              <div className="flex items-center gap-2 mb-1">
-                <Sun className="w-4 h-4 text-primary" />
-                <span className="text-xs text-muted-foreground">Efficiency Score</span>
-              </div>
-              <div className="text-xl font-bold text-primary">{metrics.efficiencyScore}/100</div>
-            </Card>
-          </div>
 
-          <Card className="p-4 bg-background border">
-            <div className="text-sm font-medium mb-2">Recommendations:</div>
-            <ul className="space-y-1">
-              {metrics.recommendations.map((rec, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                  <Leaf className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                  {rec}
-                </li>
-              ))}
-            </ul>
-          </Card>
+              <Card className="p-4 bg-background border">
+                <div className="text-sm font-medium mb-2">AI Output Recommendations:</div>
+                <ul className="space-y-1">
+                  {(metrics.ai_insights || []).map((rec, i) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
+                      <Leaf className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      {rec}
+                    </li>
+                  ))}
+                </ul>
+              </Card>
+
+              {metrics.ml_metadata && (
+                <div className="text-[10px] text-muted-foreground/60 flex justify-between px-1">
+                  <span>Model: {metrics.ml_metadata.model}</span>
+                  <span>Acc: {metrics.ml_metadata.training_accuracy}</span>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </div>
     </Card>

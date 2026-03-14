@@ -30,10 +30,10 @@ export default function BlogListClient({ posts }: { posts: Post[] }) {
                     <Card key={index} className="overflow-hidden hover-lift cursor-pointer group">
                         <div className="aspect-video bg-muted relative overflow-hidden">
                             <OptimizedImage
-                                src={post.image || "/images/modern-minimalist-design.jpg"}
+                                src={post.image || "/images/modern-villa-project.jpg"}
                                 alt={post.title}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                fallback="/images/modern-minimalist-design.jpg"
+                                fallback="/images/modern-villa-project.jpg"
                             />
                         </div>
 

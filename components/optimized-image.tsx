@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 interface OptimizedImageProps {
   src: string
@@ -21,15 +21,27 @@ export default function OptimizedImage({
   fallback = "/images/modern-minimalist-design.jpg",
   onError,
 }: OptimizedImageProps) {
-  const [imgSrc, setImgSrc] = useState(src)
+  const [imgSrc, setImgSrc] = useState(src || fallback)
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
 
+  // if parent changes the src prop we must reset internal state
+  useEffect(() => {
+    setImgSrc(src || fallback)
+    setIsLoading(true)
+    setHasError(false)
+  }, [src, fallback])
+
   const handleError = () => {
     if (imgSrc !== fallback) {
+      // primary image failed, switch to fallback and restart loading
       setImgSrc(fallback)
       setHasError(true)
+      setIsLoading(true)
       onError?.()
+    } else {
+      // fallback also failed; stop spinner so user sees the broken image icon
+      setIsLoading(false)
     }
   }
 
@@ -41,7 +53,7 @@ export default function OptimizedImage({
     <div className={`relative overflow-hidden ${className}`}>
       {isLoading && <div className="absolute inset-0 bg-muted animate-pulse" />}
       <img
-        src={imgSrc || "/placeholder.svg"}
+        src={imgSrc || fallback || "/images/modern-minimalist-design.jpg"}
         alt={alt}
         width={width}
         height={height}

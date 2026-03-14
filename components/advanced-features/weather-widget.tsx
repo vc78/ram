@@ -45,6 +45,7 @@ export function WeatherWidget({ location = "Hyderabad" }: { location?: string })
         humidity: 50,
         windSpeed: 10,
         constructionAdvice: "Unable to fetch weather data. Please try again later.",
+        error: (error as Error)?.message || "Unknown error",
       })
     } finally {
       setLoading(false)

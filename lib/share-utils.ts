@@ -181,6 +181,12 @@ function trackShareActivity(data: ShareData, method: string) {
   const activities = JSON.parse(localStorage.getItem("shareActivities") || "[]")
   activities.unshift(activity)
   localStorage.setItem("shareActivities", JSON.stringify(activities.slice(0, 100)))
+  // also record in database
+  fetch("/api/db/share_activities", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(activity),
+  }).catch((e) => console.error("DB share activity failed", e))
 }
 
 /**

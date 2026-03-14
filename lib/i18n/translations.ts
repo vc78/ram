@@ -9,6 +9,15 @@ export const translations = {
     careers: "Careers",
     contractors: "Contractors",
     settings: "Settings",
+    overview: "Overview",
+    myProjects: "My Projects",
+    tools: "Tools",
+    documents: "Documents",
+    logout: "Logout",
+    welcomeBack: "Welcome back",
+    addNewProject: "New Project",
+    addTask: "Add Task",
+    addMember: "Add Member",
 
     // Timeline Features
     timelineTitle: "Construction Timeline",
@@ -53,6 +62,92 @@ export const translations = {
     loading: "Loading",
     error: "Error",
     success: "Success",
+    
+    // 3D Model Form Tabs
+    plotTab: "Plot",
+    architectureTab: "Architecture",
+    materialsTab: "Materials",
+    cameraTab: "Camera",
+    lightingTab: "Lighting",
+    performanceTab: "Performance",
+
+    // Plot Fields
+    plotDimensions: "Plot Dimensions (m)",
+    length: "Length",
+    width: "Width",
+    plotOrientation: "Plot Orientation",
+    roadPosition: "Road Position",
+    numberOfFloors: "Number of Floors",
+    floorHeight: "Floor Height (m)",
+    hasBasement: "Has Basement",
+    parkingType: "Parking Type",
+
+    // Architecture Fields
+    roomsPerFloor: "Rooms per Floor",
+    balconyCount: "Balcony Count",
+    staircaseType: "Staircase Type",
+    hasLift: "Has Lift",
+    roofType: "Roof Type",
+    facadeStyle: "Facade Style",
+    exteriorSymmetry: "Exterior Symmetry",
+
+    // Materials Fields
+    wallMaterial: "Wall Material",
+    glassType: "Glass Type",
+    wallColor: "Wall Color",
+    roofColor: "Roof Color",
+    doorColor: "Door Color",
+    windowColor: "Window Color",
+    wallRoughness: "Wall Roughness",
+    glassOpacity: "Glass Opacity",
+
+    // Camera Fields
+    cameraMode: "Camera Mode",
+    cameraSpeed: "Camera Speed",
+    cameraHeight: "Camera Height (m)",
+    depthOfField: "Depth of Field Effect",
+
+    // Lighting Fields
+    timeOfDay: "Time of Day",
+    weatherPreset: "Weather Preset",
+    enablePBR: "Enable PBR",
+    enableShadows: "Enable Shadows",
+    shadowQuality: "Shadow Quality",
+    ambientOcclusion: "Ambient Occlusion",
+    reflections: "Reflections",
+    textureQuality: "Texture Quality",
+
+    // Performance Fields
+    renderQuality: "Overall Render Quality",
+    targetFPS: "Target FPS",
+    adaptiveQuality: "Adaptive Quality Scaling",
+    dynamicLOD: "Dynamic LOD",
+    textureStreaming: "Texture Streaming",
+    
+    generateModel: "Generate Advanced 3D Model",
+
+    // Location Picker
+    projectLocation: "Project Location",
+    searchLocation: "Search for location or use current position...",
+    gettingLocation: "Getting current location...",
+    detectLocation: "Detect current location",
+    locationPinpoint: "Use the map to pinpoint exact rooftop location",
+    locationAccuracyInfo: "High accuracy mode enabled for precise tracking",
+
+    // Options
+    slow: "Slow",
+    normal: "Normal",
+    fast: "Fast",
+    day: "Day",
+    evening: "Evening",
+    night: "Night",
+    sunny: "Sunny",
+    cloudy: "Cloudy",
+    rainy: "Rainy",
+    low: "Low",
+    medium: "Medium",
+    high: "High",
+    ultra: "Ultra",
   },
   te: {
     // Telugu translations
@@ -62,6 +157,15 @@ export const translations = {
     careers: "ఉద్యోగాలు",
     contractors: "కాంట్రాక్టర్లు",
     settings: "సెట్టింగ్‌లు",
+    overview: "అవలోకనం",
+    myProjects: "నా ప్రాజెక్టులు",
+    tools: "సాధనాలు",
+    documents: "పత్రాలు",
+    logout: "లాగ్ అవుట్",
+    welcomeBack: "స్వాగతం",
+    addNewProject: "కొత్త ప్రాజెక్ట్",
+    addTask: "టాస్క్ జోడించండి",
+    addMember: "సభ్యుడిని జోడించండి",
 
     timelineTitle: "నిర్మాణ కాలక్రమం",
     updateStatus: "స్థితిని నవీకరించండి",
@@ -103,6 +207,92 @@ export const translations = {
     loading: "లోడ్ అవుతోంది",
     error: "లోపం",
     success: "విజయం",
+
+    // 3D Model Form Tabs
+    plotTab: "ప్లాట్",
+    architectureTab: "నిర్మాణం",
+    materialsTab: "మెటీరియల్స్",
+    cameraTab: "కెమెరా",
+    lightingTab: "లైటింగ్",
+    performanceTab: "పనితీరు",
+
+    // Plot Fields
+    plotDimensions: "ప్లాట్ కొలతలు (మీ)",
+    length: "పొడవు",
+    width: "వెడల్పు",
+    plotOrientation: "ప్లాట్ దిశ",
+    roadPosition: "రోడ్డు స్థానం",
+    numberOfFloors: "అంతస్తుల సంఖ్య",
+    floorHeight: "అంతస్తు ఎత్తు (మీ)",
+    hasBasement: "బేస్మెంట్ ఉందా?",
+    parkingType: "పార్కింగ్ రకం",
+
+    // Architecture Fields
+    roomsPerFloor: "అంతస్తుకు గదులు",
+    balconyCount: "బాల్కనీల సంఖ్య",
+    staircaseType: "మెట్ల రకం",
+    hasLift: "లిఫ్ట్ ఉందా?",
+    roofType: "పైకప్పు రకం",
+    facadeStyle: "ముఖభాగం శైలి",
+    exteriorSymmetry: "బాహ్య సమరూపత",
+
+    // Materials Fields
+    wallMaterial: "గోడ మెటీరియల్",
+    glassType: "గాజు రకం",
+    wallColor: "గోడ రంగు",
+    roofColor: "పైకప్పు రంగు",
+    doorColor: "ద్వారం రంగు",
+    windowColor: "కిటికీ రంగు",
+    wallRoughness: "గోడ గరుకుదనం",
+    glassOpacity: "గాజు అపారదర్శకత",
+
+    // Camera Fields
+    cameraMode: "కెమెరా మోడ్",
+    cameraSpeed: "కెమెరా వేగం",
+    cameraHeight: "కెమెరా ఎత్తు (మీ)",
+    depthOfField: "డెప్త్ ఆఫ్ ఫీల్డ్ ఎఫెక్ట్",
+
+    // Lighting Fields
+    timeOfDay: "రోజు సమయం",
+    weatherPreset: "వాతావరణం",
+    enablePBR: "PBR ప్రారంభించు",
+    enableShadows: "షాడోస్ ప్రారంభించు",
+    shadowQuality: "షాడో క్వాలిటీ",
+    ambientOcclusion: "యాంబియంట్ అక్లూజన్",
+    reflections: "ప్రతిబింబాలు",
+    textureQuality: "టెక్స్చర్ క్వాలిటీ",
+
+    // Performance Fields
+    renderQuality: "మొత్తం రెండర్ క్వాలిటీ",
+    targetFPS: "టార్గెట్ FPS",
+    adaptiveQuality: "అడాప్టివ్ క్వాలిటీ స్కేలింగ్",
+    dynamicLOD: "డైనమిక్ LOD",
+    textureStreaming: "టెక్స్చర్ స్ట్రీమింగ్",
+
+    generateModel: "అధునాతన 3D మోడల్‌ను రూపొందించండి",
+
+    // Location Picker
+    projectLocation: "ప్రాజెక్ట్ స్థానం",
+    searchLocation: "స్థానం కోసం వెతకండి లేదా ప్రస్తుత స్థానాన్ని ఉపయోగించండి...",
+    gettingLocation: "ప్రస్తుత స్థానాన్ని పొందుతోంది...",
+    detectLocation: "ప్రస్తుత స్థానాన్ని గుర్తించండి",
+    locationPinpoint: "ఖచ్చితమైన రూఫ్‌టాప్ స్థానాన్ని గుర్తించడానికి మ్యాప్‌ని ఉపయోగించండి",
+    locationAccuracyInfo: "ఖచ్చితమైన ట్రాకింగ్ కోసం హై అక్యురసీ మోడ్ ప్రారంభించబడింది",
+
+    // Options
+    slow: "నెమ్మదిగా",
+    normal: "సాధారణం",
+    fast: "వేగంగా",
+    day: "పగలు",
+    evening: "సాయంత్రం",
+    night: "రాత్రి",
+    sunny: "ఎండగా",
+    cloudy: "మేఘావృతం",
+    rainy: "వర్షం",
+    low: "తక్కువ",
+    medium: "మధ్యస్థం",
+    high: "ఎక్కువ",
+    ultra: "అత్యధికం",
   },
   hi: {
     // Hindi translations

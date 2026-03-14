@@ -28,7 +28,7 @@ export default function AboutPage() {
 
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-balance">About SIID FLASH</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-balance">About SIID </h1>
           <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
             We're on a mission to democratize architectural design and make building dreams accessible to everyone.
           </p>
@@ -57,7 +57,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold mb-8">Our Story</h2>
             <div className="space-y-4 text-muted-foreground leading-relaxed">
               <p>
-                SIID FLASH was born from a simple observation: building or renovating a space shouldn't be so
+                SIID was born from a simple observation: building or renovating a space shouldn't be so
                 complicated. Traditional processes involve countless middlemen, unclear pricing, and designs that don't
                 match your vision.
               </p>

@@ -69,7 +69,7 @@ export function HomeAssistant({
       try {
         data = await res.json()
         if (typeof data?.text === "string") text = data.text
-      } catch (_) {}
+      } catch (_) { }
 
       if (!res.ok || !text.trim()) {
         const kbMatch = findBestAnswer(trimmed)
@@ -90,7 +90,7 @@ export function HomeAssistant({
                     .join("\n")
               }
             }
-          } catch (_) {}
+          } catch (_) { }
           text =
             fallback ||
             "I'm available and will reply. I couldn't reach the AI momentarily—please try again or disable Web for now."

@@ -84,6 +84,14 @@ ALLOWED_ORIGINS=["http://localhost:3000"]
 ## Verification
 ✅ Backend running on `http://127.0.0.1:8002/healthz` - responds with `{"ok":true}`
 ✅ Frontend running on `http://localhost:3001`
+
+### NPM install failure
+If `npm install` errors with a message like `ERESOLVE unable to resolve dependency tree` and mentions mismatched peer versions (e.g. `zod` vs `ai`, `react` vs `@vercel/analytics`), you can:
+
+1. **Remove or downgrade the problematic dependency** (analytics was removed from package.json above).
+2. **Or rerun the command with `--legacy-peer-deps`**, which tells npm to ignore peer conflicts – safe for local dev.
+
+Most conflicts can be worked around this way.
 ✅ Forms properly configured to match backend schemas
 ✅ Timeout protection in place to prevent hanging requests
 
@@ -93,7 +101,7 @@ ALLOWED_ORIGINS=["http://localhost:3000"]
 → Ensure backend is running with `python run.py`
 
 ### Port 3000/3001 already in use
-→ Kill the process or start on a different port
+→ Kill the process or start on a different port (e.g. `npx kill-port 3001` or set `PORT=3002 npm run dev`).
 
 ### Database errors
 → Delete `test.db` files - they'll be recreated automatically

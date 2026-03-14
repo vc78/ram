@@ -4,7 +4,23 @@ import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { TrendingUp, Activity, Clock, CheckCircle2 } from "lucide-react"
 import { useMemo, useState } from "react"
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar as ReBar,
+} from "recharts"
 import { Button } from "@/components/ui/button"
 
 interface ProgressAnalyticsProps {
@@ -150,24 +166,65 @@ export function ProgressAnalytics({ projectData }: ProgressAnalyticsProps) {
         </Card>
       </div>
 
-      {/* Progress Trend (summary without charts) */}
+      {/* Progress Trend Analysis */}
       <Card className="p-6 border-border">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-1">Progress Trend Analysis</h3>
-          <p className="text-sm text-muted-foreground">Planned vs Actual progress (summary)</p>
-        </div>
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="mb-6 flex items-center justify-between">
           <div>
-            <div className="mb-2 text-sm font-medium">Planned cumulative</div>
-            <Bar value={weeklyProgress.at(-1)?.planned ?? 0} color="#3b82f6" />
+            <h3 className="text-lg font-semibold mb-1">Progress Trend Analysis</h3>
+            <p className="text-sm text-muted-foreground">Cumulative planned vs actual progress over time</p>
           </div>
-          <div>
-            <div className="mb-2 text-sm font-medium">Actual cumulative</div>
-            <Bar value={weeklyProgress.at(-1)?.actual ?? 0} color="#10b981" />
+          <div className="flex gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-primary" />
+              <span className="text-xs">Planned</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-accent" />
+              <span className="text-xs">Actual</span>
+            </div>
           </div>
         </div>
-        <div className="mt-4 text-xs text-muted-foreground">
-          Latest week: {weeklyProgress.at(-1)?.week} • Efficiency {weeklyProgress.at(-1)?.efficiency}%
+        <div className="h-[300px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={weeklyProgress}>
+              <defs>
+                <linearGradient id="colorPlanned" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="colorActual" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--accent))" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="hsl(var(--accent))" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+              <XAxis dataKey="week" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis fontSize={12} tickLine={false} axisLine={false} unit="%" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "hsl(var(--background))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "8px",
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="planned"
+                stroke="hsl(var(--primary))"
+                fillOpacity={1}
+                fill="url(#colorPlanned)"
+                strokeWidth={3}
+              />
+              <Area
+                type="monotone"
+                dataKey="actual"
+                stroke="hsl(var(--accent))"
+                fillOpacity={1}
+                fill="url(#colorActual)"
+                strokeWidth={3}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </Card>
 
@@ -222,10 +279,11 @@ export function ProgressAnalytics({ projectData }: ProgressAnalyticsProps) {
                   ))}
                 </Pie>
                 <Tooltip
-                  formatter={(value: number, _name, info: any) => {
+                  formatter={(value: any, _name: any, info: any) => {
+                    const numValue = Number(value) || 0
                     const total = phaseData.reduce((acc, d) => acc + d.value, 0)
-                    const pct = total ? ((value / total) * 100).toFixed(1) : "0.0"
-                    return [`${value}% (${pct}%)`, info?.payload?.name]
+                    const pct = total ? ((numValue / total) * 100).toFixed(1) : "0.0"
+                    return [`${numValue}% (${pct}%)`, info?.payload?.name]
                   }}
                 />
                 <Legend
@@ -316,27 +374,25 @@ export function ProgressAnalytics({ projectData }: ProgressAnalyticsProps) {
         <Card className="p-6 border-border">
           <div className="mb-4">
             <h3 className="text-lg font-semibold mb-1">Daily Activity</h3>
-            <p className="text-sm text-muted-foreground">Tasks and logged hours</p>
+            <p className="text-sm text-muted-foreground">Workload and logged hours distribution</p>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="text-muted-foreground">
-                <tr className="text-left">
-                  <th className="py-2 pr-4">Day</th>
-                  <th className="py-2 pr-4">Tasks</th>
-                  <th className="py-2 pr-4">Hours</th>
-                </tr>
-              </thead>
-              <tbody>
-                {activityData.map((d) => (
-                  <tr key={d.day} className="border-t border-border">
-                    <td className="py-2 pr-4">{d.day}</td>
-                    <td className="py-2 pr-4">{d.tasks}</td>
-                    <td className="py-2 pr-4">{d.hours}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="h-[250px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={activityData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                <XAxis dataKey="day" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis fontSize={12} tickLine={false} axisLine={false} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--background))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "8px",
+                  }}
+                />
+                <ReBar dataKey="tasks" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} name="Tasks" />
+                <ReBar dataKey="hours" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} name="Hours" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </Card>
       </div>

@@ -1,0 +1,25 @@
+[
+  {
+    "id": "40c5d886-4231-43d9-b2a9-1fbae99d4bef",
+    "title": "foundation",
+    "description": "workers on duty",
+    "assignedTo": [
+      "william",
+      "john"
+    ],
+    "startDate": "2026-03-12",
+    "endDate": "2026-03-14",
+    "priority": "high",
+    "status": "in-progress",
+    "progress": 69,
+    "dependencies": [],
+    "resources": [],
+    "tags": [],
+    "comments": [],
+    "attachments": [],
+    "estimatedHours": 2,
+    "actualHours": 0,
+    "createdAt": "2026-03-12T13:41:56.353Z",
+    "updatedAt": "2026-03-12T13:41:56.353Z"
+  }
+]

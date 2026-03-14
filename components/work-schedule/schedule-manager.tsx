@@ -140,18 +140,32 @@ export function ScheduleManager() {
   })
 
   useEffect(() => {
-    const savedTasks = localStorage.getItem("workScheduleTasks")
-    if (savedTasks) {
+    const load = async () => {
       try {
-        const parsed = JSON.parse(savedTasks)
-        setTasks(parsed)
-        setFilteredTasks(parsed)
-      } catch (e) {
-        // If parse fails, use mock data
-        setTasks(MOCK_TASKS)
-        setFilteredTasks(MOCK_TASKS)
+        const res = await fetch("/api/db/workScheduleTasks")
+        if (res.ok) {
+          const dbTasks: WorkTask[] = await res.json()
+          localStorage.setItem("workScheduleTasks", JSON.stringify(dbTasks))
+          setTasks(dbTasks)
+          setFilteredTasks(dbTasks)
+          return
+        }
+      } catch (err) {
+        console.error("Failed to load tasks from DB", err)
+      }
+      const savedTasks = localStorage.getItem("workScheduleTasks")
+      if (savedTasks) {
+        try {
+          const parsed = JSON.parse(savedTasks)
+          setTasks(parsed)
+          setFilteredTasks(parsed)
+        } catch (e) {
+          setTasks(MOCK_TASKS)
+          setFilteredTasks(MOCK_TASKS)
+        }
       }
     }
+    load()
   }, [])
 
   useEffect(() => {
@@ -176,10 +190,19 @@ export function ScheduleManager() {
     setFilteredTasks(filtered)
   }, [tasks, searchTerm, filterStatus, filterPriority])
 
-  const saveTasks = (newTasks: WorkTask[]) => {
+  const saveTasks = async (newTasks: WorkTask[]) => {
     const userTasks = newTasks.filter((t) => !MOCK_TASKS.find((m) => m.id === t.id))
     localStorage.setItem("workScheduleTasks", JSON.stringify(userTasks))
     setTasks(newTasks)
+    try {
+      await fetch("/api/db/workScheduleTasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userTasks),
+      })
+    } catch (err) {
+      console.error("Failed to save tasks to DB", err)
+    }
   }
 
   const handleCreateTask = () => {
@@ -225,10 +248,10 @@ export function ScheduleManager() {
     const updatedTasks = tasks.map((t) =>
       t.id === editingTask.id
         ? {
-            ...t,
-            ...formData,
-            updatedAt: new Date().toISOString(),
-          }
+          ...t,
+          ...formData,
+          updatedAt: new Date().toISOString(),
+        }
         : t,
     )
 
@@ -270,10 +293,10 @@ export function ScheduleManager() {
     const updatedTasks = tasks.map((t) =>
       t.id === commentDialog.taskId
         ? {
-            ...t,
-            comments: [...(t.comments || []), comment],
-            updatedAt: new Date().toISOString(),
-          }
+          ...t,
+          comments: [...(t.comments || []), comment],
+          updatedAt: new Date().toISOString(),
+        }
         : t,
     )
 
@@ -310,11 +333,11 @@ export function ScheduleManager() {
     const updatedTasks = tasks.map((t) =>
       t.id === task.id
         ? {
-            ...t,
-            startDate: newStart.toISOString().split("T")[0],
-            endDate: newEnd.toISOString().split("T")[0],
-            updatedAt: new Date().toISOString(),
-          }
+          ...t,
+          startDate: newStart.toISOString().split("T")[0],
+          endDate: newEnd.toISOString().split("T")[0],
+          updatedAt: new Date().toISOString(),
+        }
         : t,
     )
 
@@ -363,7 +386,13 @@ export function ScheduleManager() {
       task: task.title,
       timestamp: new Date().toISOString(),
     })
-    localStorage.setItem("scheduleNotifications", JSON.stringify(notifications.slice(0, 50)))
+    const trimmed = notifications.slice(0, 50)
+    localStorage.setItem("scheduleNotifications", JSON.stringify(trimmed))
+    fetch("/api/db/scheduleNotifications", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(trimmed),
+    }).catch((e) => console.error("DB notifications failed", e))
   }
 
   const openEditDialog = (task: WorkTask) => {

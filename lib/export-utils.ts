@@ -399,4 +399,9 @@ function trackExportedDocument(fileInfo: { name: string; type: string; format: s
 
   docs.push(newDoc)
   localStorage.setItem("projectDocuments", JSON.stringify(docs))
+  fetch("/api/db/documents", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newDoc),
+  }).catch((e) => console.error("DB export document failed", e))
 }

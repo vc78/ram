@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AuthGuard } from "@/components/auth-guard"
@@ -11,6 +10,7 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { GoogleMapsLocationPicker, type LocationData } from "@/components/google-maps-location-picker"
 import {
   ArrowLeft,
   Home,
@@ -19,6 +19,7 @@ import {
   Loader2,
   CheckCircle2,
   TrendingUp,
+  BrainCircuit,
   Zap,
   Plane,
   Landmark,
@@ -28,938 +29,497 @@ import {
   School,
   Bus,
   Hotel,
+  ShieldCheck,
+  Wind,
+  Sun,
+  Droplets,
+  HardHat,
+  Scale,
+  Leaf,
+  Layers,
+  LayoutDashboard
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { AiHealthBanner } from "@/components/ai-health-banner"
+import { Progress } from "@/components/ui/progress"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Slider } from "@/components/ui/slider"
+import { Switch } from "@/components/ui/switch"
+import { useToast } from "@/hooks/use-toast"
 
-type ProjectStage = "moderate" | "intermediate" | "premium"
-type ProjectSize = "small" | "medium" | "large"
-type MaterialQuality = "economical" | "standard" | "premium"
+// --- Types & Interfaces ---
+type ProjectCategory = "residential" | "commercial" | "institutional" | "industrial" | "airport" | "dam" | "playground" | "education" | "hospitality" | "transport" | "civic"
+type ProjectSize = "small" | "medium" | "large" | "mega"
+type MaterialQuality = "economical" | "standard" | "premium" | "ultra_luxury"
 
 interface BudgetEstimation {
-  stage: ProjectStage
+  stage: "moderate" | "intermediate" | "premium"
   budgetRange: { min: number; max: number }
   breakdown: {
+    civil_work: number
+    finishing: number
+    mep_systems: number
+    consultancy_fees: number
+    contingency: number
+    govt_taxes_permits: number
     materials: number
     labor: number
-    technology: number
-    design: number
-    contingency: number
   }
   reasoning: string[]
+  dimensions: { primary: string; secondary: string; tertiary: string }
+  sustainability_score: number
 }
 
-type ProjectCategory =
-  | "residential"
-  | "commercial"
-  | "institutional"
-  | "industrial"
-  | "airport"
-  | "dam"
-  | "playground"
-  | "education"
-  | "hospitality"
-  | "transport"
-  | "civic"
+// --- Constants ---
+const PROJECT_TYPES: { id: ProjectCategory; name: string; icon: any; desc: string }[] = [
+  { id: "residential", name: "Residential", icon: Home, desc: "Villas, Apartments, Housing Societies" },
+  { id: "commercial", name: "Commercial", icon: Building2, desc: "Offices, Retail, Business Complexes" },
+  { id: "institutional", name: "Institutional", icon: Landmark, desc: "Museums, Govt. Buildings, Libraries" },
+  { id: "industrial", name: "Industrial", icon: Factory, desc: "Manufacturing Plants, Warehouses" },
+  { id: "airport", name: "Airport", icon: Plane, desc: "Terminals, Runways, Ancillary Blocks" },
+  { id: "hospitality", name: "Hospitality", icon: Hotel, desc: "Hotels, Resorts, Banquets" },
+  { id: "education", name: "Education", icon: School, desc: "Schools, Universities, Research Hubs" },
+  { id: "transport", name: "Transport", icon: Bus, desc: "Metro Stations, Bus Depots, Interchanges" },
+]
 
-export default function NewProjectPage() {
+export default function AdvancedNewProjectPage() {
   const router = useRouter()
-  const [step, setStep] = useState(1) // Added step state for multi-step form
+  const { toast } = useToast()
+  const [step, setStep] = useState(1)
   const [projectType, setProjectType] = useState<ProjectCategory | null>(null)
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [budgetEstimation, setBudgetEstimation] = useState<BudgetEstimation | null>(null)
-
+  
+  // Form States
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     location: "",
-    budget: "",
+    locationData: null as LocationData | null,
   })
 
   const [requirements, setRequirements] = useState({
     size: "medium" as ProjectSize,
-    features: [] as string[],
     materials: "standard" as MaterialQuality,
-    smartOptions: [] as string[],
+    hvac: "split-ac",
+    solar: false,
+    smart: [] as string[],
+    vastu: true,
+    sustainability: "leed-gold",
   })
 
-  const [generationOptions, setGenerationOptions] = useState({
-    providers: {
-      openai: false,
-      anthropic: false,
-      xai: false,
-    },
-    variantsPerProvider: 4 as number,
-  })
+  const [isEstimating, setIsEstimating] = useState(false)
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [estimation, setEstimation] = useState<BudgetEstimation | null>(null)
 
-  const calculateBudget = (): BudgetEstimation => {
-    let stage: ProjectStage = "moderate"
-    const reasoning: string[] = []
+  // --- Handlers ---
+  const handleNext = () => setStep((s) => s + 1)
+  const handleBack = () => setStep((s) => s - 1)
 
-    // Calculate actual square footage based on size
-    const sqFtRanges = {
-      small: { min: 800, max: 1500, avg: 1150 },
-      medium: { min: 1500, max: 3000, avg: 2250 },
-      large: { min: 3000, max: 5000, avg: 4000 },
-    }
-    const sqFt = sqFtRanges[requirements.size].avg
-
-    // Location-based multiplier (detect from location input)
-    const location = formData.location.toLowerCase()
-    let locationMultiplier = 1.0
-    const metroCities = ["mumbai", "delhi", "bangalore", "bengaluru", "hyderabad", "chennai", "pune", "kolkata"]
-    const tier1Cities = ["ahmedabad", "surat", "jaipur", "lucknow", "kanpur", "nagpur", "indore", "bhopal"]
-
-    if (metroCities.some((city) => location.includes(city))) {
-      locationMultiplier = 1.3
-      reasoning.push("Metro city location - higher construction costs")
-    } else if (tier1Cities.some((city) => location.includes(city))) {
-      locationMultiplier = 1.1
-      reasoning.push("Tier-1 city location - moderate construction costs")
-    } else {
-      locationMultiplier = 0.9
-      reasoning.push("Tier-2/3 city location - economical construction costs")
-    }
-
-    // Base construction cost per sq ft by category (indicative ranges)
-    const ratesPerSqFt: Record<ProjectCategory, number> = {
-      residential: 1800,
-      commercial: 2200,
-      institutional: 2400,
-      industrial: 2600,
-      airport: 3200,
-      dam: 2800, // per built-up area equivalent for civil works (simplified)
-      playground: 1400,
-      education: 2300,
-      hospitality: 2600,
-      transport: 2400,
-      civic: 2100,
-    }
-
-    // Material quality multiplier
-    const materialMultiplier: Record<MaterialQuality, number> = {
-      economical: 0.8,
-      standard: 1.0,
-      premium: 1.4,
-    }
-
-    const projectTypeKey = projectType || "residential"
-    const baseRate = (ratesPerSqFt[projectTypeKey] || 2000) * materialMultiplier[requirements.materials]
-    let totalCost = (sqFt * baseRate * locationMultiplier) / 100000
-
-    reasoning.push(`${sqFt} sq ft at ₹${Math.round(baseRate)}/sq ft`)
-    reasoning.push(
-      `${requirements.materials.charAt(0).toUpperCase() + requirements.materials.slice(1)} quality for ${projectTypeKey}`,
-    )
-
-    // Add feature-specific costs (in lakhs)
-    const featureCosts: Record<string, number> = {
-      "Basic Utilities": 0,
-      "Modern Kitchen": projectType === "residential" ? 5 : 8,
-      "Luxury Bathrooms": 3,
-      "Home Theater": 5,
-      "Swimming Pool": 12,
-      "Gym/Fitness Center": 4,
-      "Landscaped Garden": sqFt * 0.015, // ₹150 per sq ft
-    }
-
-    let featuresCost = 0
-    requirements.features.forEach((feature) => {
-      const cost = featureCosts[feature] || 0
-      featuresCost += cost
-      if (cost > 0) {
-        reasoning.push(`${feature}: +₹${cost.toFixed(1)} lakhs`)
-      }
-    })
-    totalCost += featuresCost
-
-    // Add smart home technology costs (in lakhs)
-    const smartCosts: Record<string, number> = {
-      "Smart Lighting": 0.8,
-      "Climate Control": 1.5,
-      "Security System": 2,
-      "Voice Assistant Integration": 1.2,
-      "Energy Management": 1.8,
-      "Automated Blinds": 1,
-    }
-
-    let smartCost = 0
-    requirements.smartOptions.forEach((option) => {
-      const cost = smartCosts[option] || 0
-      smartCost += cost
-    })
-
-    if (smartCost > 0) {
-      totalCost += smartCost
-      reasoning.push(`Smart home features: +₹${smartCost.toFixed(1)} lakhs`)
-    }
-
-    // Determine stage based on total cost and features
-    const featureScore = requirements.features.length
-    const smartScore = requirements.smartOptions.length
-
-    if (totalCost < 20 && requirements.materials === "economical" && featureScore <= 2) {
-      stage = "moderate"
-      reasoning.push("Budget-friendly design with essential features")
-    } else if (totalCost >= 40 || requirements.materials === "premium" || smartScore >= 3 || featureScore >= 5) {
-      stage = "premium"
-      reasoning.push("Luxury project with high-end specifications")
-    } else {
-      stage = "intermediate"
-      reasoning.push("Well-balanced modern design")
-    }
-
-    // Add professional fees and contingency
-    const designFees = totalCost * 0.08 // 8% for architectural/design
-    const contingency = totalCost * 0.12 // 12% contingency
-    const totalWithFees = totalCost + designFees + contingency
-
-    // Calculate breakdown
-    const materials = Math.round(totalCost * 0.4) // 40% materials
-    const labor = Math.round(totalCost * 0.3) // 30% labor
-    const technology = Math.round(smartCost + totalCost * 0.05) // Smart tech + 5%
-    const design = Math.round(designFees) // Design fees
-    const contingencyAmount = Math.round(contingency) // Contingency
-
-    // Create budget range (±10%)
-    const min = Math.round(totalWithFees * 0.9)
-    const max = Math.round(totalWithFees * 1.1)
-
-    return {
-      stage,
-      budgetRange: { min, max },
-      breakdown: {
-        materials,
-        labor,
-        technology,
-        design,
-        contingency: contingencyAmount,
-      },
-      reasoning,
+  const handleEstimate = async () => {
+    setIsEstimating(true)
+    try {
+      const resp = await fetch("/api/ml-project-estimation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ formData, requirements, projectType }),
+      })
+      if (!resp.ok) throw new Error("Estimation failed")
+      const data = await resp.json()
+      setEstimation(data)
+      setStep(4)
+    } catch (err: any) {
+      toast({ title: "ML Estimation Error", description: err.message, variant: "destructive" })
+    } finally {
+      setIsEstimating(false)
     }
   }
 
-  const handleRequirementsSubmit = () => {
-    const estimation = calculateBudget()
-    setBudgetEstimation(estimation)
-    setFormData((prev) => ({
-      ...prev,
-      budget: `₹${estimation.budgetRange.min}-${estimation.budgetRange.max} Lakhs`,
-    }))
-    setStep(4)
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleGenerateDesigns = async () => {
     setIsGenerating(true)
-
     try {
       const projectId = Date.now().toString()
-      const projectData = {
+      const resp = await fetch("/api/generate-designs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          projectData: { 
+            id: projectId, 
+            ...formData, 
+            type: projectType, 
+            requirements, 
+            budgetEstimation: estimation 
+          } 
+        }),
+      })
+      if (!resp.ok) throw new Error("Design generation failed")
+      const { designs } = await resp.json()
+      
+      // Save to local persistence
+      const projects = JSON.parse(localStorage.getItem("projects") || "[]")
+      projects.push({
         id: projectId,
         ...formData,
         type: projectType,
         requirements,
-        budgetEstimation,
-        createdAt: new Date().toISOString(),
-      }
-
-      const providers: string[] = []
-      if (generationOptions.providers.openai) providers.push("openai/gpt-5-mini")
-      if (generationOptions.providers.anthropic) providers.push("anthropic/claude-sonnet-4.5")
-      if (generationOptions.providers.xai) providers.push("xai/grok-4-fast")
-
-      const response = await fetch("/api/generate-designs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          projectData,
-          options: {
-            providers,
-            variantsPerProvider: generationOptions.variantsPerProvider,
-          },
-        }),
-      })
-
-      if (!response.ok) throw new Error("Failed to generate designs")
-
-      const { designs } = await response.json()
-
-      const projects = JSON.parse(localStorage.getItem("projects") || "[]")
-      projects.push({
-        ...projectData,
+        estimation,
         designs,
         status: "planning",
-        progress: 0,
+        progress: 10,
+        createdAt: new Date().toISOString()
       })
       localStorage.setItem("projects", JSON.stringify(projects))
-
+      
       router.push(`/dashboard/projects/${projectId}/designs`)
-    } catch (error) {
-      console.error("[v0] Error creating project:", error)
-      alert("Failed to generate designs. Please try again.")
+    } catch (err: any) {
+      toast({ title: "AI Generation Error", description: err.message, variant: "destructive" })
+    } finally {
       setIsGenerating(false)
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }))
-  }
-
-  const toggleFeature = (feature: string) => {
-    setRequirements((prev) => ({
-      ...prev,
-      features: prev.features.includes(feature)
-        ? prev.features.filter((f) => f !== feature)
-        : [...prev.features, feature],
-    }))
-  }
-
-  const toggleSmartOption = (option: string) => {
-    setRequirements((prev) => ({
-      ...prev,
-      smartOptions: prev.smartOptions.includes(option)
-        ? prev.smartOptions.filter((o) => o !== option)
-        : [...prev.smartOptions, option],
-    }))
-  }
-
-  const availableFeatures = [
-    "Basic Utilities",
-    "Modern Kitchen",
-    "Luxury Bathrooms",
-    "Home Theater",
-    "Swimming Pool",
-    "Gym/Fitness Center",
-    "Landscaped Garden",
-  ]
-
-  const smartOptions = [
-    "Smart Lighting",
-    "Climate Control",
-    "Security System",
-    "Voice Assistant Integration",
-    "Energy Management",
-    "Automated Blinds",
-  ]
-
   return (
     <AuthGuard>
-      <div className="min-h-screen bg-background p-8">
-        <div className="max-w-4xl mx-auto">
-          {/* AI health banner (visible when real AI is disabled) */}
-          <AiHealthBanner className="mb-4" />
-
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to dashboard
-          </Link>
-
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">Create New Project</h1>
-            <p className="text-muted-foreground">Let's bring your vision to life</p>
-
-            {projectType && (
-              <div className="flex items-center gap-2 mt-4">
-                {[1, 2, 3, 4].map((s) => (
-                  <div
-                    key={s}
-                    className={`h-2 flex-1 rounded-full transition-colors ${s <= step ? "bg-primary" : "bg-muted"}`}
-                  />
-                ))}
+      <div className="min-h-screen bg-[#050505] text-white p-4 md:p-8 font-sans selection:bg-primary/30">
+        <div className="max-w-6xl mx-auto">
+          
+          {/* Header Navigation */}
+          <div className="flex justify-between items-center mb-12">
+            <Link href="/dashboard" className="group flex items-center gap-2 text-muted-foreground hover:text-white transition-all">
+              <div className="p-2 rounded-full bg-white/5 group-hover:bg-white/10 transition-colors">
+                <ArrowLeft className="w-5 h-5" />
               </div>
-            )}
+              <span className="text-sm font-medium">Dashboard</span>
+            </Link>
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <div key={s} className={`h-1 w-8 rounded-full transition-all duration-500 ${s <= step ? "bg-primary shadow-[0_0_10px_rgba(59,130,246,0.5)]" : "bg-white/10"}`} />
+              ))}
+            </div>
           </div>
 
-          {/* Step 1: Project Type Selection (expanded) */}
-          {step === 1 && !projectType && (
-            <div>
-              <h2 className="text-xl font-semibold mb-6">What type of project are you planning?</h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* Residential */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("residential")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Home className="w-8 h-8 text-primary" />
+          {/* Main Stage */}
+          <div className="grid lg:grid-cols-[1fr_350px] gap-12">
+            
+            <main className="space-y-8">
+              {/* Step 1: Project Typer Selection */}
+              {step === 1 && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                  <div className="space-y-2">
+                    <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5 px-3 py-1">Step 01: Core Intent</Badge>
+                    <h1 className="text-4xl md:text-5xl font-black tracking-tight">What are we building today?</h1>
+                    <p className="text-muted-foreground text-lg">Select your primary project category to initialize the industry-specific ML engine.</p>
                   </div>
-                  <h3 className="text-lg font-semibold mb-1">Residential</h3>
-                  <p className="text-muted-foreground text-sm">Homes, villas, apartments, and housing</p>
-                </Card>
 
-                {/* Commercial */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("commercial")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Building2 className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Commercial</h3>
-                  <p className="text-muted-foreground text-sm">Offices, retail, complexes</p>
-                </Card>
-
-                {/* Institutional */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("institutional")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Landmark className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Institutional</h3>
-                  <p className="text-muted-foreground text-sm">Government, museums, cultural</p>
-                </Card>
-
-                {/* Industrial */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("industrial")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Factory className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Industrial</h3>
-                  <p className="text-muted-foreground text-sm">Plants, warehouses, utilities</p>
-                </Card>
-
-                {/* Airport */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("airport")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Plane className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Airport</h3>
-                  <p className="text-muted-foreground text-sm">Terminals, ancillary buildings</p>
-                </Card>
-
-                {/* Dam / Hydro */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("dam")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Landmark className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Dam / Hydro</h3>
-                  <p className="text-muted-foreground text-sm">Dams, spillways, control rooms</p>
-                </Card>
-
-                {/* Playground / Sports */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("playground")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Trees className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Playground / Sports</h3>
-                  <p className="text-muted-foreground text-sm">Parks, fields, courts, arenas</p>
-                </Card>
-
-                {/* Education */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("education")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <School className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Education</h3>
-                  <p className="text-muted-foreground text-sm">Schools, colleges, labs</p>
-                </Card>
-
-                {/* Hospitality */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("hospitality")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Hotel className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Hospitality</h3>
-                  <p className="text-muted-foreground text-sm">Hotels, resorts, convention centers</p>
-                </Card>
-
-                {/* Healthcare */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("institutional") // or a dedicated 'healthcare' if desired
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Hospital className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Healthcare</h3>
-                  <p className="text-muted-foreground text-sm">Hospitals, clinics, diagnostics</p>
-                </Card>
-
-                {/* Transport */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("transport")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Bus className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Transport</h3>
-                  <p className="text-muted-foreground text-sm">Stations, depots, interchanges</p>
-                </Card>
-
-                {/* Civic */}
-                <Card
-                  className="p-8 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer"
-                  onClick={() => {
-                    setProjectType("civic")
-                    setStep(2)
-                  }}
-                >
-                  <div className="w-16 h-16 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <Landmark className="w-8 h-8 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">Civic</h3>
-                  <p className="text-muted-foreground text-sm">Courts, halls, admin blocks</p>
-                </Card>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Basic Information */}
-          {step === 2 && projectType && (
-            <Card className="p-8 border-border">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  {projectType === "residential" ? (
-                    <Home className="w-6 h-6 text-primary" />
-                  ) : projectType === "commercial" ? (
-                    <Building2 className="w-6 h-6 text-primary" />
-                  ) : projectType === "institutional" ? (
-                    <Landmark className="w-6 h-6 text-primary" />
-                  ) : projectType === "industrial" ? (
-                    <Factory className="w-6 h-6 text-primary" />
-                  ) : projectType === "airport" ? (
-                    <Plane className="w-6 h-6 text-primary" />
-                  ) : projectType === "dam" ? (
-                    <Landmark className="w-6 h-6 text-primary" />
-                  ) : projectType === "playground" ? (
-                    <Trees className="w-6 h-6 text-primary" />
-                  ) : projectType === "education" ? (
-                    <School className="w-6 h-6 text-primary" />
-                  ) : projectType === "hospitality" ? (
-                    <Hotel className="w-6 h-6 text-primary" />
-                  ) : projectType === "transport" ? (
-                    <Bus className="w-6 h-6 text-primary" />
-                  ) : projectType === "civic" ? (
-                    <Landmark className="w-6 h-6 text-primary" />
-                  ) : (
-                    <div className="w-6 h-6 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <span className="text-primary">?</span>
-                    </div>
-                  )}
-                </div>
-                <div>
-                  <h2 className="text-xl font-semibold capitalize">{projectType} Project</h2>
-                  <button
-                    onClick={() => {
-                      setProjectType(null)
-                      setStep(1)
-                    }}
-                    className="text-sm text-primary hover:underline"
-                  >
-                    Change type
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Project Name</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    placeholder="e.g., Modern Villa Design"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    placeholder="Describe your vision and requirements..."
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={4}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input
-                    id="location"
-                    name="location"
-                    placeholder="City, State"
-                    value={formData.location}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="flex items-center gap-4 pt-4">
-                  <Button
-                    onClick={() => {
-                      if (formData.name && formData.description && formData.location) {
-                        setStep(3)
-                      }
-                    }}
-                    className="bg-primary hover:bg-primary/90"
-                  >
-                    Continue to Requirements
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setStep(1)}>
-                    Back
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          {/* Step 3: Requirements & Features */}
-          {step === 3 && (
-            <Card className="p-8 border-border">
-              <h2 className="text-xl font-semibold mb-6">Project Requirements</h2>
-
-              <div className="space-y-8">
-                {/* Project Size */}
-                <div className="space-y-3">
-                  <Label>Project Size</Label>
-                  <div className="grid grid-cols-3 gap-4">
-                    {(["small", "medium", "large"] as ProjectSize[]).map((size) => (
-                      <Card
-                        key={size}
-                        className={`p-4 cursor-pointer transition-all ${
-                          requirements.size === size
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        }`}
-                        onClick={() => setRequirements((prev) => ({ ...prev, size }))}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {PROJECT_TYPES.map((type) => (
+                      <Card 
+                        key={type.id}
+                        onClick={() => { setProjectType(type.id); handleNext(); }}
+                        className={`p-6 border-white/5 bg-white/5 hover:bg-white/10 hover:border-primary/50 transition-all cursor-pointer group relative overflow-hidden ${projectType === type.id ? 'border-primary/50 bg-white/10' : ''}`}
                       >
-                        <div className="text-center">
-                          <div className="font-semibold capitalize mb-1">{size}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {size === "small" && "< 1500 sq ft"}
-                            {size === "medium" && "1500-3000 sq ft"}
-                            {size === "large" && "> 3000 sq ft"}
+                        <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                          <type.icon size={100} />
+                        </div>
+                        <div className="relative z-10 space-y-4">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-colors ${projectType === type.id ? 'bg-primary text-white' : 'bg-white/5 text-primary'}`}>
+                            <type.icon className="w-6 h-6" />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-lg">{type.name}</h3>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{type.desc}</p>
                           </div>
                         </div>
                       </Card>
                     ))}
                   </div>
                 </div>
+              )}
 
-                {/* Features */}
-                <div className="space-y-3">
-                  <Label>Features & Amenities</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {availableFeatures.map((feature) => (
-                      <Card
-                        key={feature}
-                        className={`p-4 cursor-pointer transition-all ${
-                          requirements.features.includes(feature)
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        }`}
-                        onClick={() => toggleFeature(feature)}
-                      >
-                        <div className="flex items-center gap-2">
-                          {requirements.features.includes(feature) && <CheckCircle2 className="w-4 h-4 text-primary" />}
-                          <span className="text-sm">{feature}</span>
-                        </div>
-                      </Card>
-                    ))}
+              {/* Step 2: Spatial & Geo Intelligence */}
+              {step === 2 && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
+                  <div className="space-y-2">
+                    <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5 px-3 py-1">Step 02: Space & Location</Badge>
+                    <h1 className="text-4xl font-black tracking-tight">Spatial Parameters</h1>
+                    <p className="text-muted-foreground">Define the physical and geographic constraints for precise cost modeling.</p>
                   </div>
-                </div>
 
-                {/* Smart Options */}
-                <div className="space-y-3">
-                  <Label>Smart Home Features</Label>
-                  <div className="grid grid-cols-2 gap-3">
-                    {smartOptions.map((option) => (
-                      <Card
-                        key={option}
-                        className={`p-4 cursor-pointer transition-all ${
-                          requirements.smartOptions.includes(option)
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        }`}
-                        onClick={() => toggleSmartOption(option)}
-                      >
-                        <div className="flex items-center gap-2">
-                          {requirements.smartOptions.includes(option) && <Zap className="w-4 h-4 text-primary" />}
-                          <span className="text-sm">{option}</span>
+                  <Card className="p-8 border-white/5 bg-white/5 backdrop-blur-xl">
+                    <div className="space-y-8">
+                      <div className="grid md:grid-cols-2 gap-8">
+                        <div className="space-y-3">
+                          <Label className="text-white/70 text-sm font-semibold uppercase tracking-wider">Project Identity</Label>
+                          <Input 
+                            placeholder="e.g. Skyline Residency" 
+                            className="h-14 bg-white/5 border-white/10 focus:border-primary text-lg" 
+                            value={formData.name}
+                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          />
                         </div>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Material Quality */}
-                <div className="space-y-3">
-                  <Label>Material Quality</Label>
-                  <div className="grid grid-cols-3 gap-4">
-                    {(["economical", "standard", "premium"] as MaterialQuality[]).map((quality) => (
-                      <Card
-                        key={quality}
-                        className={`p-4 cursor-pointer transition-all ${
-                          requirements.materials === quality
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50"
-                        }`}
-                        onClick={() => setRequirements((prev) => ({ ...prev, materials: quality }))}
-                      >
-                        <div className="text-center">
-                          <div className="font-semibold capitalize mb-1">{quality}</div>
-                          <div className="text-xs text-muted-foreground">
-                            {quality === "economical" && "Budget-friendly"}
-                            {quality === "standard" && "Mid-range quality"}
-                            {quality === "premium" && "High-end materials"}
+                        <div className="space-y-3">
+                          <Label className="text-white/70 text-sm font-semibold uppercase tracking-wider">Footprint Scale</Label>
+                          <div className="flex gap-2">
+                            {(["small", "medium", "large", "mega"] as ProjectSize[]).map((sz) => (
+                              <Button
+                                key={sz}
+                                variant={requirements.size === sz ? "default" : "outline"}
+                                className={`flex-1 h-14 border-white/10 ${requirements.size === sz ? 'bg-primary' : 'bg-white/5'}`}
+                                onClick={() => setRequirements({...requirements, size: sz})}
+                              >
+                                {sz.toUpperCase()}
+                              </Button>
+                            ))}
                           </div>
                         </div>
-                      </Card>
-                    ))}
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label className="text-white/70 text-sm font-semibold uppercase tracking-wider">Global Positioning (GIS)</Label>
+                        <div className="rounded-xl overflow-hidden border border-white/10 bg-white/5">
+                          <GoogleMapsLocationPicker 
+                            value={formData.locationData}
+                            onChange={(loc) => setFormData({...formData, location: loc.address, locationData: loc})}
+                            placeholder="Search district, city or specific plot coordinates..."
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label className="text-white/70 text-sm font-semibold uppercase tracking-wider">Detailed Objective</Label>
+                        <Textarea 
+                          placeholder="Describe site constraints, specific architectural desires, or unique functional requirements..." 
+                          className="bg-white/5 border-white/10 focus:border-primary min-h-[120px] text-lg"
+                          value={formData.description}
+                          onChange={(e) => setFormData({...formData, description: e.target.value})}
+                        />
+                      </div>
+                    </div>
+                  </Card>
+
+                  <div className="flex justify-between items-center">
+                    <Button variant="ghost" className="h-14 px-8 text-white/50" onClick={handleBack}>Previous Step</Button>
+                    <Button 
+                      className="h-14 px-12 bg-primary hover:bg-primary/90 shadow-[0_4px_20px_rgba(59,130,246,0.3)] font-bold text-lg" 
+                      onClick={handleNext}
+                      disabled={!formData.name || !formData.locationData}
+                    >
+                      Continue to Engineering
+                    </Button>
                   </div>
                 </div>
+              )}
 
-                <div className="flex items-center gap-4 pt-4">
-                  <Button onClick={handleRequirementsSubmit} className="bg-accent hover:bg-accent/90">
-                    <TrendingUp className="w-4 h-4 mr-2" />
-                    Calculate Budget
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setStep(2)}>
-                    Back
-                  </Button>
+              {/* Step 3: Infrastructure & MEP Logic */}
+              {step === 3 && (
+                <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-700">
+                  <div className="space-y-2">
+                    <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5 px-3 py-1">Step 03: MEP & Compliance</Badge>
+                    <h1 className="text-4xl font-black tracking-tight">Engineering Intelligence</h1>
+                    <p className="text-muted-foreground">Select advanced infrastructure systems to calibrate technical designs.</p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Quality Tab */}
+                    <Card className="p-6 border-white/5 bg-white/5 space-y-6">
+                      <div className="flex items-center gap-3">
+                        <Layers className="text-primary w-5 h-5" />
+                        <h3 className="font-bold">Material Specification Tier</h3>
+                      </div>
+                      <div className="space-y-4">
+                        {(["economical", "standard", "premium", "ultra_luxury"] as MaterialQuality[]).map((m) => (
+                          <div 
+                            key={m} 
+                            onClick={() => setRequirements({...requirements, materials: m})}
+                            className={`p-4 rounded-xl border border-white/10 cursor-pointer flex justify-between items-center transition-all ${requirements.materials === m ? 'bg-primary/10 border-primary' : 'hover:bg-white/5'}`}
+                          >
+                            <span className="capitalize font-medium">{m.replace('_', ' ')}</span>
+                            {requirements.materials === m && <CheckCircle2 className="w-5 h-5 text-primary" />}
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+
+                    {/* HVAC & Sustainability */}
+                    <Card className="p-6 border-white/5 bg-white/5 space-y-6">
+                      <div className="flex items-center gap-3">
+                        <Wind className="text-primary w-5 h-5" />
+                        <h3 className="font-bold">MEP & Green Tech</h3>
+                      </div>
+                      <div className="space-y-6">
+                        <div className="space-y-3">
+                          <Label className="text-xs uppercase text-white/50 tracking-widest">Climate Control (HVAC)</Label>
+                          <div className="grid grid-cols-2 gap-2">
+                            {["split-ac", "central-ac", "vrf", "natural"].map((h) => (
+                              <Button 
+                                key={h} 
+                                variant={requirements.hvac === h ? "default" : "outline"}
+                                size="sm"
+                                className="h-10 border-white/10 capitalize"
+                                onClick={() => setRequirements({...requirements, hvac: h})}
+                              >
+                                {h}
+                              </Button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                          <div className="flex items-center gap-3">
+                            <Sun className="text-orange-400 w-5 h-5" />
+                            <div>
+                              <p className="font-bold text-sm">Solar Photovoltaic</p>
+                              <p className="text-[10px] text-muted-foreground">Renewable Energy Integration</p>
+                            </div>
+                          </div>
+                          <Switch checked={requirements.solar} onCheckedChange={(v) => setRequirements({...requirements, solar: v})} />
+                        </div>
+
+                        <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/10">
+                          <div className="flex items-center gap-3">
+                            <Scale className="text-green-400 w-5 h-5" />
+                            <div>
+                              <p className="font-bold text-sm">Vastu Compliance</p>
+                              <p className="text-[10px] text-muted-foreground">Architectural Orientation logic</p>
+                            </div>
+                          </div>
+                          <Switch checked={requirements.vastu} onCheckedChange={(v) => setRequirements({...requirements, vastu: v})} />
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <Button variant="ghost" className="h-14 px-8 text-white/50" onClick={handleBack}>Go Back</Button>
+                    <Button 
+                      className="h-14 px-12 bg-primary hover:bg-primary/90 shadow-[0_4px_20px_rgba(59,130,246,0.3)] font-bold text-lg" 
+                      onClick={handleEstimate}
+                      disabled={isEstimating}
+                    >
+                      {isEstimating ? <><Loader2 className="w-5 h-5 animate-spin mr-3" /> Running ML Projection...</> : "Run Financial & Structural Preview"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: ML Budget & Dimensions Output */}
+              {step === 4 && estimation && (
+                <div className="space-y-8 animate-in zoom-in-95 duration-700">
+                  <div className="space-y-2 text-center">
+                    <Badge className="bg-green-500/20 text-green-400 border-green-500/30 px-4 py-1">AI Projection Complete</Badge>
+                    <h1 className="text-4xl md:text-5xl font-black tracking-tighter">Strategic Estimation</h1>
+                  </div>
+
+                  <div className="grid md:grid-cols-3 gap-6">
+                    <Card className="p-6 border-white/5 bg-white/5 text-center space-y-2">
+                        <Label className="text-xs uppercase text-muted-foreground tracking-widest">Total CAPEX Prediction</Label>
+                        <div className="text-4xl font-black text-primary">₹{estimation.budgetRange.min}-{estimation.budgetRange.max}</div>
+                        <p className="text-[10px] text-white/40 italic">Lakhs (Projected Base)</p>
+                    </Card>
+                    <Card className="p-6 border-white/5 bg-white/5 text-center space-y-2">
+                        <Label className="text-xs uppercase text-muted-foreground tracking-widest">Structural Footprint</Label>
+                        <div className="text-xl font-bold">{estimation.dimensions.primary}</div>
+                        <p className="text-[10px] text-white/40 uppercase">Optimized Grid</p>
+                    </Card>
+                    <Card className="p-6 border-white/5 bg-white/5 text-center space-y-2">
+                        <Label className="text-xs uppercase text-muted-foreground tracking-widest">Sustainability Target</Label>
+                        <div className="text-3xl font-black text-green-400">{estimation.sustainability_score}%</div>
+                        <p className="text-[10px] text-white/40 uppercase">Eco-Efficiency Index</p>
+                    </Card>
+                  </div>
+
+                  <Card className="p-8 border-white/5 bg-white/5 divide-y divide-white/10">
+                    <div className="pb-6 grid md:grid-cols-2 gap-8">
+                       <div className="space-y-4">
+                          <h4 className="font-bold flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary" /> Core Reasoning</h4>
+                          <ul className="space-y-3">
+                            {estimation.reasoning.map((r, i) => (
+                              <li key={i} className="flex gap-3 text-sm text-white/70">
+                                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                                {r}
+                              </li>
+                            ))}
+                          </ul>
+                       </div>
+                       <div className="space-y-4">
+                          <h4 className="font-bold flex items-center gap-2"><Layers className="w-4 h-4 text-primary" /> Resource Allocation</h4>
+                          <div className="space-y-4">
+                            {Object.entries(estimation.breakdown).slice(0, 4).map(([key, val]) => (
+                              <div key={key} className="space-y-1.5">
+                                <div className="flex justify-between text-[10px] uppercase font-bold text-white/40">
+                                  <span>{key.replace('_', ' ')}</span>
+                                  <span>₹{val}L</span>
+                                </div>
+                                <Progress value={(val / (estimation.budgetRange.max || 1)) * 100} className="h-1 bg-white/5" />
+                              </div>
+                            ))}
+                          </div>
+                       </div>
+                    </div>
+                  </Card>
+
+                  <div className="flex justify-between items-center">
+                    <Button variant="ghost" className="h-14 px-8 text-white/50" onClick={handleBack}>Adjust Details</Button>
+                    <Button 
+                      className="h-14 px-12 bg-white text-black hover:bg-white/90 shadow-[0_4px_30px_rgba(255,255,255,0.2)] font-black text-lg" 
+                      onClick={handleGenerateDesigns}
+                      disabled={isGenerating}
+                    >
+                      {isGenerating ? <><Loader2 className="w-5 h-5 animate-spin mr-3" /> Synthesizing Architectural Variants...</> : "Generate AI-Ready Design Assets"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </main>
+
+            {/* Sidebar Context */}
+            <aside className="hidden lg:block">
+              <div className="sticky top-8 space-y-6">
+                <Card className="p-1 border-white/5 bg-white/5 backdrop-blur-2xl overflow-hidden">
+                  <div className="bg-primary/10 p-6 space-y-4">
+                    <BrainCircuit className="text-primary w-10 h-10" />
+                    <h3 className="font-bold text-lg leading-tight">Advanced SIID AEC Workflow v4.2</h3>
+                    <p className="text-xs text-white/50 leading-relaxed">Leveraging distributed ML models for real-time cost regression and structural topology optimization.</p>
+                  </div>
+                  <div className="p-6 space-y-6">
+                    <div className="space-y-3">
+                      <Label className="text-[10px] uppercase tracking-[0.2em] text-white/40">Active Engine Specs</Label>
+                      <ul className="space-y-4">
+                        <li className="flex items-center gap-3 text-xs">
+                          <ShieldCheck className="text-green-500 w-4 h-4" />
+                          <span>NBC 2016 Safety Compliance</span>
+                        </li>
+                        <li className="flex items-center gap-3 text-xs">
+                          <TrendingUp className="text-primary w-4 h-4" />
+                          <span>Inflation-Agnostic Pricing</span>
+                        </li>
+                        <li className="flex items-center gap-3 text-xs">
+                          <Droplets className="text-blue-400 w-4 h-4" />
+                          <span>Universal MEP Standard Mapping</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </Card>
+
+                {/* Live Stats Mockup */}
+                <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/20 to-transparent border border-white/5">
+                   <h4 className="text-sm font-bold mb-4">Engineering Meta</h4>
+                   <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] text-white/40">ML Confidence</span>
+                        <span className="text-xs font-mono text-primary">94.2%</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] text-white/40">Market Data Freshness</span>
+                        <span className="text-xs font-mono text-green-400">14m ago</span>
+                      </div>
+                   </div>
                 </div>
               </div>
-            </Card>
-          )}
-
-          {/* Step 4: Budget Estimation Results */}
-          {step === 4 && budgetEstimation && (
-            <div className="space-y-6">
-              <Card className="p-8 border-border bg-gradient-to-br from-primary/5 to-accent/5">
-                <div className="flex items-start justify-between mb-6">
-                  <div>
-                    <h2 className="text-2xl font-bold mb-2">Budget Estimation</h2>
-                    <p className="text-muted-foreground">Based on current market rates and your requirements</p>
-                  </div>
-                  <Badge
-                    className={`text-lg px-4 py-2 ${
-                      budgetEstimation.stage === "moderate"
-                        ? "bg-green-500"
-                        : budgetEstimation.stage === "intermediate"
-                          ? "bg-blue-500"
-                          : "bg-purple-500"
-                    }`}
-                  >
-                    {budgetEstimation.stage.toUpperCase()}
-                  </Badge>
-                </div>
-
-                <div className="bg-background rounded-lg p-6 mb-6">
-                  <div className="text-center">
-                    <div className="text-sm text-muted-foreground mb-2">Estimated Budget Range</div>
-                    <div className="text-4xl font-bold text-primary">
-                      ₹{budgetEstimation.budgetRange.min} - ₹{budgetEstimation.budgetRange.max} Lakhs
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4 mb-6">
-                  <h3 className="font-semibold">Cost Breakdown</h3>
-                  {Object.entries(budgetEstimation.breakdown).map(([key, value]) => (
-                    <div key={key} className="flex items-center justify-between">
-                      <span className="text-sm capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
-                      <span className="font-semibold">₹{value} Lakhs</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="font-semibold">Why this category?</h3>
-                  <ul className="space-y-2">
-                    {budgetEstimation.reasoning.map((reason, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
-                        <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                        <span>{reason}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </Card>
-
-              <Card className="p-6 border-border">
-                <h3 className="font-semibold mb-4">AI Generation Options</h3>
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div className="space-y-3">
-                    <div className="font-medium">Providers</div>
-                    <p className="text-xs text-muted-foreground">
-                      Leave all off to use fast mock generation. Enabling providers uses the AI Gateway and may require
-                      billing.
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <input
-                        id="prov-openai"
-                        type="checkbox"
-                        className="h-4 w-4"
-                        checked={generationOptions.providers.openai}
-                        onChange={(e) =>
-                          setGenerationOptions((prev) => ({
-                            ...prev,
-                            providers: { ...prev.providers, openai: e.target.checked },
-                          }))
-                        }
-                      />
-                      <label htmlFor="prov-openai" className="text-sm">
-                        OpenAI
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <input
-                        id="prov-anthropic"
-                        type="checkbox"
-                        className="h-4 w-4"
-                        checked={generationOptions.providers.anthropic}
-                        onChange={(e) =>
-                          setGenerationOptions((prev) => ({
-                            ...prev,
-                            providers: { ...prev.providers, anthropic: e.target.checked },
-                          }))
-                        }
-                      />
-                      <label htmlFor="prov-anthropic" className="text-sm">
-                        Anthropic
-                      </label>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <input
-                        id="prov-xai"
-                        type="checkbox"
-                        className="h-4 w-4"
-                        checked={generationOptions.providers.xai}
-                        onChange={(e) =>
-                          setGenerationOptions((prev) => ({
-                            ...prev,
-                            providers: { ...prev.providers, xai: e.target.checked },
-                          }))
-                        }
-                      />
-                      <label htmlFor="prov-xai" className="text-sm">
-                        xAI (Grok)
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="font-medium">Variants Per Provider</div>
-                    <input
-                      type="number"
-                      min={1}
-                      max={4}
-                      value={generationOptions.variantsPerProvider}
-                      onChange={(e) =>
-                        setGenerationOptions((prev) => ({
-                          ...prev,
-                          variantsPerProvider: Math.min(4, Math.max(1, Number(e.target.value) || 1)),
-                        }))
-                      }
-                      className="w-24 h-9 rounded-md border border-border px-2 bg-background"
-                    />
-                    <p className="text-xs text-muted-foreground">Generate multiple alternative designs per provider.</p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="font-medium">Notes</div>
-                    <p className="text-sm text-muted-foreground">
-                      Designs will include architectural, structural, interior, exterior, plus MEP. Variants combine
-                      your inputs with provider-specific styles for diverse results.
-                    </p>
-                  </div>
-                </div>
-              </Card>
-
-              <Card className="p-6 border-border">
-                <h3 className="font-semibold mb-4">Ready to proceed?</h3>
-                <p className="text-sm text-muted-foreground mb-6">
-                  Click below to generate AI-powered architectural, structural, interior, exterior and MEP designs based
-                  on your requirements.
-                </p>
-                <div className="flex items-center gap-4">
-                  <Button onClick={handleSubmit} className="bg-accent hover:bg-accent/90" disabled={isGenerating}>
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Generating AI Designs...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Generate AI Designs
-                      </>
-                    )}
-                  </Button>
-                  <Button type="button" variant="outline" onClick={() => setStep(3)} disabled={isGenerating}>
-                    Adjust Requirements
-                  </Button>
-                </div>
-              </Card>
-            </div>
-          )}
+            </aside>
+          </div>
         </div>
+
+        {/* Dynamic Background Noise */}
+        <div className="fixed inset-0 pointer-events-none opacity-[0.03] z-[-1] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
       </div>
     </AuthGuard>
   )

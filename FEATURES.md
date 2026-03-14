@@ -198,6 +198,7 @@ When expanded, each phase shows:
 ### Additional Features
 - **Responsive Design**: Works on mobile, tablet, and desktop
 - **Dark Mode Support**: All colors work in dark theme
+
 - **Loading States**: Graceful handling of data loading
 - **Empty States**: Clear message when no phases found
 - **Indian Currency**: All amounts in ₹ (Rupees)

@@ -1127,15 +1127,14 @@ export function VastuLayoutGenerator() {
         <div className="mt-6 pt-6 border-t space-y-4">
           {/* Score Display */}
           <div
-            className={`p-6 rounded-lg border-2 ${
-              layout.score >= 90
-                ? "bg-green-50 dark:bg-green-900/20 border-green-500"
-                : layout.score >= 75
-                  ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500"
-                  : layout.score >= 60
-                    ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500"
-                    : "bg-red-50 dark:bg-red-900/20 border-red-500"
-            }`}
+            className={`p-6 rounded-lg border-2 ${layout.score >= 90
+              ? "bg-green-50 dark:bg-green-900/20 border-green-500"
+              : layout.score >= 75
+                ? "bg-blue-50 dark:bg-blue-900/20 border-blue-500"
+                : layout.score >= 60
+                  ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-500"
+                  : "bg-red-50 dark:bg-red-900/20 border-red-500"
+              }`}
           >
             <div className="flex items-center justify-between">
               <div>
@@ -1159,13 +1158,12 @@ export function VastuLayoutGenerator() {
               {layout.rooms.map((room, index) => (
                 <div
                   key={index}
-                  className={`p-3 rounded-lg border ${
-                    room.status === "compliant"
-                      ? "bg-green-50 dark:bg-green-900/20 border-green-200"
-                      : room.status === "warning"
-                        ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200"
-                        : "bg-red-50 dark:bg-red-900/20 border-red-200"
-                  }`}
+                  className={`p-3 rounded-lg border ${room.status === "compliant"
+                    ? "bg-green-50 dark:bg-green-900/20 border-green-200"
+                    : room.status === "warning"
+                      ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200"
+                      : "bg-red-50 dark:bg-red-900/20 border-red-200"
+                    }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     {room.status === "compliant" ? (
@@ -1219,13 +1217,12 @@ export function VastuLayoutGenerator() {
               {layout.doshas.map((dosha, index) => (
                 <div
                   key={index}
-                  className={`p-3 rounded-lg border ${
-                    dosha.severity === "high"
-                      ? "bg-red-50 dark:bg-red-900/20 border-red-300"
-                      : dosha.severity === "medium"
-                        ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300"
-                        : "bg-green-50 dark:bg-green-900/20 border-green-300"
-                  }`}
+                  className={`p-3 rounded-lg border ${dosha.severity === "high"
+                    ? "bg-red-50 dark:bg-red-900/20 border-red-300"
+                    : dosha.severity === "medium"
+                      ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300"
+                      : "bg-green-50 dark:bg-green-900/20 border-green-300"
+                    }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <Badge

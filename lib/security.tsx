@@ -126,6 +126,13 @@ export function logSecurityEvent(event: string, details: Record<string, any>) {
   }
 
   localStorage.setItem("securityLogs", JSON.stringify(logs))
+
+  // save to database as well
+  fetch("/api/db/security_logs", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(log),
+  }).catch((e) => console.error("DB security log failed", e))
 }
 
 // Input sanitization

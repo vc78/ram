@@ -12,20 +12,17 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // First check local user & token presence
     const user = getCurrentUser()
     if (!user) {
       router.push("/login")
       return
     }
 
-    // Verify token with backend to catch server-side expiry/invalid tokens
     (async () => {
       try {
         await apiGet("/auth/me")
         setIsLoading(false)
       } catch (err: any) {
-        // If verification fails (401 etc), clear session and redirect to login
         logout()
         router.push("/login")
       }

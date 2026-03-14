@@ -1,0 +1,50 @@
+[
+  {
+    "id": "dc4b2c2a-0b9c-4074-8c8c-9be5bc0cc9f5",
+    "name": "Material-Estimate-My Project-12_3_2026 (1).pdf",
+    "type": "design",
+    "format": "pdf",
+    "status": "draft",
+    "date": "2026-03-12",
+    "size": "0.01 MB",
+    "version": "v1.0",
+    "uploadedBy": "VENKAT  CHOWDARY BODDULURI",
+    "url": "/uploads/Material-Estimate-My Project-12_3_2026 (1).pdf",
+    "mlAnalysis": {
+      "summary": "This document appears to be a standard pdf document. Standard procedural or inspection document.",
+      "confidenceScore": 90.5,
+      "risks": [
+        "General compliance review recommended."
+      ],
+      "financialObligations": [],
+      "extractedSpecs": [
+        "No major structural specifications detected."
+      ],
+      "docClass": "General Document"
+    }
+  },
+  {
+    "id": "483b2e46-08ac-47f7-b245-6d9bc3c6a709",
+    "name": "Oose assignment 4.pdf",
+    "type": "design",
+    "format": "pdf",
+    "status": "draft",
+    "date": "2026-03-11",
+    "size": "1.86 MB",
+    "version": "v1.0",
+    "uploadedBy": "VENKAT  CHOWDARY BODDULURI",
+    "url": "/uploads/Oose assignment 4.pdf"
+  },
+  {
+    "id": "0ba088fc-446b-4b47-bce5-78a88ea7e035",
+    "name": "intern.docx",
+    "type": "design",
+    "format": "docx",
+    "status": "draft",
+    "date": "2026-03-11",
+    "size": "0.01 MB",
+    "version": "v1.0",
+    "uploadedBy": "VENKAT  CHOWDARY BODDULURI",
+    "url": "/uploads/intern.docx"
+  }
+]
