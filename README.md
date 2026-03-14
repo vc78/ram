@@ -88,7 +88,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - **UI Components**: shadcn/ui
 - **PDF Generation**: jsPDF + jspdf-autotable
 - **State Management**: React Context API
-- **Data Persistence**: localStorage
+- **Data Persistence**: localStorage (now augmented with a simple server-side JSON database under `/data/*.json` via `/api/db/*` endpoints)
 - **Icons**: Lucide React
 
 ## 📁 Project Structure
@@ -176,3 +176,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Built with ❤️ by the SIID FLASH team**
 "# SIIDVC" 
+"# ram" 
