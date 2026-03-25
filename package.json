@@ -58,7 +58,7 @@
     "jspdf-autotable": "latest",
     "jszip": "latest",
     "lucide-react": "^0.454.0",
-    "next": "15.2.4",
+    "next": "^15.2.5",
     "next-themes": "latest",
     "react": "^19",
     "react-day-picker": "9.8.0",
