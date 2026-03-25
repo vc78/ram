@@ -5,29 +5,30 @@ const BASE = process.env.BACKEND_URL // e.g., https://your-python-service.com
 async function proxy(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   const { path } = await params;
 
-  if (!BASE) {
+  // Detect if we should use the local Next.js API (when Python backend is not configured)
+  const isServerless = !BASE || BASE.includes("localhost") || BASE.includes("127.0.0.1")
+  
+  if (isServerless && (path.includes("auth") || path.includes("login") || path.includes("signup"))) {
     const localPath = `/api/${path.join("/")}`
     const localUrl = new URL(localPath + req.nextUrl.search, req.url)
-
+    
+    console.log(`Forwarding to local Next.js Auth API: ${localPath}`)
+    
     try {
-      // Forward to local Next.js API route
       const init: RequestInit = {
         method: req.method,
         headers: req.headers,
         body: ["GET", "HEAD"].includes(req.method) ? undefined : await req.arrayBuffer(),
       }
-
       const localRes = await fetch(localUrl, init)
       const body = await localRes.arrayBuffer()
       return new Response(body, { status: localRes.status, headers: localRes.headers })
     } catch (e: any) {
-      return new Response(JSON.stringify({ error: "Local API error", detail: e?.message || "unknown" }), {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      })
+      console.error("Local auth proxy error:", e)
     }
   }
 
+  // Regular proxy to the Python backend
   const target = `${BASE}/api/v1/${path.join("/")}${req.nextUrl.search}`
   const headers: Record<string, string> = {}
   req.headers.forEach((v, k) => {
