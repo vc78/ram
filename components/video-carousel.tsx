@@ -16,14 +16,14 @@ const videos = [
     poster: "/images/structural-engineering-simulation-3d.jpg",
   },
   {
-    src: "/images/int.mp4",
+    src: "/images/int1.mp4",
     title: "Interior Walkthrough",
     poster: "/images/interior-design-3d-walkthrough.jpg",
   },
   {
-    src: "/images/ext.mp4",
+    src: "/images/ext1.mp4",
     title: "Exterior Walkthrough",
-    poster: "/images/x.jpg",
+    poster: "/images/modern-villa-project.jpg",
   },
 ]
 
@@ -70,7 +70,7 @@ export default function VideoCarousel() {
   }, [active, playing])
 
   return (
-    <section className="w-full py-10 md:py-16">
+    <section className="w-full pt-10 pb-2 md:pt-16 md:pb-4">
       <div className="mx-auto max-w-6xl px-4">
         <h2 className="text-2xl md:text-3xl font-bold mb-6 text-pretty">Project Video Highlights</h2>
         <Carousel className="w-full">
@@ -85,7 +85,7 @@ export default function VideoCarousel() {
                     <div className="absolute inset-0 flex items-center justify-center">
                       {playing === i ? (
                         <video
-                          ref={(el) => (videoRefs.current[i] = el)}
+                          ref={(el) => { videoRefs.current[i] = el }}
                           src={v.src}
                           className="w-full h-full object-cover absolute inset-0"
                           controls

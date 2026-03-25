@@ -37,6 +37,7 @@ export function logout() {
     localStorage.removeItem("token")
     localStorage.removeItem("rememberedEmail")
     localStorage.removeItem("loginAttempts")
+    document.cookie = "userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   }
 }
 

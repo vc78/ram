@@ -1,0 +1,22 @@
+[
+  {
+    "id": "tsk_1774336549379",
+    "project_id": "default_proj",
+    "task_name": "wiring first floor",
+    "required_skill": "Electrician",
+    "priority": "medium",
+    "deadline": "2026-03-24",
+    "status": "assigned",
+    "created_at": "2026-03-24T07:15:49.379Z"
+  },
+  {
+    "id": "tsk_1774336614352",
+    "project_id": "default_proj",
+    "task_name": "veeru",
+    "required_skill": "Mason",
+    "priority": "high",
+    "deadline": "2026-03-24",
+    "status": "assigned",
+    "created_at": "2026-03-24T07:16:54.352Z"
+  }
+]

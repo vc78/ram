@@ -1,0 +1,22 @@
+[
+  {
+    "id": "wrk_1774336518970",
+    "name": "venkat",
+    "skill": "Electrician",
+    "experience": 1,
+    "availability": false,
+    "performance_score": 80,
+    "daily_cost": 500,
+    "created_at": "2026-03-24T07:15:18.971Z"
+  },
+  {
+    "id": "wrk_1774336594248",
+    "name": "veeru",
+    "skill": "Mason",
+    "experience": 12,
+    "availability": false,
+    "performance_score": 80,
+    "daily_cost": 600,
+    "created_at": "2026-03-24T07:16:34.248Z"
+  }
+]

@@ -140,7 +140,17 @@ export async function POST(req: Request) {
       govt_taxes_permits: Math.round(totalInLakhs * 0.15)
     }
 
-    // 7. Reasoning & Statistical Metadata
+    // 7. Module 3: Material Calculation Engine
+    const builtUpArea = sqFt
+    const materialQuantity = {
+      cement: Math.round(0.40 * builtUpArea + 5), // Bags
+      steel: Math.round(4.5 * builtUpArea + 20), // Kg
+      bricks: Math.round(12.5 * builtUpArea), // Pcs
+      sand: Math.round(1.8 * builtUpArea), // Cft
+      aggregate: Math.round(1.3 * builtUpArea) // Cft
+    }
+
+    // 8. Reasoning & Statistical Metadata
     const reasoning = [
       `Localized index for ${cityEntry ? cityEntry[0].toUpperCase() : "Regional Zone"} applied at ${geoMultiplier}x.`,
       `Applied ${type} complexity weighting (${PROJECT_TYPE_RATES[type].complexity}x baseline).`,
@@ -155,6 +165,7 @@ export async function POST(req: Request) {
         min: Math.round(totalInLakhs * 0.95), 
         max: Math.round(totalInLakhs * 1.08) 
       },
+      materialQuantity, // Explicit materials for Module 3/4
       breakdown: {
         materials: Math.round(totalInLakhs * 0.48),
         labor: Math.round(totalInLakhs * 0.32),

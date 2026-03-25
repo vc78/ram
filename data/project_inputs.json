@@ -1,0 +1,18 @@
+[
+  {
+    "project_id": "e6186851-5f3b-4c1f-85b6-f00e6da61e9c",
+    "materials": "Cement/Steel Standard",
+    "amenities": "none",
+    "features": "Basic",
+    "construction_grade": "Standard",
+    "updated_at": "2026-03-14T14:58:49.492Z"
+  },
+  {
+    "project_id": "95e1aee5-3692-4595-ba15-2266012ae3f0",
+    "materials": "Standard",
+    "amenities": "none",
+    "features": "double ceiling",
+    "construction_grade": "Standard",
+    "updated_at": "2026-03-15T13:39:00.168Z"
+  }
+]

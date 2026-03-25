@@ -1,0 +1,5 @@
+// Type declaration for file-saver module
+declare module 'file-saver' {
+  export function saveAs(data: Blob | File | string, filename?: string, options?: { autoBom?: boolean }): void
+  export default saveAs
+}

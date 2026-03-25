@@ -62,15 +62,34 @@ export default function AdvancedProjectDesignsPage() {
   const [approving, setApproving] = useState(false)
 
   useEffect(() => {
-    const projects = JSON.parse(localStorage.getItem("projects") || "[]")
-    const foundProject = projects.find((p: Project) => p.id === params.id)
-
-    if (foundProject) {
-      setProject(foundProject)
-    } else {
-      router.push("/dashboard")
+    const fetchProject = async () => {
+      try {
+        // Primary: API route
+        const resp = await fetch(`/api/projects/${params.id}`)
+        if (resp.ok) {
+          const { project: apiProject } = await resp.json()
+          if (apiProject) {
+            setProject(apiProject)
+            setLoading(false)
+            return
+          }
+        }
+        // Fallback: legacy localStorage
+        const projects = JSON.parse(localStorage.getItem("projects") || "[]")
+        const foundProject = projects.find((p: Project) => p.id === params.id)
+        if (foundProject) {
+          setProject(foundProject)
+        } else {
+          router.push("/dashboard")
+        }
+      } catch (err) {
+        console.error("Failed to load project:", err)
+        router.push("/dashboard")
+      } finally {
+        setLoading(false)
+      }
     }
-    setLoading(false)
+    fetchProject()
   }, [params.id, router])
 
   const handleApproveDesigns = async () => {
@@ -294,7 +313,7 @@ export default function AdvancedProjectDesignsPage() {
                       <h3 className="text-xl font-bold">Engineering Chassis</h3>
                     </div>
                     <div className="aspect-video bg-white/5 rounded-2xl border border-white/10 overflow-hidden group">
-                        <OptimizedImage src={view.structural?.layoutImage} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                        <OptimizedImage src={view.structural?.layoutImage} alt="Structural Layout" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                     </div>
                     <div className="grid md:grid-cols-3 gap-4">
                        <div className="p-4 rounded-xl bg-white/5 border border-white/10">
@@ -386,11 +405,11 @@ export default function AdvancedProjectDesignsPage() {
             <TabsContent value="interior" className="animate-in fade-in zoom-in-95 duration-500">
                 <div className="grid md:grid-cols-2 gap-8">
                    <Card className="p-1 border-white/5 bg-white/5 overflow-hidden group aspect-video relative">
-                       <OptimizedImage src={view.interior?.renderingImage} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                       <OptimizedImage src={view.interior?.renderingImage} alt="Interior Rendering" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                        <div className="absolute top-4 left-4"><Badge className="bg-black/50 backdrop-blur-md">Primary View</Badge></div>
                    </Card>
                    <Card className="p-1 border-white/5 bg-white/5 overflow-hidden group aspect-video relative">
-                       <OptimizedImage src={view.interior?.moodBoardImage} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                       <OptimizedImage src={view.interior?.moodBoardImage} alt="Interior Mood Board" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                        <div className="absolute top-4 left-4"><Badge className="bg-black/50 backdrop-blur-md">Material Board</Badge></div>
                    </Card>
                 </div>
@@ -398,7 +417,7 @@ export default function AdvancedProjectDesignsPage() {
 
             <TabsContent value="exterior" className="animate-in fade-in zoom-in-95 duration-500">
                 <Card className="p-1 border-white/5 bg-white/5 overflow-hidden group aspect-video relative mb-8">
-                    <OptimizedImage src={view.exterior?.renderingImage} className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    <OptimizedImage src={view.exterior?.renderingImage} alt="Exterior Rendering" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent flex flex-col justify-end p-12">
                        <h2 className="text-5xl font-black mb-4 tracking-tighter">Site Landscape & Aesthetics</h2>
                        <p className="text-white/60 max-w-2xl italic leading-relaxed">Integrated biophilic design approach mapping native flora of {project.location} with sustainable RCC facade structures.</p>

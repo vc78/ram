@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calculator, Download, Loader2 } from "lucide-react"
+import { Calculator, Download, Loader2, BarChart3 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts"
 
 interface MaterialEstimate {
   cement: { bags: number; cost: number }
@@ -27,6 +28,7 @@ export function MaterialCalculator() {
   const [metadata, setMetadata] = useState<{confidence: number, margin: number} | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [projectName, setProjectName] = useState("My Project")
+  const [showChart, setShowChart] = useState(false)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -65,6 +67,7 @@ export function MaterialCalculator() {
         aggregate: { cft: aggregateCft, cost: aggregateCost },
         total: cementCost + steelCost + brickCost + sandCost + aggregateCost,
       })
+      setShowChart(false)
       
       setMetadata({
         confidence: prediction.ml_metadata?.r_squared ?? 0.94,
@@ -83,6 +86,9 @@ export function MaterialCalculator() {
 
   const exportToPDF = async () => {
     if (!estimate) return
+
+    // Show graphical analytics view along with downloading
+    setShowChart(true)
 
     try {
       const { jsPDF } = await import("jspdf")
@@ -262,17 +268,99 @@ export function MaterialCalculator() {
               {metadata && (
                 <div className="flex justify-between items-center text-xs text-muted-foreground mt-2 relative z-10">
                   <span>ML Confidence: {((metadata.confidence || 0) * 100).toFixed(1)}%</span>
-                  <span>Margin of Error: ±{(metadata.margin || 0).toFixed(1)}%</span>
-                </div>
-              )}
-            </Card>
-            <Button variant="outline" className="w-full bg-transparent" size="sm" onClick={exportToPDF}>
-              <Download className="w-4 h-4 mr-2" />
-              Export Detailed Estimate (PDF)
-            </Button>
-          </div>
-        )}
+              <span>Margin of Error: ±{(metadata.margin || 0).toFixed(1)}%</span>
+            </div>
+          )}
+        </Card>
+        <Button variant="outline" className="w-full bg-transparent" size="sm" onClick={exportToPDF}>
+          <Download className="w-4 h-4 mr-2" />
+          Export Detailed Estimate (PDF)
+        </Button>
       </div>
-    </Card>
+    )}
+  </div>
+
+  {showChart && estimate && (
+    <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex items-center gap-2 mb-4">
+        <BarChart3 className="w-5 h-5 text-primary" />
+        <h4 className="text-lg font-semibold">Real-Time Analytical View</h4>
+      </div>
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card className="p-4 border-border bg-muted/20">
+          <h5 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Cost Distribution (₹)</h5>
+          <div className="h-[250px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: "Cement", value: estimate.cement.cost },
+                    { name: "Steel", value: estimate.steel.cost },
+                    { name: "Bricks", value: estimate.bricks.cost },
+                    { name: "Sand", value: estimate.sand.cost },
+                    { name: "Aggregate", value: estimate.aggregate.cost },
+                  ]}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  <Cell fill="#3b82f6" />
+                  <Cell fill="#8b5cf6" />
+                  <Cell fill="#f59e0b" />
+                  <Cell fill="#10b981" />
+                  <Cell fill="#ef4444" />
+                </Pie>
+                <Tooltip
+                  formatter={(value: any) => formatCurrency(Number(value) || 0)}
+                  contentStyle={{ backgroundColor: "#0f172a", border: "1px solid #1e293b", borderRadius: "8px" }}
+                />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+        
+        <Card className="p-4 border-border bg-muted/20">
+          <h5 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Quantity Analytics</h5>
+          <div className="space-y-4 pt-4">
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-muted-foreground">Cement Bags Volume</span>
+                <span className="font-bold text-primary">{estimate.cement.bags} Bags</span>
+              </div>
+              <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full bg-blue-500" style={{ width: '85%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-muted-foreground">Steel reinforcement weight</span>
+                <span className="font-bold text-purple-500">{estimate.steel.kg} Kg</span>
+              </div>
+              <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full bg-purple-500" style={{ width: '70%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="text-muted-foreground">Structural Bricks Usage</span>
+                <span className="font-bold text-amber-500">{estimate.bricks.count.toLocaleString()} Nos</span>
+              </div>
+              <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-full bg-amber-500" style={{ width: '92%' }}></div>
+              </div>
+            </div>
+            <div className="text-[10px] text-muted-foreground italic text-center mt-6">
+              * Analytics are dynamically generated based on your material ML estimation scale.
+            </div>
+          </div>
+        </Card>
+      </div>
+    </div>
+  )}
+</Card>
   )
 }

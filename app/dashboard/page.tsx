@@ -30,6 +30,7 @@ import {
   Grid3x3,
   LayoutGrid,
   Cable as Cube,
+  BrainCircuit,
 } from "lucide-react"
 
 import { ErrorBoundary } from "@/components/error-boundary"
@@ -232,6 +233,13 @@ export default function DashboardPage() {
                   </button>
                 </Link>
 
+                <Link href="/dashboard/ai-worker-allocation">
+                  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all border border-muted-foreground/10 bg-indigo-500/5 hover:bg-indigo-500/10 dark:text-indigo-300">
+                    <BrainCircuit className="w-5 h-5 flex-shrink-0 text-indigo-500" />
+                    <span className="text-sm font-medium">AI Worker Allocation</span>
+                  </button>
+                </Link>
+
                 <Link href="/dashboard/careers">
                   <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
                     <Briefcase className="w-5 h-5 flex-shrink-0" />
@@ -246,7 +254,7 @@ export default function DashboardPage() {
                   </button>
                 </Link>
 
-                <Link href="/dashboard/settings">
+                <Link href="/settings">
                   <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
                     <Settings className="w-5 h-5 flex-shrink-0" />
                     <span className="text-sm font-medium">{t.settings}</span>
@@ -342,7 +350,7 @@ export default function DashboardPage() {
                       ))}
 
                       {/* Weather summary card */}
-                      <WeatherWidget location={user?.location || "Hyderabad"} />
+                      <WeatherWidget location={(user as any)?.location || "Hyderabad"} />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -590,7 +598,7 @@ export default function DashboardPage() {
                   onClick={() => {
                     const tasks = JSON.parse(localStorage.getItem("globalTasks") || "[]")
                     tasks.unshift({ id: crypto.randomUUID(), title: newTaskTitle, at: Date.now() })
-                    localStorage.setItem("globalTasks", JSON.unshift(tasks))
+                    localStorage.setItem("globalTasks", JSON.stringify(tasks))
                     setTaskOpen(false)
                     setNewTaskTitle("")
                   }}

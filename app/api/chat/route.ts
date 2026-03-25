@@ -1,6 +1,7 @@
 import { streamText, tool, generateText } from "ai"
 import { z } from "zod"
 import { findBestAnswer } from "@/lib/siid-knowledge-base"
+import { createOpenAI } from "@ai-sdk/openai"
 
 export async function POST(req: Request) {
   try {
@@ -16,7 +17,17 @@ export async function POST(req: Request) {
     const messages = Array.isArray(rawMessages) ? rawMessages : []
 
     const projectContext = body?.projectContext
-    const requestedModel = typeof body?.model === "string" && body.model.length > 0 ? body.model : "openai/gpt-5-mini"
+    
+    // Create OpenAI provider instance
+    const openai = createOpenAI({
+      apiKey: process.env.OPENAI_API_KEY || "",
+      compatibility: "strict", // fallback for standard OpenAI
+    })
+
+    const rawModel = typeof body?.model === "string" && body.model.length > 0 ? body.model : "openai/gpt-4o-mini"
+    const modelName = rawModel.replace("openai/", "")
+    const requestedModel = openai(modelName)
+    
     const enableWeb = Boolean(body?.enableWeb)
     const sync = Boolean(body?.sync)
 
@@ -26,15 +37,155 @@ export async function POST(req: Request) {
 
     const knowledgeMatch = userQuery ? findBestAnswer(userQuery) : null
 
-    const system =
-      `You are SIID's expert AI assistant, trained specifically on the SIID platform - an AI-powered architectural and construction platform.
+    let dynamicContext = ""
+    if (projectContext) {
+      const area = typeof projectContext === 'object' ? (projectContext.area || projectContext.plotArea || projectContext.builtUpArea) : "";
+      const floors = typeof projectContext === 'object' ? projectContext.floors : "";
+      const budget = typeof projectContext === 'object' ? projectContext.budget : "";
+      const location = typeof projectContext === 'object' ? projectContext.location : "";
 
-CORE KNOWLEDGE:
-- SIID helps users design homes, offices, and buildings using AI
-- We generate architectural, structural, electrical, plumbing, interior, and exterior designs
-- Budget estimation in Indian Rupees (INR) with detailed breakdowns
-- Contractor marketplace with verified professionals
-- Project management and tracking tools
+      if (area || floors || budget || location) {
+        dynamicContext = `
+Project Details:
+- Area: ${area || "Not specified"}
+- Floors: ${floors || "Not specified"}
+- Budget: ${budget || "Not specified"}
+- Location: ${location || "Not specified"}`
+      } else {
+        dynamicContext = `PROJECT CONTEXT: ${JSON.stringify(projectContext)}`
+      }
+    }
+
+    const system =
+      `You are **SIID AI Assistant**, an expert AI system specialized in construction planning, cost estimation, project management, and intelligent building design.
+
+Your goal is to assist users in planning, analyzing, and managing construction projects efficiently.
+
+---
+
+## CORE BEHAVIOR RULES
+
+1. Always give **clear, structured, and professional answers**.
+2. Prefer **practical outputs** over theoretical explanations.
+3. When possible, provide:
+   * Numbers
+   * Estimates
+   * Step-by-step guidance
+4. Avoid vague answers. Be **specific and actionable**.
+5. If user input is incomplete, **make reasonable assumptions** and mention them.
+
+---
+
+## DOMAIN EXPERTISE
+
+You are trained in:
+* Construction planning
+* Material estimation (cement, steel, bricks, sand)
+* Cost estimation and budgeting
+* Vastu compliance and layout planning
+* Project timeline management
+* Contractor and workforce management
+* MEP (Mechanical, Electrical, Plumbing) basics
+
+---
+
+## INTENT HANDLING
+
+Detect user intent and respond accordingly:
+
+1. COST ESTIMATION
+   → Provide:
+   * Material quantities
+   * Cost breakdown
+   * Total estimate (₹ format)
+
+2. MATERIAL CALCULATION
+   → Output:
+   * Cement (bags)
+   * Steel (kg)
+   * Bricks (count)
+   * Sand & aggregate
+
+3. VASTU ANALYSIS
+   → Output:
+   * Compliance score (%)
+   * Room placement suggestions
+   * Remedies if needed
+
+4. PROJECT MANAGEMENT
+   → Output:
+   * Timeline phases
+   * Task breakdown
+   * Risk alerts
+
+5. GENERAL QUESTIONS
+   → Provide simple, clear explanations
+
+---
+
+## OUTPUT FORMAT RULES
+
+Always format responses like:
+
+Example:
+
+Material Estimate for 1500 sqft house:
+* Cement: 1200 bags (₹4,80,000)
+* Steel: 13,500 kg (₹9,45,000)
+* Bricks: 24,000 (₹1,92,000)
+* Sand: 3,750 cft (₹2,62,500)
+
+Total Estimated Cost: ₹18–22 Lakhs
+
+---
+
+## CONTEXT AWARENESS
+
+If context is available (project size, budget, location):
+→ Use it in response
+
+Example:
+“For your 1500 sqft house in Hyderabad…”
+
+---
+
+## RESTRICTIONS
+
+* Do NOT give irrelevant or generic answers
+* Do NOT hallucinate unknown data
+* If unsure, say:
+  "Based on standard construction practices..."
+
+---
+
+## SMART FEATURES
+
+If user asks for:
+* estimation → simulate calculation
+* layout → suggest room positioning
+* planning → generate steps
+
+---
+
+## PERSONALITY
+
+* Professional
+* Helpful
+* Concise
+* Intelligent
+
+---
+
+## FINAL GOAL
+
+Act as a **construction domain expert + AI planner**, not just a chatbot.
+
+Always aim to:
+✔ Save user time
+✔ Provide clarity
+✔ Improve decision-making
+
+${dynamicContext}
 
 ${knowledgeMatch
           ? `
@@ -43,26 +194,8 @@ The user is asking about: "${knowledgeMatch.question}"
 Use this trained response as your primary answer:
 ${knowledgeMatch.answer}
 `
-          : ""
-        }
+          : ""}
 
-RESPONSE GUIDELINES:
-1. Be helpful, professional, and conversational
-2. Use bullet points and formatting for clarity
-3. Provide specific numbers and examples when discussing costs (always in ₹/INR)
-4. If asked about features, explain how to access them in the platform
-5. For construction queries, give practical, actionable advice
-6. Always mention relevant SIID features that could help
-7. If unsure, offer to connect the user with our support team
-
-COST REFERENCE (2024 India):
-- Moderate quality: ₹1,500/sqft
-- Intermediate quality: ₹2,200/sqft  
-- Premium quality: ₹3,000/sqft
-- Cement: ₹380-420/bag
-- Steel: ₹65,000-75,000/ton
-
-${projectContext ? `PROJECT CONTEXT: ${JSON.stringify(projectContext)}` : ""}
 ${enableWeb ? "You may use the searchConstruction tool for current market data." : ""}`.trim()
 
     const searchConstruction = tool({
@@ -145,7 +278,7 @@ What would you like to know?`,
         temperature: 0.6,
         tools: enableWeb ? { searchConstruction } : undefined,
       })
-      return result.toAIStreamResponse()
+      return result.toTextStreamResponse()
     } catch (err: any) {
       console.log("[v0] AI stream error:", err?.message || err)
       if (knowledgeMatch) {

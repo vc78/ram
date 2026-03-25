@@ -1,0 +1,67 @@
+[
+  {
+    "id": "arch-001",
+    "name": "Contemporary Open Plan",
+    "category": "Architectural Layout",
+    "type": "2D Layout",
+    "description": "Spacious open living area with integrated kitchen and deck access. Ideal for modern families.",
+    "thumbnail": "/images/architectural-floorplan.jpg",
+    "features": [
+      "Open Kitchen",
+      "Glass Partition",
+      "Natural Lighting"
+    ]
+  },
+  {
+    "id": "struct-001",
+    "name": "Heavy-Duty RCC Frame",
+    "category": "Structural Layout",
+    "type": "Technical Plan",
+    "description": "Standard beam and column configuration for G+2 structures with high safety factors.",
+    "thumbnail": "/images/structural-layout.jpg",
+    "features": [
+      "Reinforced Columns",
+      "Beam Continuity",
+      "Shear Wall Optional"
+    ]
+  },
+  {
+    "id": "elec-001",
+    "name": "Smart Home Wiring",
+    "category": "Electrical Layout",
+    "type": "System Diagram",
+    "description": "Includes automated light controls, IoT sensor placement, and heavy appliance circuits.",
+    "thumbnail": "/images/electrical-layout.jpg",
+    "features": [
+      "Automation Hub",
+      "UPS Backup",
+      "Concealed Wiring"
+    ]
+  },
+  {
+    "id": "int-001",
+    "name": "Minimalist Zen",
+    "category": "Interior Layout",
+    "type": "3D View",
+    "description": "Clean lines, neutral palette, and functional furniture arrangement for maximum space.",
+    "thumbnail": "/images/interior-layout.jpg",
+    "features": [
+      "Modular Kitchen",
+      "Walk-in Closet",
+      "Indirect Lighting"
+    ]
+  },
+  {
+    "id": "ext-001",
+    "name": "Modern Industrial Facade",
+    "category": "Exterior Layout",
+    "type": "Rendering",
+    "description": "Exposed brick finish with metal frames and large window panes for a bold look.",
+    "thumbnail": "/images/exterior-layout.jpg",
+    "features": [
+      "Terrace Garden",
+      "Stone Cladding",
+      "LED Strip Lighting"
+    ]
+  }
+]

@@ -1,0 +1,698 @@
+[
+  {
+    "id": "e6186851-5f3b-4c1f-85b6-f00e6da61e9c",
+    "user_id": "demo-user",
+    "project_name": "BMR residency",
+    "floors": "1",
+    "location": "ongole,andhra  pradesh",
+    "plot_area": "1200",
+    "created_at": "2026-03-14T14:58:24.957Z"
+  },
+  {
+    "id": "95e1aee5-3692-4595-ba15-2266012ae3f0",
+    "user_id": "demo-user",
+    "project_name": "BMR residency",
+    "floors": "1",
+    "location": "ongole,andhra pradesh",
+    "plot_area": "1200",
+    "created_at": "2026-03-15T13:38:55.053Z"
+  },
+  {
+    "id": "04d2eb79-709f-4e1c-9b23-fcfbffb167ba",
+    "user_id": "demo-user",
+    "project_name": "BMR residency",
+    "floors": "1",
+    "location": "17.563727, 78.444957",
+    "plot_area": "1200",
+    "construction_type": "Steel Structure",
+    "materials": "Standard",
+    "amenities": [
+      "Water Storage",
+      "Power Backup"
+    ],
+    "construction_grade": "Standard",
+    "building_type": "residential",
+    "interior_preference": "Modern",
+    "exterior_type": "Contemporary",
+    "created_at": "2026-03-16T09:45:36.769Z"
+  },
+  {
+    "id": "21863d5e-db7c-4a8b-afd4-0565be921885",
+    "user_id": "demo-user",
+    "project_name": "BMR",
+    "floors": "1",
+    "location": "17.563727, 78.444957",
+    "plot_area": "1200",
+    "construction_type": "RCC Frame",
+    "materials": "Standard",
+    "amenities": [
+      "Water Storage",
+      "Power Backup"
+    ],
+    "construction_grade": "Standard",
+    "building_type": "residential",
+    "interior_preference": "Modern",
+    "exterior_type": "Contemporary",
+    "created_at": "2026-03-16T09:53:52.248Z"
+  },
+  {
+    "id": "f9568b55-b4b6-4f01-bc43-e4eb8f452257",
+    "user_id": "demo-user",
+    "project_name": "BMR residency",
+    "floors": "1",
+    "location": "17.564533, 78.444611",
+    "plot_area": "1200",
+    "construction_type": "RCC Frame",
+    "materials": "Standard",
+    "amenities": [
+      "Water Storage",
+      "Power Backup"
+    ],
+    "construction_grade": "Standard",
+    "building_type": "residential",
+    "interior_preference": "Modern",
+    "exterior_type": "Contemporary",
+    "created_at": "2026-03-25T04:11:56.540Z",
+    "estimation": {
+      "budgetRange": {
+        "min": 48,
+        "max": 55
+      },
+      "itemized": {
+        "civil_work": 23,
+        "finishing": 13,
+        "mep_systems": 2,
+        "consultancy_fees": 4,
+        "contingency": 4,
+        "govt_taxes_permits": 8
+      },
+      "dimensions": {
+        "primary": "39ft x 64ft (Optimized Structural Grid)",
+        "secondary": "Predicted Steel Consumption: 9500 kg",
+        "tertiary": "Concrete Volume Estimate: 300 cum (M25 Grade)"
+      }
+    },
+    "materialQuantity": {
+      "cement": 1005,
+      "steel": 11270,
+      "bricks": 31250,
+      "sand": 4500,
+      "aggregate": 3250
+    },
+    "updated_at": "2026-03-25T04:12:12.570Z",
+    "designs": {
+      "variants": [
+        {
+          "id": "variant-1",
+          "provider": "SIID-AI-Engine-v4",
+          "model": "Enterprise-AEC-Model",
+          "variant": 1,
+          "categories": {
+            "architectural": {
+              "floorPlanImage": "https://image.pollinations.ai/prompt/architectural%20technical%20floor%20plan%20blueprint%20residential%20building%2C%20high%20detail%2C%202D%20top%20view%2C%20professional%20cad%20drawing%2C%20white%20background%2C%20black%20lines%2C%20dimensions%2C%20labels%2C%20Neo-Modern?width=1280&height=720&seed=1774411932467&model=flux-realism",
+              "renderingImage": "https://image.pollinations.ai/prompt/photorealistic%203D%20architectural%20rendering%20of%20a%20Neo-Modern%20residential%20building%20in%2017.564533%2C%2078.444611%2C%20golden%20hour%20lighting%2C%20cinematic%2C%20ultra-detailed%20facade%2C%20high-end%20materials%3A%20concrete%2C%20glass%2C%20metal?width=1280&height=720&seed=1774411932468&model=flux-realism",
+              "description": "A Neo-Modern approach focusing on Double Height Ceiling integration, Maximum Floor Area Ratio (FAR) utilization, Passive cooling facade design, Universal accessibility compliance, Interactive LED lighting zones."
+            },
+            "structural": {
+              "layoutImage": "https://image.pollinations.ai/prompt/structural%20engineering%20diagram%20of%20RCC%20frame%20building%2C%20foundation%2C%20columns%2C%20beams%2C%20technical%20blueprint%2C%203D%20isometric%20view%2C%20professional%20white%20background?width=1280&height=720&seed=1774411932469&model=flux-realism",
+              "specifications": {
+                "foundationType": "Raft Foundation with Anti-Termite Treatment",
+                "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+                "materialUsageEfficiency": "High (Low waste structural grid)"
+              }
+            },
+            "mep": {
+              "layoutImage": "https://image.pollinations.ai/prompt/MEP%20engineering%20layout%20diagram%2C%20plumbing%20and%20electrical%20conduits%20schematic%2C%203D%20visualization%20inside%20a%20residential%20building%2C%20colorful%20pipes%20and%20wires%2C%20technical?width=1280&height=720&seed=1774411932470&model=flux-realism",
+              "details": {
+                "hvacStrategy": "High-COP Ducted Split System",
+                "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+                "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+              }
+            },
+            "interior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/luxurious%20interior%20design%20rendering%20of%20a%20residential%20lobby%2Fhall%2C%20Neo-Modern%20style%2C%20expensive%20furniture%2C%20ambient%20lighting%2C%20high%20quality%20materials%3A%20marble%2C%20wood%2C%20velvet?width=1280&height=720&seed=1774411932471&model=flux-realism",
+              "moodBoardImage": "https://image.pollinations.ai/prompt/interior%20design%20mood%20board%20for%20Neo-Modern%20style%2C%20materials%20swatches%2C%20color%20palette%2C%20fabric%2C%20stone%2C%20metal%20textures%2C%20professional%20presentation?width=1280&height=720&seed=1774411932472&model=flux-realism"
+            },
+            "exterior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/wide%20angle%20aerial%20view%20of%20a%20residential%20building%20site%20in%2017.564533%2C%2078.444611%2C%20Neo-Modern%20architecture%2C%20beautiful%20landscaping%2C%20cars%20on%20road%2C%20people%20walking%2C%20photorealistic?width=1280&height=720&seed=1774411932473&model=flux-realism"
+            },
+            "estimatedCost": {
+              "total": "₹48L - ₹55L",
+              "breakdown": "Civil: 45%, Finishing: 30%, MEP: 15%, Permits: 10%"
+            },
+            "timeline": {
+              "designPhase": "45 Days",
+              "constructionPhase": "12 - 14 Months",
+              "handoverDate": "Q3 2026"
+            }
+          },
+          "style": "Neo-Modern",
+          "architecturalFeatures": [
+            "Double Height Ceiling integration",
+            "Maximum Floor Area Ratio (FAR) utilization",
+            "Passive cooling facade design",
+            "Universal accessibility compliance",
+            "Interactive LED lighting zones"
+          ],
+          "structuralSpecifications": {
+            "foundationType": "Raft Foundation with Anti-Termite Treatment",
+            "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+            "materialUsageEfficiency": "High (Low waste structural grid)"
+          },
+          "mepIntelligence": {
+            "hvacStrategy": "High-COP Ducted Split System",
+            "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+            "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+          },
+          "vastuScore": 85,
+          "sustainabilityRating": "LEED Gold equivalent / GRIHA 4-Star",
+          "estimatedTimeline": {
+            "designPhase": "45 Days",
+            "constructionPhase": "12 - 14 Months",
+            "handoverDate": "Q3 2026"
+          }
+        }
+      ],
+      "summary": {
+        "totalVariants": 1,
+        "bestVastu": "variant-1",
+        "mostEfficient": "variant-1"
+      }
+    }
+  },
+  {
+    "id": "d4e87224-67df-44c2-bf8b-9149db3fa1da",
+    "user_id": "demo-user",
+    "project_name": "bmr residency",
+    "floors": "1",
+    "location": "17.564533, 78.444611",
+    "plot_area": "1200",
+    "construction_type": "RCC Frame",
+    "materials": "Standard",
+    "amenities": [
+      "Water Storage",
+      "Power Backup"
+    ],
+    "construction_grade": "Standard",
+    "building_type": "residential",
+    "interior_preference": "Modern",
+    "exterior_type": "Contemporary",
+    "created_at": "2026-03-25T04:14:28.425Z",
+    "estimation": {
+      "budgetRange": {
+        "min": 48,
+        "max": 55
+      },
+      "itemized": {
+        "civil_work": 23,
+        "finishing": 13,
+        "mep_systems": 2,
+        "consultancy_fees": 4,
+        "contingency": 4,
+        "govt_taxes_permits": 8
+      },
+      "dimensions": {
+        "primary": "39ft x 64ft (Optimized Structural Grid)",
+        "secondary": "Predicted Steel Consumption: 9500 kg",
+        "tertiary": "Concrete Volume Estimate: 300 cum (M25 Grade)"
+      }
+    },
+    "materialQuantity": {
+      "cement": 1005,
+      "steel": 11270,
+      "bricks": 31250,
+      "sand": 4500,
+      "aggregate": 3250
+    },
+    "updated_at": "2026-03-25T04:14:32.767Z",
+    "designs": {
+      "variants": [
+        {
+          "id": "variant-1",
+          "provider": "SIID-AI-Engine-v4",
+          "model": "Enterprise-AEC-Model",
+          "variant": 1,
+          "categories": {
+            "architectural": {
+              "floorPlanImage": "https://image.pollinations.ai/prompt/architectural%20technical%20floor%20plan%20blueprint%20residential%20building%2C%20high%20detail%2C%202D%20top%20view%2C%20professional%20cad%20drawing%2C%20white%20background%2C%20black%20lines%2C%20dimensions%2C%20labels%2C%20Neo-Modern?width=1280&height=720&seed=1774412072629&model=flux-realism",
+              "renderingImage": "https://image.pollinations.ai/prompt/photorealistic%203D%20architectural%20rendering%20of%20a%20Neo-Modern%20residential%20building%20in%2017.564533%2C%2078.444611%2C%20golden%20hour%20lighting%2C%20cinematic%2C%20ultra-detailed%20facade%2C%20high-end%20materials%3A%20concrete%2C%20glass%2C%20metal?width=1280&height=720&seed=1774412072630&model=flux-realism",
+              "description": "A Neo-Modern approach focusing on Double Height Ceiling integration, Maximum Floor Area Ratio (FAR) utilization, Passive cooling facade design, Universal accessibility compliance, Interactive LED lighting zones."
+            },
+            "structural": {
+              "layoutImage": "https://image.pollinations.ai/prompt/structural%20engineering%20diagram%20of%20RCC%20frame%20building%2C%20foundation%2C%20columns%2C%20beams%2C%20technical%20blueprint%2C%203D%20isometric%20view%2C%20professional%20white%20background?width=1280&height=720&seed=1774412072631&model=flux-realism",
+              "specifications": {
+                "foundationType": "Raft Foundation with Anti-Termite Treatment",
+                "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+                "materialUsageEfficiency": "High (Low waste structural grid)"
+              }
+            },
+            "mep": {
+              "layoutImage": "https://image.pollinations.ai/prompt/MEP%20engineering%20layout%20diagram%2C%20plumbing%20and%20electrical%20conduits%20schematic%2C%203D%20visualization%20inside%20a%20residential%20building%2C%20colorful%20pipes%20and%20wires%2C%20technical?width=1280&height=720&seed=1774412072632&model=flux-realism",
+              "details": {
+                "hvacStrategy": "High-COP Ducted Split System",
+                "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+                "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+              }
+            },
+            "interior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/luxurious%20interior%20design%20rendering%20of%20a%20residential%20lobby%2Fhall%2C%20Neo-Modern%20style%2C%20expensive%20furniture%2C%20ambient%20lighting%2C%20high%20quality%20materials%3A%20marble%2C%20wood%2C%20velvet?width=1280&height=720&seed=1774412072633&model=flux-realism",
+              "moodBoardImage": "https://image.pollinations.ai/prompt/interior%20design%20mood%20board%20for%20Neo-Modern%20style%2C%20materials%20swatches%2C%20color%20palette%2C%20fabric%2C%20stone%2C%20metal%20textures%2C%20professional%20presentation?width=1280&height=720&seed=1774412072634&model=flux-realism"
+            },
+            "exterior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/wide%20angle%20aerial%20view%20of%20a%20residential%20building%20site%20in%2017.564533%2C%2078.444611%2C%20Neo-Modern%20architecture%2C%20beautiful%20landscaping%2C%20cars%20on%20road%2C%20people%20walking%2C%20photorealistic?width=1280&height=720&seed=1774412072635&model=flux-realism"
+            },
+            "estimatedCost": {
+              "total": "₹48L - ₹55L",
+              "breakdown": "Civil: 45%, Finishing: 30%, MEP: 15%, Permits: 10%"
+            },
+            "timeline": {
+              "designPhase": "45 Days",
+              "constructionPhase": "12 - 14 Months",
+              "handoverDate": "Q3 2026"
+            }
+          },
+          "style": "Neo-Modern",
+          "architecturalFeatures": [
+            "Double Height Ceiling integration",
+            "Maximum Floor Area Ratio (FAR) utilization",
+            "Passive cooling facade design",
+            "Universal accessibility compliance",
+            "Interactive LED lighting zones"
+          ],
+          "structuralSpecifications": {
+            "foundationType": "Raft Foundation with Anti-Termite Treatment",
+            "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+            "materialUsageEfficiency": "High (Low waste structural grid)"
+          },
+          "mepIntelligence": {
+            "hvacStrategy": "High-COP Ducted Split System",
+            "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+            "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+          },
+          "vastuScore": 85,
+          "sustainabilityRating": "LEED Gold equivalent / GRIHA 4-Star",
+          "estimatedTimeline": {
+            "designPhase": "45 Days",
+            "constructionPhase": "12 - 14 Months",
+            "handoverDate": "Q3 2026"
+          }
+        }
+      ],
+      "summary": {
+        "totalVariants": 1,
+        "bestVastu": "variant-1",
+        "mostEfficient": "variant-1"
+      }
+    }
+  },
+  {
+    "id": "a0bc5d79-5c1a-4304-88aa-0d94faf1f355",
+    "user_id": "demo-user",
+    "project_name": "BMR residency",
+    "floors": "1",
+    "location": "Ongole,Andhra Pradesh",
+    "plot_area": "1200",
+    "construction_type": "RCC Frame",
+    "materials": "Standard",
+    "amenities": [
+      "Water Storage",
+      "Power Backup"
+    ],
+    "construction_grade": "Standard",
+    "building_type": "residential",
+    "interior_preference": "Modern",
+    "exterior_type": "Contemporary",
+    "created_at": "2026-03-25T05:17:26.676Z",
+    "estimation": {
+      "budgetRange": {
+        "min": 48,
+        "max": 55
+      },
+      "itemized": {
+        "civil_work": 23,
+        "finishing": 13,
+        "mep_systems": 2,
+        "consultancy_fees": 4,
+        "contingency": 4,
+        "govt_taxes_permits": 8
+      },
+      "dimensions": {
+        "primary": "39ft x 64ft (Optimized Structural Grid)",
+        "secondary": "Predicted Steel Consumption: 9500 kg",
+        "tertiary": "Concrete Volume Estimate: 300 cum (M25 Grade)"
+      }
+    },
+    "materialQuantity": {
+      "cement": 1005,
+      "steel": 11270,
+      "bricks": 31250,
+      "sand": 4500,
+      "aggregate": 3250
+    },
+    "updated_at": "2026-03-25T05:17:51.625Z",
+    "designs": {
+      "variants": [
+        {
+          "id": "variant-1",
+          "provider": "SIID-AI-Engine-v4",
+          "model": "Enterprise-AEC-Model",
+          "variant": 1,
+          "categories": {
+            "architectural": {
+              "floorPlanImage": "https://image.pollinations.ai/prompt/architectural%20technical%20floor%20plan%20blueprint%20residential%20building%2C%20high%20detail%2C%202D%20top%20view%2C%20professional%20cad%20drawing%2C%20white%20background%2C%20black%20lines%2C%20dimensions%2C%20labels%2C%20Neo-Modern?width=1280&height=720&seed=1774415871467&model=flux-realism",
+              "renderingImage": "https://image.pollinations.ai/prompt/photorealistic%203D%20architectural%20rendering%20of%20a%20Neo-Modern%20residential%20building%20in%20Ongole%2CAndhra%20Pradesh%2C%20golden%20hour%20lighting%2C%20cinematic%2C%20ultra-detailed%20facade%2C%20high-end%20materials%3A%20concrete%2C%20glass%2C%20metal?width=1280&height=720&seed=1774415871468&model=flux-realism",
+              "description": "A Neo-Modern approach focusing on Double Height Ceiling integration, Maximum Floor Area Ratio (FAR) utilization, Passive cooling facade design, Universal accessibility compliance, Interactive LED lighting zones."
+            },
+            "structural": {
+              "layoutImage": "https://image.pollinations.ai/prompt/structural%20engineering%20diagram%20of%20RCC%20frame%20building%2C%20foundation%2C%20columns%2C%20beams%2C%20technical%20blueprint%2C%203D%20isometric%20view%2C%20professional%20white%20background?width=1280&height=720&seed=1774415871469&model=flux-realism",
+              "specifications": {
+                "foundationType": "Raft Foundation with Anti-Termite Treatment",
+                "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+                "materialUsageEfficiency": "High (Low waste structural grid)"
+              }
+            },
+            "mep": {
+              "layoutImage": "https://image.pollinations.ai/prompt/MEP%20engineering%20layout%20diagram%2C%20plumbing%20and%20electrical%20conduits%20schematic%2C%203D%20visualization%20inside%20a%20residential%20building%2C%20colorful%20pipes%20and%20wires%2C%20technical?width=1280&height=720&seed=1774415871470&model=flux-realism",
+              "details": {
+                "hvacStrategy": "High-COP Ducted Split System",
+                "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+                "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+              }
+            },
+            "interior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/luxurious%20interior%20design%20rendering%20of%20a%20residential%20lobby%2Fhall%2C%20Neo-Modern%20style%2C%20expensive%20furniture%2C%20ambient%20lighting%2C%20high%20quality%20materials%3A%20marble%2C%20wood%2C%20velvet?width=1280&height=720&seed=1774415871471&model=flux-realism",
+              "moodBoardImage": "https://image.pollinations.ai/prompt/interior%20design%20mood%20board%20for%20Neo-Modern%20style%2C%20materials%20swatches%2C%20color%20palette%2C%20fabric%2C%20stone%2C%20metal%20textures%2C%20professional%20presentation?width=1280&height=720&seed=1774415871472&model=flux-realism"
+            },
+            "exterior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/wide%20angle%20aerial%20view%20of%20a%20residential%20building%20site%20in%20Ongole%2CAndhra%20Pradesh%2C%20Neo-Modern%20architecture%2C%20beautiful%20landscaping%2C%20cars%20on%20road%2C%20people%20walking%2C%20photorealistic?width=1280&height=720&seed=1774415871473&model=flux-realism"
+            },
+            "estimatedCost": {
+              "total": "₹48L - ₹55L",
+              "breakdown": "Civil: 45%, Finishing: 30%, MEP: 15%, Permits: 10%"
+            },
+            "timeline": {
+              "designPhase": "45 Days",
+              "constructionPhase": "12 - 14 Months",
+              "handoverDate": "Q3 2026"
+            }
+          },
+          "style": "Neo-Modern",
+          "architecturalFeatures": [
+            "Double Height Ceiling integration",
+            "Maximum Floor Area Ratio (FAR) utilization",
+            "Passive cooling facade design",
+            "Universal accessibility compliance",
+            "Interactive LED lighting zones"
+          ],
+          "structuralSpecifications": {
+            "foundationType": "Raft Foundation with Anti-Termite Treatment",
+            "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+            "materialUsageEfficiency": "High (Low waste structural grid)"
+          },
+          "mepIntelligence": {
+            "hvacStrategy": "High-COP Ducted Split System",
+            "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+            "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+          },
+          "vastuScore": 85,
+          "sustainabilityRating": "LEED Gold equivalent / GRIHA 4-Star",
+          "estimatedTimeline": {
+            "designPhase": "45 Days",
+            "constructionPhase": "12 - 14 Months",
+            "handoverDate": "Q3 2026"
+          }
+        }
+      ],
+      "summary": {
+        "totalVariants": 1,
+        "bestVastu": "variant-1",
+        "mostEfficient": "variant-1"
+      }
+    }
+  },
+  {
+    "id": "de4aae17-7e3f-4bce-be91-0ab65b22659a",
+    "user_id": "demo-user",
+    "project_name": "BMR Residency",
+    "floors": "1",
+    "location": "hyderabad,telangana",
+    "plot_area": "1200",
+    "construction_type": "RCC Frame",
+    "materials": "Standard",
+    "amenities": [
+      "Water Storage",
+      "Power Backup"
+    ],
+    "construction_grade": "Standard",
+    "building_type": "residential",
+    "interior_preference": "Modern",
+    "exterior_type": "Contemporary",
+    "created_at": "2026-03-25T05:30:43.470Z",
+    "estimation": {
+      "budgetRange": {
+        "min": 62,
+        "max": 70
+      },
+      "itemized": {
+        "civil_work": 29,
+        "finishing": 16,
+        "mep_systems": 3,
+        "consultancy_fees": 5,
+        "contingency": 5,
+        "govt_taxes_permits": 10
+      },
+      "dimensions": {
+        "primary": "39ft x 64ft (Optimized Structural Grid)",
+        "secondary": "Predicted Steel Consumption: 9500 kg",
+        "tertiary": "Concrete Volume Estimate: 300 cum (M25 Grade)"
+      }
+    },
+    "materialQuantity": {
+      "cement": 1005,
+      "steel": 11270,
+      "bricks": 31250,
+      "sand": 4500,
+      "aggregate": 3250
+    },
+    "updated_at": "2026-03-25T05:31:11.499Z",
+    "designs": {
+      "variants": [
+        {
+          "id": "variant-3",
+          "provider": "SIID-AI-Engine-v4",
+          "model": "Enterprise-AEC-Model",
+          "variant": 3,
+          "categories": {
+            "architectural": {
+              "floorPlanImage": "https://image.pollinations.ai/prompt/architectural%20technical%20floor%20plan%20blueprint%20residential%20building%2C%20high%20detail%2C%202D%20top%20view%2C%20professional%20cad%20drawing%2C%20white%20background%2C%20black%20lines%2C%20dimensions%2C%20labels%2C%20Industrial%20Loft?width=1280&height=720&seed=1774416671405&model=flux-realism",
+              "renderingImage": "https://image.pollinations.ai/prompt/photorealistic%203D%20architectural%20rendering%20of%20a%20Industrial%20Loft%20residential%20building%20in%20hyderabad%2Ctelangana%2C%20golden%20hour%20lighting%2C%20cinematic%2C%20ultra-detailed%20facade%2C%20high-end%20materials%3A%20concrete%2C%20glass%2C%20metal?width=1280&height=720&seed=1774416671406&model=flux-realism",
+              "description": "A Industrial Loft approach focusing on Double Height Ceiling integration, Maximum Floor Area Ratio (FAR) utilization, Passive cooling facade design, Universal accessibility compliance, Interactive LED lighting zones."
+            },
+            "structural": {
+              "layoutImage": "https://image.pollinations.ai/prompt/structural%20engineering%20diagram%20of%20RCC%20frame%20building%2C%20foundation%2C%20columns%2C%20beams%2C%20technical%20blueprint%2C%203D%20isometric%20view%2C%20professional%20white%20background?width=1280&height=720&seed=1774416671407&model=flux-realism",
+              "specifications": {
+                "foundationType": "Raft Foundation with Anti-Termite Treatment",
+                "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+                "materialUsageEfficiency": "High (Low waste structural grid)"
+              }
+            },
+            "mep": {
+              "layoutImage": "https://image.pollinations.ai/prompt/MEP%20engineering%20layout%20diagram%2C%20plumbing%20and%20electrical%20conduits%20schematic%2C%203D%20visualization%20inside%20a%20residential%20building%2C%20colorful%20pipes%20and%20wires%2C%20technical?width=1280&height=720&seed=1774416671408&model=flux-realism",
+              "details": {
+                "hvacStrategy": "High-COP Ducted Split System",
+                "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+                "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+              }
+            },
+            "interior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/luxurious%20interior%20design%20rendering%20of%20a%20residential%20lobby%2Fhall%2C%20Industrial%20Loft%20style%2C%20expensive%20furniture%2C%20ambient%20lighting%2C%20high%20quality%20materials%3A%20marble%2C%20wood%2C%20velvet?width=1280&height=720&seed=1774416671409&model=flux-realism",
+              "moodBoardImage": "https://image.pollinations.ai/prompt/interior%20design%20mood%20board%20for%20Industrial%20Loft%20style%2C%20materials%20swatches%2C%20color%20palette%2C%20fabric%2C%20stone%2C%20metal%20textures%2C%20professional%20presentation?width=1280&height=720&seed=1774416671410&model=flux-realism"
+            },
+            "exterior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/wide%20angle%20aerial%20view%20of%20a%20residential%20building%20site%20in%20hyderabad%2Ctelangana%2C%20Industrial%20Loft%20architecture%2C%20beautiful%20landscaping%2C%20cars%20on%20road%2C%20people%20walking%2C%20photorealistic?width=1280&height=720&seed=1774416671411&model=flux-realism"
+            },
+            "estimatedCost": {
+              "total": "₹62L - ₹70L",
+              "breakdown": "Civil: 45%, Finishing: 30%, MEP: 15%, Permits: 10%"
+            },
+            "timeline": {
+              "designPhase": "45 Days",
+              "constructionPhase": "12 - 14 Months",
+              "handoverDate": "Q3 2026"
+            }
+          },
+          "style": "Industrial Loft",
+          "architecturalFeatures": [
+            "Double Height Ceiling integration",
+            "Maximum Floor Area Ratio (FAR) utilization",
+            "Passive cooling facade design",
+            "Universal accessibility compliance",
+            "Interactive LED lighting zones"
+          ],
+          "structuralSpecifications": {
+            "foundationType": "Raft Foundation with Anti-Termite Treatment",
+            "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+            "materialUsageEfficiency": "High (Low waste structural grid)"
+          },
+          "mepIntelligence": {
+            "hvacStrategy": "High-COP Ducted Split System",
+            "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+            "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+          },
+          "vastuScore": 89,
+          "sustainabilityRating": "LEED Gold equivalent / GRIHA 4-Star",
+          "estimatedTimeline": {
+            "designPhase": "45 Days",
+            "constructionPhase": "12 - 14 Months",
+            "handoverDate": "Q3 2026"
+          }
+        },
+        {
+          "id": "variant-2",
+          "provider": "SIID-AI-Engine-v4",
+          "model": "Enterprise-AEC-Model",
+          "variant": 2,
+          "categories": {
+            "architectural": {
+              "floorPlanImage": "https://image.pollinations.ai/prompt/architectural%20technical%20floor%20plan%20blueprint%20residential%20building%2C%20high%20detail%2C%202D%20top%20view%2C%20professional%20cad%20drawing%2C%20white%20background%2C%20black%20lines%2C%20dimensions%2C%20labels%2C%20Contemporary%20Tropical?width=1280&height=720&seed=1774416671403&model=flux-realism",
+              "renderingImage": "https://image.pollinations.ai/prompt/photorealistic%203D%20architectural%20rendering%20of%20a%20Contemporary%20Tropical%20residential%20building%20in%20hyderabad%2Ctelangana%2C%20golden%20hour%20lighting%2C%20cinematic%2C%20ultra-detailed%20facade%2C%20high-end%20materials%3A%20concrete%2C%20glass%2C%20metal?width=1280&height=720&seed=1774416671404&model=flux-realism",
+              "description": "A Contemporary Tropical approach focusing on Double Height Ceiling integration, Maximum Floor Area Ratio (FAR) utilization, Passive cooling facade design, Universal accessibility compliance, Interactive LED lighting zones."
+            },
+            "structural": {
+              "layoutImage": "https://image.pollinations.ai/prompt/structural%20engineering%20diagram%20of%20RCC%20frame%20building%2C%20foundation%2C%20columns%2C%20beams%2C%20technical%20blueprint%2C%203D%20isometric%20view%2C%20professional%20white%20background?width=1280&height=720&seed=1774416671405&model=flux-realism",
+              "specifications": {
+                "foundationType": "Raft Foundation with Anti-Termite Treatment",
+                "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+                "materialUsageEfficiency": "High (Low waste structural grid)"
+              }
+            },
+            "mep": {
+              "layoutImage": "https://image.pollinations.ai/prompt/MEP%20engineering%20layout%20diagram%2C%20plumbing%20and%20electrical%20conduits%20schematic%2C%203D%20visualization%20inside%20a%20residential%20building%2C%20colorful%20pipes%20and%20wires%2C%20technical?width=1280&height=720&seed=1774416671406&model=flux-realism",
+              "details": {
+                "hvacStrategy": "High-COP Ducted Split System",
+                "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+                "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+              }
+            },
+            "interior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/luxurious%20interior%20design%20rendering%20of%20a%20residential%20lobby%2Fhall%2C%20Contemporary%20Tropical%20style%2C%20expensive%20furniture%2C%20ambient%20lighting%2C%20high%20quality%20materials%3A%20marble%2C%20wood%2C%20velvet?width=1280&height=720&seed=1774416671407&model=flux-realism",
+              "moodBoardImage": "https://image.pollinations.ai/prompt/interior%20design%20mood%20board%20for%20Contemporary%20Tropical%20style%2C%20materials%20swatches%2C%20color%20palette%2C%20fabric%2C%20stone%2C%20metal%20textures%2C%20professional%20presentation?width=1280&height=720&seed=1774416671408&model=flux-realism"
+            },
+            "exterior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/wide%20angle%20aerial%20view%20of%20a%20residential%20building%20site%20in%20hyderabad%2Ctelangana%2C%20Contemporary%20Tropical%20architecture%2C%20beautiful%20landscaping%2C%20cars%20on%20road%2C%20people%20walking%2C%20photorealistic?width=1280&height=720&seed=1774416671409&model=flux-realism"
+            },
+            "estimatedCost": {
+              "total": "₹62L - ₹70L",
+              "breakdown": "Civil: 45%, Finishing: 30%, MEP: 15%, Permits: 10%"
+            },
+            "timeline": {
+              "designPhase": "45 Days",
+              "constructionPhase": "12 - 14 Months",
+              "handoverDate": "Q3 2026"
+            }
+          },
+          "style": "Contemporary Tropical",
+          "architecturalFeatures": [
+            "Double Height Ceiling integration",
+            "Maximum Floor Area Ratio (FAR) utilization",
+            "Passive cooling facade design",
+            "Universal accessibility compliance",
+            "Interactive LED lighting zones"
+          ],
+          "structuralSpecifications": {
+            "foundationType": "Raft Foundation with Anti-Termite Treatment",
+            "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+            "materialUsageEfficiency": "High (Low waste structural grid)"
+          },
+          "mepIntelligence": {
+            "hvacStrategy": "High-COP Ducted Split System",
+            "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+            "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+          },
+          "vastuScore": 87,
+          "sustainabilityRating": "LEED Gold equivalent / GRIHA 4-Star",
+          "estimatedTimeline": {
+            "designPhase": "45 Days",
+            "constructionPhase": "12 - 14 Months",
+            "handoverDate": "Q3 2026"
+          }
+        },
+        {
+          "id": "variant-1",
+          "provider": "SIID-AI-Engine-v4",
+          "model": "Enterprise-AEC-Model",
+          "variant": 1,
+          "categories": {
+            "architectural": {
+              "floorPlanImage": "https://image.pollinations.ai/prompt/architectural%20technical%20floor%20plan%20blueprint%20residential%20building%2C%20high%20detail%2C%202D%20top%20view%2C%20professional%20cad%20drawing%2C%20white%20background%2C%20black%20lines%2C%20dimensions%2C%20labels%2C%20Neo-Modern?width=1280&height=720&seed=1774416671402&model=flux-realism",
+              "renderingImage": "https://image.pollinations.ai/prompt/photorealistic%203D%20architectural%20rendering%20of%20a%20Neo-Modern%20residential%20building%20in%20hyderabad%2Ctelangana%2C%20golden%20hour%20lighting%2C%20cinematic%2C%20ultra-detailed%20facade%2C%20high-end%20materials%3A%20concrete%2C%20glass%2C%20metal?width=1280&height=720&seed=1774416671403&model=flux-realism",
+              "description": "A Neo-Modern approach focusing on Double Height Ceiling integration, Maximum Floor Area Ratio (FAR) utilization, Passive cooling facade design, Universal accessibility compliance, Interactive LED lighting zones."
+            },
+            "structural": {
+              "layoutImage": "https://image.pollinations.ai/prompt/structural%20engineering%20diagram%20of%20RCC%20frame%20building%2C%20foundation%2C%20columns%2C%20beams%2C%20technical%20blueprint%2C%203D%20isometric%20view%2C%20professional%20white%20background?width=1280&height=720&seed=1774416671404&model=flux-realism",
+              "specifications": {
+                "foundationType": "Raft Foundation with Anti-Termite Treatment",
+                "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+                "materialUsageEfficiency": "High (Low waste structural grid)"
+              }
+            },
+            "mep": {
+              "layoutImage": "https://image.pollinations.ai/prompt/MEP%20engineering%20layout%20diagram%2C%20plumbing%20and%20electrical%20conduits%20schematic%2C%203D%20visualization%20inside%20a%20residential%20building%2C%20colorful%20pipes%20and%20wires%2C%20technical?width=1280&height=720&seed=1774416671405&model=flux-realism",
+              "details": {
+                "hvacStrategy": "High-COP Ducted Split System",
+                "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+                "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+              }
+            },
+            "interior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/luxurious%20interior%20design%20rendering%20of%20a%20residential%20lobby%2Fhall%2C%20Neo-Modern%20style%2C%20expensive%20furniture%2C%20ambient%20lighting%2C%20high%20quality%20materials%3A%20marble%2C%20wood%2C%20velvet?width=1280&height=720&seed=1774416671406&model=flux-realism",
+              "moodBoardImage": "https://image.pollinations.ai/prompt/interior%20design%20mood%20board%20for%20Neo-Modern%20style%2C%20materials%20swatches%2C%20color%20palette%2C%20fabric%2C%20stone%2C%20metal%20textures%2C%20professional%20presentation?width=1280&height=720&seed=1774416671407&model=flux-realism"
+            },
+            "exterior": {
+              "renderingImage": "https://image.pollinations.ai/prompt/wide%20angle%20aerial%20view%20of%20a%20residential%20building%20site%20in%20hyderabad%2Ctelangana%2C%20Neo-Modern%20architecture%2C%20beautiful%20landscaping%2C%20cars%20on%20road%2C%20people%20walking%2C%20photorealistic?width=1280&height=720&seed=1774416671408&model=flux-realism"
+            },
+            "estimatedCost": {
+              "total": "₹62L - ₹70L",
+              "breakdown": "Civil: 45%, Finishing: 30%, MEP: 15%, Permits: 10%"
+            },
+            "timeline": {
+              "designPhase": "45 Days",
+              "constructionPhase": "12 - 14 Months",
+              "handoverDate": "Q3 2026"
+            }
+          },
+          "style": "Neo-Modern",
+          "architecturalFeatures": [
+            "Double Height Ceiling integration",
+            "Maximum Floor Area Ratio (FAR) utilization",
+            "Passive cooling facade design",
+            "Universal accessibility compliance",
+            "Interactive LED lighting zones"
+          ],
+          "structuralSpecifications": {
+            "foundationType": "Raft Foundation with Anti-Termite Treatment",
+            "frameSystem": "RCC Moment Resisting Frame (Seismic Zone III compliant)",
+            "materialUsageEfficiency": "High (Low waste structural grid)"
+          },
+          "mepIntelligence": {
+            "hvacStrategy": "High-COP Ducted Split System",
+            "electricalOptimization": "Automated Power Factor Correction & Smart Distribution",
+            "waterconservation": "Greywater recycling for landscaping & low-flow fixtures"
+          },
+          "vastuScore": 85,
+          "sustainabilityRating": "LEED Gold equivalent / GRIHA 4-Star",
+          "estimatedTimeline": {
+            "designPhase": "45 Days",
+            "constructionPhase": "12 - 14 Months",
+            "handoverDate": "Q3 2026"
+          }
+        }
+      ],
+      "summary": {
+        "totalVariants": 3,
+        "bestVastu": "variant-3",
+        "mostEfficient": "variant-3"
+      }
+    }
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "id": "assn_1774336560638",
+    "task_id": "tsk_1774336549379",
+    "worker_id": "wrk_1774336518970",
+    "score": 83,
+    "assigned_at": "2026-03-24T07:16:00.638Z",
+    "status": "active"
+  },
+  {
+    "id": "assn_1774336622778",
+    "task_id": "tsk_1774336614352",
+    "worker_id": "wrk_1774336594248",
+    "score": 98,
+    "assigned_at": "2026-03-24T07:17:02.778Z",
+    "status": "active"
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "u1",
+    "name": "Super Admin",
+    "email": "admin@siid.com",
+    "password": "admin",
+    "role": "admin",
+    "status": "active",
+    "created_at": "2026-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "u2",
+    "name": "Arjun Chowdary",
+    "email": "user@siid.com",
+    "password": "user",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-03-01T10:00:00.000Z"
+  },
+  {
+    "id": "u3",
+    "name": "Build Master",
+    "email": "contractor@siid.com",
+    "password": "contractor",
+    "role": "contractor",
+    "status": "active",
+    "created_at": "2026-03-10T14:30:00.000Z"
+  }
+]

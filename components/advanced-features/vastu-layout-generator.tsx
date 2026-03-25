@@ -659,9 +659,9 @@ export function VastuLayoutGenerator() {
         pdf.circle(18, yPos - 1, 2, "F")
 
         pdf.setTextColor(0, 0, 0)
-        pdf.setFont(undefined, "bold")
+        pdf.setFont("helvetica", "bold")
         pdf.text(`${room.name}`, 23, yPos)
-        pdf.setFont(undefined, "normal")
+        pdf.setFont("helvetica", "normal")
         pdf.setTextColor(100, 100, 100)
         pdf.text(`- ${room.direction}`, 70, yPos)
         pdf.setTextColor(0, 0, 0)
@@ -713,9 +713,9 @@ export function VastuLayoutGenerator() {
         pdf.circle(18, yPos - 1, 1.5, "F")
 
         pdf.setTextColor(0, 0, 0)
-        pdf.setFont(undefined, "bold")
+        pdf.setFont("helvetica", "bold")
         pdf.text(`${index + 1}. ${feature.name}`, 23, yPos)
-        pdf.setFont(undefined, "normal")
+        pdf.setFont("helvetica", "normal")
 
         yPos += 4
         pdf.setTextColor(80, 80, 80)
@@ -742,20 +742,24 @@ export function VastuLayoutGenerator() {
           yPos = 20
         }
 
-        pdf.setFillColor(
-          dosha.severity === "high" ? [239, 68, 68] : dosha.severity === "medium" ? [251, 191, 36] : [34, 197, 94],
-        )
+        if (dosha.severity === "high") {
+           pdf.setFillColor(239, 68, 68)
+        } else if (dosha.severity === "medium") {
+           pdf.setFillColor(251, 191, 36)
+        } else {
+           pdf.setFillColor(34, 197, 94)
+        }
         pdf.rect(20, yPos - 4, 40, 6, "F")
         pdf.setTextColor(255, 255, 255)
-        pdf.setFont(undefined, "bold")
+        pdf.setFont("helvetica", "bold")
         pdf.text(dosha.severity.toUpperCase(), 40, yPos, { align: "center" })
 
         pdf.setTextColor(0, 0, 0)
-        pdf.setFont(undefined, "bold")
+        pdf.setFont("helvetica", "bold")
         pdf.text(dosha.name, 65, yPos)
 
         yPos += 6
-        pdf.setFont(undefined, "normal")
+        pdf.setFont("helvetica", "normal")
         pdf.setTextColor(80, 80, 80)
         pdf.setFontSize(9)
         const remedyLines = pdf.splitTextToSize(`Remedy: ${dosha.remedy}`, 170)
@@ -785,9 +789,9 @@ export function VastuLayoutGenerator() {
           yPos = 20
         }
 
-        pdf.setFont(undefined, "bold")
+        pdf.setFont("helvetica", "bold")
         pdf.text(`${rec.room}:`, 23, yPos)
-        pdf.setFont(undefined, "normal")
+        pdf.setFont("helvetica", "normal")
         pdf.text(rec.colors.join(", "), 70, yPos)
         yPos += 7
       })
@@ -853,45 +857,88 @@ export function VastuLayoutGenerator() {
     ctx.font = "bold 48px Arial"
     ctx.fillText(`${layout.score}%`, 150, 170)
 
-    // Simple room layout grid
-    const gridSize = 150
-    const startX = 300
-    const startY = 150
+    // Dynamic room layout grid generator
+    const getRoomLabel = (r: number, c: number) => {
+       if (r === 0 && c === 2) return { title: "Pooja Room (NE)", color: "#059669" }
+       if (r === 2 && c === 2) return { title: "Kitchen (SE)", color: "#dc2626" }
+       if (r === 2 && c === 0) return { title: "Master Bed (SW)", color: "#7c3aed" }
+       if (r === 0 && c === 0) return { title: "Guest Room (NW)", color: "#0891b2" }
+       if (r === 1 && c === 1) return { title: "Brahmasthan", color: "#d97706" }
+       if (r === 0 && c === 1) return { title: "Living/Entrance", color: "#2563eb" }
+       if (r === 1 && c === 2) return { title: "Study/Living", color: "#16a34a" }
+       if (r === 2 && c === 1) return { title: "Bedroom/Store", color: "#9333ea" }
+       if (r === 1 && c === 0) return { title: "Dining/Bath", color: "#0284c7" }
+       return { title: "Utility", color: "#64748b" }
+    }
+
+    const availableWidth = 800
+    const availableHeight = 1000
+    
+    // Scale layout using plot dimensions (Width/Length)
+    const plotRatio = (inputs.plotWidth || 30) / (inputs.plotLength || 40)
+    let canvasPlotW = availableWidth
+    let canvasPlotH = availableWidth / plotRatio
+    
+    if (canvasPlotH > availableHeight) {
+      canvasPlotH = availableHeight
+      canvasPlotW = availableHeight * plotRatio
+    }
+    
+    const startX = (canvas.width - canvasPlotW) / 2
+    const startY = 250
+    
+    const cellWidth = canvasPlotW / 3
+    const cellHeight = canvasPlotH / 3
 
     // Draw compass directions
     ctx.fillStyle = "#000000"
-    ctx.font = "bold 16px Arial"
-    ctx.fillText("N", startX + gridSize * 1.5, startY - 20)
-    ctx.fillText("S", startX + gridSize * 1.5, startY + gridSize * 3 + 40)
-    ctx.fillText("E", startX + gridSize * 3 + 40, startY + gridSize * 1.5)
-    ctx.fillText("W", startX - 40, startY + gridSize * 1.5)
+    ctx.font = "bold 20px Arial"
+    ctx.fillText("NORTH", startX + canvasPlotW / 2, startY - 20)
+    ctx.fillText("SOUTH", startX + canvasPlotW / 2, startY + canvasPlotH + 30)
+    ctx.fillText("EAST", startX + canvasPlotW + 35, startY + canvasPlotH / 2)
+    ctx.fillText("WEST", startX - 45, startY + canvasPlotH / 2)
 
-    // Draw grid
-    ctx.strokeStyle = "#cccccc"
-    ctx.lineWidth = 2
-    for (let i = 0; i <= 3; i++) {
-      for (let j = 0; j <= 3; j++) {
-        ctx.strokeRect(startX + i * gridSize, startY + j * gridSize, gridSize, gridSize)
+    // Draw dynamic Vastu grid
+    for (let row = 0; row < 3; row++) {
+      for (let col = 0; col < 3; col++) {
+         const room = getRoomLabel(row, col)
+         
+         const x = startX + col * cellWidth
+         const y = startY + row * cellHeight
+         
+         // Fill Room Background (simulating opacity using hex)
+         ctx.fillStyle = room.color + "1A" // ~10% opacity
+         ctx.fillRect(x, y, cellWidth, cellHeight)
+         
+         // Stroke Grid
+         ctx.strokeStyle = "#475569"
+         ctx.lineWidth = 2
+         ctx.strokeRect(x, y, cellWidth, cellHeight)
+         
+         // Draw Text
+         ctx.fillStyle = room.color
+         ctx.font = "bold 16px Arial"
+         ctx.fillText(room.title, x + (cellWidth / 2), y + (cellHeight / 2))
+
+         // Add Entrance Marker based on facing direction
+         if (
+            (inputs.facing === "north" && row === 0 && col === 1) ||
+            (inputs.facing === "east" && row === 1 && col === 2) ||
+            (inputs.facing === "south" && row === 2 && col === 1) ||
+            (inputs.facing === "west" && row === 1 && col === 0) ||
+            (inputs.facing === "northeast" && row === 0 && col === 2) ||
+            (inputs.facing === "northwest" && row === 0 && col === 0) ||
+            (inputs.facing === "southeast" && row === 2 && col === 2) ||
+            (inputs.facing === "southwest" && row === 2 && col === 0)
+         ) {
+            ctx.fillStyle = "#000000"
+            ctx.font = "bold 14px Arial"
+            ctx.fillText("🚪 ENTRANCE", x + (cellWidth / 2), y + (cellHeight / 2) + 25)
+         }
       }
     }
 
-    // Label major zones
-    ctx.font = "bold 14px Arial"
-    ctx.fillStyle = "#059669"
-    ctx.fillText("NE", startX + gridSize * 2 + 10, startY + 30)
-    ctx.fillText("(Pooja)", startX + gridSize * 2 + 10, startY + 50)
-
-    ctx.fillStyle = "#dc2626"
-    ctx.fillText("SE", startX + gridSize * 2 + 10, startY + gridSize * 2 + 30)
-    ctx.fillText("(Kitchen)", startX + gridSize * 2 + 10, startY + gridSize * 2 + 50)
-
-    ctx.fillStyle = "#7c3aed"
-    ctx.fillText("SW", startX + 10, startY + gridSize * 2 + 30)
-    ctx.fillText("(Master)", startX + 10, startY + gridSize * 2 + 50)
-
-    ctx.fillStyle = "#0891b2"
-    ctx.fillText("NW", startX + 10, startY + 30)
-    ctx.fillText("(Guest)", startX + 10, startY + 50)
+    console.log("Generated Dynamic Layout Grid bounds:", { canvasPlotW, canvasPlotH, cellWidth, cellHeight })
 
     // Convert to image and download
     canvas.toBlob((blob) => {

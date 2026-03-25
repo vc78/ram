@@ -57,5 +57,50 @@
       ],
       "description": "Visual analysis of Vastu-Layout-apartment-6_3_2026.png indicates 45% completion of the Foundation & Excavation stage. OSHA violations detected."
     }
+  },
+  {
+    "id": "70d65b18-8a59-4204-a823-5cd11aaa2c6b",
+    "url": "/uploads/2eaf995baf6b439700a0fa7140e40d93.jpg",
+    "filename": "2eaf995baf6b439700a0fa7140e40d93.jpg",
+    "format": "jpg",
+    "uploadedAt": "2026-03-24T06:33:33.346Z",
+    "date": "2026-03-24",
+    "tags": [
+      "Foundation",
+      "Auto-Analyzed",
+      "Exterior Masonry",
+      "Safety Flag"
+    ],
+    "location": {
+      "latitude": 17.500271062083225,
+      "longitude": 78.39385677177316,
+      "address": "Lat: 17.500271, Lng: 78.393857"
+    },
+    "comments": "",
+    "uploadedBy": "VENKAT  CHOWDARY BODDULURI",
+    "size": 98349,
+    "mlAnalysis": {
+      "progress": 15,
+      "phase": "Exterior Masonry",
+      "confidenceScore": 96.5,
+      "safetyViolations": [
+        {
+          "type": "ppe_missing_helmet",
+          "description": "Warning: 2 worker(s) detected without safety helmets in zone B.",
+          "severity": "high"
+        },
+        {
+          "type": "edge_protection",
+          "description": "Incomplete edge protection along the eastern perimeter.",
+          "severity": "medium"
+        }
+      ],
+      "autoTags": [
+        "Auto-Analyzed",
+        "Exterior Masonry",
+        "Safety Flag"
+      ],
+      "description": "Visual analysis of 2eaf995baf6b439700a0fa7140e40d93.jpg indicates 15% completion of the Exterior Masonry stage. OSHA violations detected."
+    }
   }
 ]

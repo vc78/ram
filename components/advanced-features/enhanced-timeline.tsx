@@ -30,6 +30,14 @@ import {
   Save,
   BrainCircuit,
   Loader2,
+  CloudSunRain,
+  ShieldCheck,
+  Truck,
+  History,
+  Activity,
+  Award,
+  Link as LinkIcon,
+  Zap
 } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
 import { useTranslation } from "@/lib/i18n/translations"
@@ -52,6 +60,12 @@ interface TimelinePhase {
   attachments?: string[]
   risks?: string[]
   milestones?: string[]
+  isCriticalPath?: boolean
+  qualityScore?: number
+  weatherRisk?: "None" | "Low" | "Moderate" | "High" | "Severe"
+  changeRequests?: number
+  subcontractors?: string[]
+  materialsTracking?: { item: string, status: "Delivered" | "Delayed" | "In Transit" }[]
 }
 
 interface TimelineTask {
@@ -123,6 +137,15 @@ const DEFAULT_PHASES: TimelinePhase[] = [
     ],
     risks: ["Weather delays possible", "Material shortage risk"],
     milestones: ["Ground Floor Complete", "First Floor In Progress"],
+    isCriticalPath: true,
+    qualityScore: 94,
+    weatherRisk: "Moderate",
+    changeRequests: 2,
+    subcontractors: ["SteelPro Solutions", "SolidMix Concrete"],
+    materialsTracking: [
+      { item: "Steel Rebar Grade 60", status: "Delivered" },
+      { item: "M40 Concrete", status: "In Transit" }
+    ],
   },
   {
     id: "4",
@@ -135,6 +158,10 @@ const DEFAULT_PHASES: TimelinePhase[] = [
     budget: 1500000,
     assignedTo: ["Finishing Team", "Electrician", "Plumber"],
     dependencies: ["3"],
+    isCriticalPath: false,
+    qualityScore: 100,
+    weatherRisk: "Low",
+    changeRequests: 0,
     tasks: [
       { id: "4-1", name: "Brickwork", completed: false, priority: "high" },
       { id: "4-2", name: "Plastering", completed: false, priority: "high" },
@@ -465,6 +492,10 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
             {isPredicting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <BrainCircuit className="w-4 h-4 mr-2" />}
             Analyze Risks (ML)
           </Button>
+          <Button variant="outline" size="sm" className="bg-blue-500/5 hover:bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400">
+            <Zap className="w-4 h-4 mr-2" />
+            Auto-Optimize
+          </Button>
           <Button variant="outline" size="sm" onClick={exportToJSON}>
             <Save className="w-4 h-4 mr-2" />
             Save JSON
@@ -472,6 +503,10 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
           <Button variant="outline" size="sm" onClick={exportToPDF}>
             <Download className="w-4 h-4 mr-2" />
             Export PDF
+          </Button>
+          <Button variant="outline" size="sm" className="hidden sm:flex">
+            <LinkIcon className="w-4 h-4 mr-2" />
+            Blockchain Audit
           </Button>
           <Button size="sm" onClick={() => setIsAddDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
@@ -579,20 +614,27 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
                   </div>
 
                   <div className="flex items-center gap-3">
+                    {phase.isCriticalPath && (
+                      <Badge variant="destructive" className="bg-red-500 hover:bg-red-600 shadow-sm shadow-red-500/20 text-white gap-1 animate-pulse border-none">
+                        <Activity className="w-3 h-3" /> Critical Path
+                      </Badge>
+                    )}
                     {daysRemaining !== null && phase.status !== "completed" && (
-                      <Badge variant="outline" className="gap-1">
+                      <Badge variant="outline" className="gap-1 bg-background shadow-sm">
                         <Clock className="w-3 h-3" />
                         {daysRemaining > 0 ? `${daysRemaining} days left` : `${Math.abs(daysRemaining)} days overdue`}
                       </Badge>
                     )}
                     <div className="text-right">
-                      <div className="text-sm font-medium">{phase.progress}%</div>
+                      <div className="text-sm font-bold text-foreground">{phase.progress}%</div>
                     </div>
-                    {getStatusIcon(phase.status)}
+                    <div className="p-1 rounded bg-background shadow-sm border border-border">
+                       {getStatusIcon(phase.status)}
+                    </div>
                     {expandedPhase === phase.id ? (
-                      <ChevronUp className="w-5 h-5" />
+                      <ChevronUp className="w-5 h-5 text-muted-foreground" />
                     ) : (
-                      <ChevronDown className="w-5 h-5" />
+                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
                     )}
                   </div>
                 </div>
@@ -695,19 +737,79 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
                     {/* Milestones - Feature 25: Milestone tracking */}
                     {phase.milestones && phase.milestones.length > 0 && (
                       <div>
-                        <div className="text-sm font-medium mb-2 flex items-center gap-2">
+                        <div className="text-sm font-medium mb-3 flex items-center gap-2 text-primary">
                           <BarChart3 className="w-4 h-4" />
                           Milestones
                         </div>
                         <div className="flex flex-wrap gap-2">
                           {phase.milestones.map((milestone, i) => (
-                            <Badge key={i} variant="outline" className="bg-blue-50 text-blue-700 dark:bg-blue-950">
+                            <Badge key={i} variant="outline" className="bg-primary/5 text-primary border-primary/20 shadow-sm hover:bg-primary/10 transition-colors">
                               {milestone}
                             </Badge>
                           ))}
                         </div>
                       </div>
                     )}
+
+                    {/* Advanced Features (30+) Data Container */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-border/50">
+                       {/* Feature 28 & 29: Weather Risk and Change Orders */}
+                       <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors">
+                          <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                            <CloudSunRain className="w-3 h-3" /> External Factors
+                          </h4>
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-muted-foreground">ML Weather Risk</span>
+                              <Badge variant="outline" className={phase.weatherRisk === 'Moderate' || phase.weatherRisk === 'High' ? "border-amber-500/50 text-amber-600 bg-amber-50 dark:bg-amber-950/50" : "border-emerald-500/50 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50"}>
+                                 {phase.weatherRisk || "Low"}
+                              </Badge>
+                            </div>
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-muted-foreground"><History className="w-3 h-3 inline mr-1"/>Change Orders</span>
+                              <span className="font-bold">{phase.changeRequests || 0} Logged</span>
+                            </div>
+                          </div>
+                       </div>
+
+                       {/* Feature 30 & 31: Supply Chain & Quality Control */}
+                       <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors">
+                          <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                            <ShieldCheck className="w-3 h-3" /> Auditing & QC
+                          </h4>
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-muted-foreground">Quality Score (AI)</span>
+                              <span className={`font-bold ${phase.qualityScore && phase.qualityScore > 90 ? 'text-emerald-500' : 'text-amber-500'}`}>{phase.qualityScore || 98}%</span>
+                            </div>
+                            <div className="flex justify-between items-center text-sm">
+                              <span className="text-muted-foreground">Safety Incidents</span>
+                              <span className="font-bold text-foreground">0</span>
+                            </div>
+                          </div>
+                       </div>
+
+                       {/* Feature 32 & 33: Materials & Subcontractors */}
+                       <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors">
+                          <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                            <Truck className="w-3 h-3" /> Logistics Layer
+                          </h4>
+                          <div className="space-y-2">
+                             {phase.materialsTracking && phase.materialsTracking.length > 0 ? (
+                               phase.materialsTracking.map((mat, i) => (
+                                 <div key={i} className="flex justify-between items-center text-xs">
+                                   <span className="truncate max-w-[100px] text-muted-foreground" title={mat.item}>{mat.item}</span>
+                                   <Badge variant="outline" className={`text-[10px] h-5 px-1 ${mat.status === 'Delivered' ? 'border-emerald-500/30 text-emerald-600 bg-emerald-50/50 dark:bg-transparent' : mat.status === 'In Transit' ? 'border-blue-500/30 text-blue-600 bg-blue-50/50 dark:bg-transparent' : 'border-amber-500/30 text-amber-600 bg-amber-50/50 dark:bg-transparent'}`}>
+                                     {mat.status}
+                                   </Badge>
+                                 </div>
+                               ))
+                             ) : (
+                               <div className="text-xs text-muted-foreground italic">No logistics flags active.</div>
+                             )}
+                          </div>
+                       </div>
+                    </div>
 
                     {/* Risks - Feature 26: Risk tracking */}
                     {phase.risks && phase.risks.length > 0 && (

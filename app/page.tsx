@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
   ArrowRight,
@@ -26,15 +26,20 @@ import MediaFallbackInjector from "@/components/media-fallback-injector"
 
 import KpiCounters from "@/components/kpi-counters"
 import VideoCarousel from "@/components/video-carousel"
+import { HeadlineScroller } from "@/components/headline-scroller"
+import { CompanyLogoScroller } from "@/components/company-logo-scroller"
 import ProgressAnalytics from "@/components/progress-analytics"
 
 import BudgetEstimator from "@/components/budget-estimator"
 import InsightsSearch from "@/components/insights-search"
 import TestimonialsCarousel from "@/components/testimonials-carousel"
 import LiveTicker from "@/components/live-ticker"
-import { LanguageSelector } from "@/components/language-selector"
+import Navbar from "@/components/navbar"
+import { useWelcomeVoice } from "@/hooks/use-welcome-voice"
 
 export default function LandingPage() {
+  useWelcomeVoice()
+
   const [selectedVideo, setSelectedVideo] = useState<{
     title: string
     description: string
@@ -43,7 +48,37 @@ export default function LandingPage() {
   } | null>(null)
 
   const [openFaq, setOpenFaq] = useState<number | null>(null)
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
+
+  const heroVideos = [
+    "/images/ext1.mp4",
+    "/images/ext1.mp4",
+    "/images/ext1.mp4"
+  ]
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+
+    // Initial check
+    handleResize()
+
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  useEffect(() => {
+    if (isMobile) return // Only run carousel on desktop
+
+    // Rotate videos every 6 seconds
+    const intervalId = setInterval(() => {
+      setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % heroVideos.length)
+    }, 6000)
+
+    return () => clearInterval(intervalId)
+  }, [isMobile])
+
   /*
     const videos = [
       {
@@ -111,124 +146,63 @@ export default function LandingPage() {
       thumbnail: "/project-management-dashboard-timeline.jpg",
       duration: "5:20",
       poster: "/project-management-dashboard-timeline.jpg",
-      videoSrc: "/images/ext.mp4",
+      videoSrc: "/images/ext1.mp4",
     },
   ]
 
   return (
     <div className="min-h-screen bg-background">
       <MediaFallbackInjector />
-      {/* Header */}
-      <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <img
-              src="/images/siid-flash-logo.png"
-              alt="SIID FLASH Logo"
-              className="h-14 w-auto object-contain"
-              onError={(e) => {
-                const img = e.currentTarget as HTMLImageElement
-                if (!img.dataset.fallbackShown) {
-                  img.dataset.fallbackShown = "true"
-                  img.style.display = "none"
-                  const fallback = document.createElement("span")
-                  fallback.className = "text-2xl font-bold"
-                  fallback.textContent = "SIID FLASH"
-                  img.parentElement?.appendChild(fallback)
-                }
-              }}
-            />
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Features
-            </Link>
-            <Link href="#vision" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              Vision
-            </Link>
-            <Link
-              href="#how-it-works"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              How It Works
-            </Link>
-            <Link
-              href="/3d-generator"
-              className="text-sm text-accent hover:text-accent-dark transition-colors font-semibold"
-            >
-              3D Generator
-            </Link>
-            {/* </CHANGE> */}
-          </nav>
-          <div className="flex items-center gap-3">
-            <LanguageSelector />
-            <Link href="/login">
-              <Button variant="ghost" size="sm">
-                Login
-              </Button>
-            </Link>
-            <Link href="/signup">
-              <Button size="sm" className="bg-accent hover:bg-accent-dark text-white">
-                Get Started
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Mobile Navigation Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border bg-background/95 py-4 px-4 space-y-3">
-            <Link
-              href="#features"
-              className="block text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Features
-            </Link>
-            <Link
-              href="#vision"
-              className="block text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Vision
-            </Link>
-            <Link
-              href="#how-it-works"
-              className="block text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              How It Works
-            </Link>
-            <Link
-              href="/3d-generator"
-              className="block text-sm text-accent hover:text-accent-dark transition-colors font-semibold py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              3D Generator
-            </Link>
-          </div>
-        )}
-      </header>
+      {/* Extracted modular Navbar */}
+      <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-32">
-        {/* Vanta background sits behind content */}
-        <VantaBackground
-          effect="waves"
-          color={0x1e3a8a} // deep blue matching brand
-          backgroundAlpha={0.0}
-          minHeight={420}
-          className="absolute inset-0"
-        />
+      <section className="relative w-full min-h-[90vh] md:min-h-screen flex items-center overflow-hidden py-32">
+        {/* Background Video Layer */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          {!isMobile ? (
+            <video
+              key={heroVideos[currentVideoIndex]}
+              src={heroVideos[currentVideoIndex]}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="none"
+              className="w-full h-full object-cover transition-opacity duration-1000"
+            />
+          ) : (
+            <img
+              src="/images/interior-design-3d-walkthrough.jpg"
+              alt="Hero Background"
+              className="w-full h-full object-cover"
+            />
+          )}
+          {/* Dark Overlay (IMPORTANT) */}
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Vanta background sits behind content - Made optional to prevent blocking video */}
+        {false && (
+          <VantaBackground
+            effect="waves"
+            color={0x1e3a8a} // deep blue matching brand
+            backgroundAlpha={0.1} // Reduced visibility
+            minHeight={420}
+            className="absolute inset-0 pointer-events-none"
+          />
+        )}
         <div className="relative z-10 container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-10 items-center">
             <div className="animate-slide-up">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-                <Sparkles className="w-4 h-4" />
+              <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 text-white border border-white/20 backdrop-blur-md text-sm font-medium mb-6 drop-shadow-md">
+                <Sparkles className="w-4 h-4 text-accent" />
                 Your Dream, Our Design
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 text-balance">Turn Your Dreams Into Reality</h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-8 text-pretty leading-relaxed max-w-prose">
+              <h1 className="text-4xl md:text-6xl font-extrabold mb-6 text-balance text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">
+                Turn Your Dreams Into Reality
+              </h1>
+              <p className="text-lg md:text-xl text-white/90 font-medium mb-8 text-pretty leading-relaxed max-w-prose drop-shadow-md">
                 We believe every dream deserves a shape, and every idea deserves a plan. Transform imagination into
                 reality—fast, simple, and personalized.
               </p>
@@ -236,14 +210,14 @@ export default function LandingPage() {
                 <Link href="/signup">
                   <Button
                     size="lg"
-                    className="bg-accent hover:bg-accent-dark text-white hover:scale-105 transition-transform"
+                    className="bg-accent hover:bg-accent-dark text-white hover:scale-105 transition-transform shadow-lg"
                   >
                     Start Your Project
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
                 </Link>
                 <Link href="#how-it-works">
-                  <Button size="lg" variant="outline" className="bg-transparent hover:scale-105 transition-transform">
+                  <Button size="lg" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/20 hover:scale-105 transition-all backdrop-blur-sm drop-shadow-sm">
                     See How It Works
                   </Button>
                 </Link>
@@ -292,109 +266,41 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Video Carousel Section */}
-      {/* insert a featured video carousel after KPI counters */}
-      <section className="py-16 bg-background border-y border-border">
-        <div className="container mx-auto px-4">
-          <VideoCarousel />
-        </div>
-      </section>
-      {/* ... existing code ... */}
+      {/* ================================================================================== */}
+      {/* =================== PROJECT VIDEO HIGHLIGHTS SECTION ======================= */}
+      {/* ================================================================================== */}
+      <section className="relative pt-20 pb-12 md:pt-32 md:pb-16 overflow-hidden border-t border-border/50">
+        {/* Dynamic Professional Background Colors & Ambient Glowing Effects */}
+        <div className="absolute inset-0 bg-background/95 z-0" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5 z-0" />
 
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">See SIID in Action</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Watch how our platform transforms ideas into reality
-            </p>
-          </div>
+        {/* Large abstract ambient orbs */}
+        <div className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen dark:mix-blend-color-dodge z-0 animate-pulse-slow" />
+        <div className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen dark:mix-blend-color-dodge z-0" />
+        <div className="absolute top-[40%] left-[20%] w-[400px] h-[400px] bg-accent/5 rounded-full blur-[100px] pointer-events-none z-0" />
 
-          <div className="max-w-5xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-6">
-              {videosUI.map((video, index) => (
-                <Card
-                  key={index}
-                  className="relative overflow-hidden group hover-lift cursor-pointer"
-                  onClick={() => setSelectedVideo(video)}
-                >
-                  <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 relative">
-                    <img
-                      src={video.thumbnail || "/images/modern-minimalist-design.jpg"}
-                      alt={video.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const img = e.currentTarget as HTMLImageElement
-                        if (img.src.includes("/images/modern-minimalist-design.jpg")) return
-                        img.onerror = null
-                        img.src = "/images/modern-minimalist-design.jpg"
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="text-center text-white">
-                        <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-3">
-                          <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
-                        </div>
-                        <p className="text-sm font-medium">Watch Demo</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold mb-2">{video.title}</h3>
-                    <p className="text-sm text-muted-foreground">{video.description}</p>
-                  </div>
-                </Card>
-              ))}
+        {/* Content Container */}
+        <div className="relative z-10 container mx-auto px-4">
+
+          {/* Main Video Carousel */}
+          <div>
+            <div className="text-center mb-12">
+              <h2 className="text-sm font-bold tracking-widest text-primary uppercase mb-3">Featured Highlights</h2>
+              <h3 className="text-3xl md:text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+                Immersive Project Views
+              </h3>
             </div>
+            <VideoCarousel />
           </div>
+
         </div>
       </section>
 
-      {/* Video Modal Section */}
-      {selectedVideo && (
-        <div
-          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 animate-fade-in"
-          onClick={() => setSelectedVideo(null)}
-        >
-          <div
-            className="bg-background rounded-lg max-w-5xl w-full overflow-hidden animate-scale-in shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between p-6 border-b border-border bg-gradient-to-r from-primary/5 to-accent/5">
-              <div>
-                <h3 className="text-2xl font-bold">{selectedVideo.title}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{selectedVideo.description}</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSelectedVideo(null)}
-                className="hover:bg-destructive/10 hover:text-destructive"
-              >
-                <X className="w-6 h-6" />
-              </Button>
-            </div>
-            <div className="aspect-video bg-black">
-              <video
-                src={selectedVideo.videoSrc}
-                poster={selectedVideo.poster}
-                controls
-                autoPlay
-                className="w-full h-full"
-                controlsList="nodownload"
-              >
-                Your browser does not support the video tag.
-              </video>
-            </div>
-            <div className="p-4 bg-muted/50 text-center text-sm text-muted-foreground">
-              Click outside or press ESC to close
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Corporate Trusted By Logos */}
+      <CompanyLogoScroller />
 
+      {/* Infinite Scrolling Professional Ticker Tape */}
+      <HeadlineScroller />
 
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
@@ -567,7 +473,7 @@ export default function LandingPage() {
                 <Card className="overflow-hidden hover-lift">
                   <div className="aspect-video relative bg-muted">
                     <img
-                      src="/placeholder.svg?height=300&width=500"
+                      src="/images/interior-finishing-painting-flooring.jpg"
                       alt="Interior Design"
                       className="w-full h-full object-cover"
                     />
@@ -581,7 +487,7 @@ export default function LandingPage() {
                 <Card className="overflow-hidden hover-lift">
                   <div className="aspect-video relative bg-muted">
                     <img
-                      src="/placeholder.svg?height=300&width=500"
+                      src="/modern-architectural-design-software-dashboard-int.jpg"
                       alt="Exterior Design"
                       className="w-full h-full object-cover"
                     />
