@@ -1,7 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
 import MediaFallbackInjector from "@/components/media-fallback-injector"
 import { Suspense } from "react"
 import "./globals.css"
@@ -40,7 +39,6 @@ export default function RootLayout({
               <PageTheme />
               <MediaFallbackInjector />
               {children}
-              <Analytics />
             </LanguageProvider>
           </Suspense>
         </ErrorBoundary>
