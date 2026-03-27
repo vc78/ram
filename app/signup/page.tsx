@@ -83,8 +83,13 @@ export default function SignupPage() {
 
       localStorage.setItem("user", JSON.stringify(loginRes.user))
       localStorage.setItem("token", loginRes.access_token)
+      document.cookie = `userRole=${loginRes.user.role || 'user'}; path=/; max-age=86400`
 
-      router.push("/dashboard")
+      if (loginRes.user.role === 'admin') {
+        router.push("/admin")
+      } else {
+        router.push("/dashboard")
+      }
     } catch (err: any) {
       setError(err?.message || "Signup failed")
     } finally {

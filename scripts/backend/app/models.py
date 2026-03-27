@@ -90,10 +90,12 @@ class User(Base):
     email = Column(String(255), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
     role = Column(String(64), nullable=False, default="user")
+    status = Column(String(32), nullable=False, default="active")
+    settings_data = Column(Text, nullable=True) # Stores JSON settings
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     def to_dict(self):
-        return {"id": self.id, "name": self.name, "email": self.email, "role": self.role, "created_at": self.created_at}
+        return {"id": self.id, "name": self.name, "email": self.email, "role": self.role, "status": self.status, "settings_data": self.settings_data, "created_at": self.created_at}
 
 
 class Project(Base):

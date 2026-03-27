@@ -8,17 +8,35 @@ import { LanguageSelector } from "@/components/language-selector"
 import { BrandLogo } from "@/components/brand-logo"
 
 export default function Navbar() {
+  const [user, setUser] = useState<any>(null)
   const [isScrolled, setIsScrolled] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  // Track scroll position for subtle animation
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
     }
+    
+    // Check if user is logged in
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (e) {
+        console.error("Failed to parse user", e)
+      }
+    }
+
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem("user")
+    localStorage.removeItem("token")
+    document.cookie = "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
+    window.location.href = "/"
+  }
 
   return (
     <header
@@ -55,16 +73,35 @@ export default function Navbar() {
           <div className={isScrolled ? "" : "opacity-90 grayscale brightness-200 contrast-200"}>
             <LanguageSelector />
           </div>
-          <Link href="/login">
-            <Button variant="ghost" size="sm" className={`font-medium transition-colors ${isScrolled ? 'hover:bg-muted/50' : 'text-white hover:bg-white/20 hover:text-white'}`}>
-              Login
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button size="sm" className="bg-accent hover:bg-accent-dark text-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
-              Get Started
-            </Button>
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-4">
+              <Link href={user.role === 'admin' ? '/admin' : '/dashboard'}>
+                <Button variant="ghost" size="sm" className={`font-medium ${isScrolled ? 'hover:bg-muted/50' : 'text-white hover:bg-white/20'}`}>
+                  {user.name.split(' ')[0]}'s Portal
+                </Button>
+              </Link>
+              <Button 
+                onClick={handleLogout}
+                size="sm" 
+                className="bg-destructive/10 text-destructive hover:bg-destructive hover:text-white border border-destructive/20 transition-all"
+              >
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" size="sm" className={`font-medium transition-colors ${isScrolled ? 'hover:bg-muted/50' : 'text-white hover:bg-white/20 hover:text-white'}`}>
+                  Login
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button size="sm" className="bg-accent hover:bg-accent-dark text-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+                  Get Started
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile menu button */}
@@ -103,6 +140,15 @@ export default function Navbar() {
           >
             Vision
           </Link>
+          {user && (
+            <Link
+              href={user.role === 'admin' ? '/admin' : '/dashboard'}
+              className="block text-sm font-medium text-primary hover:pl-2 transition-all py-1.5"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              My Dashboard
+            </Link>
+          )}
           <Link
             href="/#how-it-works"
             className="block text-sm font-medium text-muted-foreground hover:text-foreground hover:pl-2 transition-all py-1.5"
@@ -126,16 +172,24 @@ export default function Navbar() {
             3D Generator
           </Link>
           <div className="flex items-center gap-3 pt-4 pb-2">
-            <Link href="/login" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
-              <Button variant="outline" className="w-full">
-                Login
-              </Button>
-            </Link>
-            <Link href="/signup" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
-              <Button className="w-full bg-accent hover:bg-accent-dark text-white">
-                Get Started
-              </Button>
-            </Link>
+            {user ? (
+               <Button onClick={handleLogout} className="w-full bg-destructive text-white">
+                 Logout
+               </Button>
+            ) : (
+              <>
+                <Link href="/login" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
+                  <Button variant="outline" className="w-full">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/signup" className="flex-1" onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full bg-accent hover:bg-accent-dark text-white">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

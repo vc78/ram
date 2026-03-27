@@ -31,13 +31,20 @@ export function getCurrentUser(): User | null {
   }
 }
 
-export function logout() {
+export async function logout() {
   if (typeof window !== "undefined") {
     localStorage.removeItem("user")
     localStorage.removeItem("token")
     localStorage.removeItem("rememberedEmail")
     localStorage.removeItem("loginAttempts")
     document.cookie = "userRole=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    
+    // Clear server-side cookie
+    try {
+      await fetch("/api/auth/logout", { method: "POST" })
+    } catch (e) {
+      console.error("Logout API failed:", e)
+    }
   }
 }
 

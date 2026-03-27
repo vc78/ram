@@ -110,9 +110,15 @@ class UserOut(BaseModel):
     name: str
     email: EmailStr
     role: str
+    status: Optional[str] = "active"
+    settings_data: Optional[str] = None
     created_at: datetime
     class Config:
         from_attributes = True
+
+class UserSettingsUpdate(BaseModel):
+    name: Optional[str] = None
+    settings_data: Optional[str] = None # JSON string
 
 class ProjectCreate(BaseModel):
     name: str

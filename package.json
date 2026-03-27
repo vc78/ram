@@ -73,7 +73,10 @@
     "vanta": "latest",
     "vaul": "^0.9.9",
     "xlsx": "latest",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "mongoose": "latest",
+    "mongodb": "latest",
+    "jose": "^5.9.6"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",

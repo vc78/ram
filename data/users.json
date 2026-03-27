@@ -25,5 +25,14 @@
     "role": "contractor",
     "status": "active",
     "created_at": "2026-03-10T14:30:00.000Z"
+  },
+  {
+    "id": "u1774446042181",
+    "name": "VENKAT  CHOWDARY BODDULURI",
+    "email": "venkatbodduluri78@gmail.com",
+    "password": "$2b$10$OivFSPESX2DWrbs1neBfvOYEnBNj8.U/9KH97s.FQeVk3298ldEO6",
+    "role": "user",
+    "status": "active",
+    "created_at": "2026-03-25T13:40:42.182Z"
   }
 ]

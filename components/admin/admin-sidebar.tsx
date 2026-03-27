@@ -79,8 +79,8 @@ export function AdminSidebar() {
         <Button 
           variant="ghost" 
           className="w-full justify-start gap-3 text-slate-400 hover:text-red-400 hover:bg-red-400/5"
-          onClick={() => {
-            logout()
+          onClick={async () => {
+            await logout()
             router.push("/login")
           }}
         >

@@ -59,8 +59,8 @@ export default function DashboardPage() {
   const [newTaskTitle, setNewTaskTitle] = useState("")
   const [newMember, setNewMember] = useState({ name: "", email: "" })
 
-  const handleLogout = () => {
-    logout()
+  const handleLogout = async () => {
+    await logout()
     router.push("/")
   }
 
@@ -129,8 +129,8 @@ export default function DashboardPage() {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => {
-                      logout()
+                    onClick={async () => {
+                      await logout()
                       router.push("/")
                     }}
                   >

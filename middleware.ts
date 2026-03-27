@@ -1,35 +1,54 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
+import * as jose from "jose"
+const { jwtVerify } = jose
 
-export function middleware(request: NextRequest) {
-  // If accessing /admin paths
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    // We cannot use localStorage in middleware, we must rely on cookies or headers.
-    // However, the app currently uses localStorage for auth as it's fully client-side.
-    // Since this is just a frontend-level middleware check simulation or if we use cookies later.
-    // Let's implement a basic check or just redirect if no mock 'admin' cookie is found
-    // If we only have client-side auth, middleware can't check localStorage.
-    // A better approach for client-side localstorage is what we already have in app/admin/layout.tsx
-    // The user requested middleware.ts explicitly:
-    /*
-      example check:
-      if(user.role !== "admin"){
-         redirect("/dashboard")
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || "fallback_default_secret_dont_use_in_prod"
+)
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+
+  // Define public routes
+  const isPublicRoute = pathname === "/login" || pathname === "/signup" || pathname === "/"
+
+  // Protect dashboard and admin routes
+  const isProtectedRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/admin")
+
+  const token = request.cookies.get("auth_token")?.value
+
+  // Redirect to dashboard if already logged in and hitting a public page (like login)
+  if (isPublicRoute && token) {
+    try {
+      await jwtVerify(token, JWT_SECRET)
+      return NextResponse.redirect(new URL("/dashboard", request.url))
+    } catch (e) {
+      // Token invalid, continue to login page
+    }
+  }
+
+  // Redirect to login if unauthenticated on a protected route
+  if (isProtectedRoute && !token) {
+    return NextResponse.redirect(new URL("/login", request.url))
+  }
+
+  // Admin route check
+  if (pathname.startsWith("/admin") && token) {
+    try {
+      const { payload } = await jwtVerify(token, JWT_SECRET)
+      if (payload.role !== "admin") {
+        return NextResponse.redirect(new URL("/dashboard", request.url))
       }
-    */
-    // We will leave the middleware to pass for now, or check a cookie if they migrate to cookies.
-    // Many mock apps without JWT set a cookie during login, let's assume `role` cookie.
-    
-    const userRole = request.cookies.get('userRole')?.value
-
-    if (!userRole || userRole !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+    } catch (e) {
+      return NextResponse.redirect(new URL("/login", request.url))
     }
   }
 
   return NextResponse.next()
 }
 
+// Ensure middleware runs for auth, dashboard, and admin routes
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ["/dashboard/:path*", "/admin/:path*", "/login", "/signup"],
 }

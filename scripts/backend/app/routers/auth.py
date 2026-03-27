@@ -51,8 +51,31 @@ def login(payload: schemas.UserLogin, request: Request, db: Session = Depends(ge
     )
     
     token = create_access_token({"sub": str(user.id)})
-    return {"access_token": token, "token_type": "bearer", "user": schemas.UserOut.from_orm(user)}
+    
+    # Ensure missing fields don't cause a crash
+    user_out = schemas.UserOut(
+        id=user.id,
+        name=user.name,
+        email=user.email,
+        role=user.role,
+        status=user.status or "active",
+        settings_data=user.settings_data,
+        created_at=user.created_at
+    )
+    
+    return {"access_token": token, "token_type": "bearer", "user": user_out}
 
 @router.get("/me", response_model=schemas.UserOut)
 def me(current_user: models.User = Depends(get_current_user)):
+    return current_user
+
+@router.put("/settings", response_model=schemas.UserOut)
+def update_settings(payload: schemas.UserSettingsUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    if payload.name:
+        current_user.name = payload.name
+    if payload.settings_data:
+        current_user.settings_data = payload.settings_data
+    
+    db.commit()
+    db.refresh(current_user)
     return current_user

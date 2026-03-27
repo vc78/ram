@@ -23,7 +23,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
         await apiGet("/auth/me")
         setIsLoading(false)
       } catch (err: any) {
-        logout()
+        await logout()
         router.push("/login")
       }
     })()
