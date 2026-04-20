@@ -237,7 +237,22 @@ export default function ConstructionIntelligencePlatform() {
               vastuOrientation: formData.vastuOrientation,
               soilType: formData.soilType,
               automation: formData.automationLevel,
-              sustainability: formData.sustainabilityLevel
+              sustainability: formData.sustainabilityLevel,
+              hvacType: formData.hvacType,
+              powerBackup: formData.powerBackup,
+              waterResource: formData.waterResource,
+              securityLevel: formData.securityLevel,
+              acousticTarget: formData.acousticTarget,
+              carbonTarget: formData.carbonTarget,
+              concreteGrade: formData.concreteGrade,
+              steelGrade: formData.steelGrade,
+              wallMaterial: formData.wallMaterial,
+              waterProofingGrade: formData.waterProofingGrade,
+              exteriorCladding: formData.exteriorCladding,
+              flooringPreference: formData.flooringPreference,
+              interiorPreference: formData.interiorPreference,
+              exteriorType: formData.exteriorType,
+              fireSafetyGrade: formData.fireSafetyGrade
             }
           },
           options: { variantsPerProvider: 3 }
