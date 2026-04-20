@@ -1,0 +1,94 @@
+{step === 2 && "Materials & Budget"}
+                 {step === 3 && "Features & Amenities"}
+                 {step === 4 && "AI Analysis Engine"}
+                 {step === 5 && "Vastu Layout"}
+                 {step === 6 && "Live Design Suite"}
+                 {step === 7 && "Executive Master Brief"}
+               </div>
+            </div>
+          </div>
+          <Progress value={(step / 7) * 100} className="h-2" />
+        </header>
+
+        {/* WORKFLOW CONTAINER */}
+        <Card id="project-workflow-container" className="p-6 md:p-8 rounded-xl shadow-sm border border-border min-h-[500px] flex flex-col bg-card">
+          <AnimatePresence mode="wait">
+            
+            {/* --- STEP 1: PLOT INPUT --- */}
+            {step === 1 && <motion.div key="s1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6 flex-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <Label className="font-semibold">Plot Dimensions (L × W)</Label>
+                    <div className="flex gap-4">
+                       <Input placeholder="Length (ft)" type="number" className="h-12" value={plot.length} onChange={e => {
+                         const l = e.target.value; const w = plot.width;
+                         setPlot({...plot, length: l, area: (parseFloat(l||'0')*parseFloat(w||'0')||'').toString()})
+                       }} />
+                       <Input placeholder="Width (ft)" type="number" className="h-12" value={plot.width} onChange={e => {
+                         const w = e.target.value; const l = plot.length;
+                         setPlot({...plot, width: w, area: (parseFloat(l||'0')*parseFloat(w||'0')||'').toString()})
+                       }} />
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                     <Label className="font-semibold">Total Plot Area</Label>
+                     <Input placeholder="Sq Feet" type="number" className="h-12 bg-muted font-mono" readOnly value={plot.area} onChange={e => setPlot({...plot, area: e.target.value})} />
+                  </div>
+                  <div className="space-y-3">
+                     <Label className="font-semibold">Location Tracker (Live)</Label>
+                     <div className="flex gap-2">
+                        <Input placeholder="City Name" className="h-12" value={plot.city} onChange={e => setPlot({...plot, city: e.target.value})} />
+                        <Input placeholder="Pin Code" className="h-12 w-1/3" value={plot.pincode} onChange={e => setPlot({...plot, pincode: e.target.value})} />
+                     </div>
+                  </div>
+                  <div className="space-y-3">
+                     <Label className="font-semibold">Facing Direction</Label>
+                     <div className="grid grid-cols-4 gap-2">
+                        {["North", "East", "West", "South"].map(d => (
+                          <Button key={d} variant={plot.facing.toLowerCase() === d.toLowerCase() ? "default" : "outline"} className={`h-12 w-full transition-colors`} onClick={() => setPlot({...plot, facing: d.toLowerCase()})}>{d}</Button>
+                        ))}
+                     </div>
+                  </div>
+                  
+                  {/* Embedded Google Maps based on location input */}
+                  <div className="md:col-span-2 mt-4">
+                     <Label className="font-semibold flex items-center gap-2 mb-2 text-primary"><MapPin className="w-4 h-4"/> Geolocation Boundary</Label>
+                     <div className="h-48 w-full border rounded-lg bg-muted/30 overflow-hidden shadow-inner relative">
+                       {plot.city && plot.pincode && plot.city.length > 2 ? (
+                         <iframe 
+                           width="100%" height="100%" frameBorder="0" style={{ border: 0 }}
+                           src={`https://maps.google.com/maps?&q=${encodeURIComponent(plot.city + ' ' + plot.pincode)}&output=embed`}
+                           allowFullScreen
+                         />
+                       ) : (
+                         <div className="w-full h-full flex items-center justify-center text-sm text-muted-foreground flex-col gap-2">
+                            <Map className="w-8 h-8 opacity-20" />
+                            Enter City & Pincode to load satellite view
+                         </div>
+                       )}
+                     </div>
+                  </div>
+
+                  <div className="space-y-3">
+                     <Label className="font-semibold">Number of Floors</Label>
+                     <Input placeholder="e.g. 2" type="number" className="h-12" value={plot.floors} onChange={e => setPlot({...plot, floors: e.target.value})} />
+                  </div>
+                  <div className="space-y-3">
+                     <Label className="font-semibold">Soil Type (Structural Analysis)</Label>
+                     <select className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" value={plot.soil} onChange={e => setPlot({...plot, soil: e.target.value})}>
+                        <option value="red">Red Soil</option>
+                        <option value="black">Black Soil (High Swell)</option>
+                        <option value="sandy">Sandy Soil</option>
+                        <option value="clay">Clay Soil</option>
+                        <option value="rocky">Rocky (Hard Strata)</option>
+                     </select>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-6 border-t mt-6">
+                   <div className="text-sm text-muted-foreground flex gap-2"><FileDown className="w-4 h-4"/> Can export PDF at any stage</div>
+                   <Button onClick={handleNext} disabled={!plot.length || !plot.width || !plot.area || !plot.city} className="h-12 px-8" size="lg">
+                     Next Step <ArrowRight className="ml-2 w-4 h-4" />
+                   </Button>
+                </div>
+              </motion.div>}

@@ -6,15 +6,6 @@ import { signToken, setAuthCookies } from "@/lib/jwt"
 
 export async function POST(req: Request) {
   try {
-    // Attempt database connection with a shorter timeout or fallback
-    let isDbConnected = false
-    try {
-      await dbConnect()
-      isDbConnected = true
-    } catch (e) {
-      console.warn("MongoDB Connection failed during signup, using JSON DB fallback:", e)
-    }
-
     const { name, email, password } = await req.json()
 
     if (!name || !email || !password) {
@@ -22,17 +13,27 @@ export async function POST(req: Request) {
     }
 
     const lowerEmail = email.toLowerCase()
-    let existingUser: any = null
 
-    // 1. Check for existing user
+    // 1. Try MongoDB connection
+    let isDbConnected = false
+    try {
+      await dbConnect()
+      isDbConnected = true
+    } catch (e) {
+      console.warn("MongoDB connection failed in signup, using fallback.")
+    }
+
+    // 2. Check if user already exists
+    let existingUser = null
     if (isDbConnected) {
       try {
         existingUser = await User.findOne({ email: lowerEmail })
       } catch (e) {
-        console.error("MongoDB Check failed:", e)
+        console.error("MongoDB check failed in signup:", e)
       }
     }
 
+    // 3. Fallback check from JSON DB
     if (!existingUser) {
       const { getAll } = require("@/lib/db")
       const localUsers = getAll("users")
@@ -43,65 +44,62 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email already registered" }, { status: 409 })
     }
 
-    // 2. Hash password and prepare user data
+    // 4. Hash password
     const hashedPassword = await bcrypt.hash(password, 12)
-    const userData = {
-      name,
-      email: lowerEmail,
-      password: hashedPassword,
-      role: "user",
-      status: "active",
-      settings_data: "{}",
-      created_at: new Date().toISOString()
-    }
 
+    // 5. Create user (MongoDB + JSON fallback)
     let newUser: any = null
-
-    // 3. Save to MongoDB if connected
     if (isDbConnected) {
-      try {
-        newUser = await User.create(userData)
-      } catch (e) {
-        console.error("MongoDB Create failed:", e)
-      }
+        try {
+            newUser = await User.create({
+                name,
+                email: lowerEmail,
+                password: hashedPassword,
+                role: 'user',
+                status: 'active'
+            })
+        } catch (e) {
+            console.error("MongoDB creation failed in signup:", e)
+        }
     }
 
-    // 4. Always ensure it's in the local JSON DB for reliability
+    // Always sync to JSON DB for development resilience
     const { insert } = require("@/lib/db")
-    if (!newUser) {
-      // Create local user with ID if MongoDB failed
-      const localUser = { id: `u${Date.now()}`, ...userData }
-      insert("users", localUser)
-      newUser = localUser
-    } else {
-      // Sync MongoDB user to local DB
-      insert("users", { id: newUser._id.toString(), ...userData })
+    const localId = `u${Date.now()}`
+    const localUser = {
+        id: newUser?._id?.toString() || localId,
+        name,
+        email: lowerEmail,
+        password: hashedPassword,
+        role: 'user',
+        status: 'active'
     }
+    insert("users", localUser)
 
-    // 5. Generate token
+    // Ensure we have a consistent user object for the token
+    const userForToken = newUser || localUser
+
+    // 6. Generate token
     const token = await signToken({
-      userId: (newUser._id || newUser.id).toString(),
-      email: newUser.email,
-      role: newUser.role,
+      userId: (userForToken._id || userForToken.id).toString(),
+      email: userForToken.email,
+      role: userForToken.role,
     })
 
-    // Set HTTP-only cookie
+    // 7. Set HTTP-only cookie
     await setAuthCookies(token)
 
-    // Return sanitized user object
-    const sanitizedUser = {
-      id: (newUser._id || newUser.id).toString(),
-      name: newUser.name,
-      email: newUser.email,
-      role: newUser.role,
-      status: newUser.status,
-    }
-
     return NextResponse.json({
-      message: "Signup successful",
-      access_token: token,
-      token_type: "bearer",
-      user: sanitizedUser,
+        message: "Signup successful",
+        access_token: token,
+        token_type: "bearer",
+        user: {
+            id: (userForToken._id || userForToken.id).toString(),
+            name: userForToken.name,
+            email: userForToken.email,
+            role: userForToken.role,
+            status: userForToken.status
+        }
     }, { status: 201 })
 
   } catch (error: any) {

@@ -8,16 +8,21 @@ async function proxy(req: NextRequest, { params }: { params: Promise<{ path: str
   // Simple, direct proxy to the Python backend
   const target = `${BASE}/api/v1/${path.join("/")}${req.nextUrl.search}`
   const headers: Record<string, string> = {}
-  
+
   req.headers.forEach((v, k) => {
     if (!["host", "content-length"].includes(k.toLowerCase())) headers[k] = v
   })
+
+  const tokenCookie = req.cookies.get("token")
+  if (tokenCookie && !headers.authorization && !headers.Authorization) {
+    headers.Authorization = `Bearer ${tokenCookie}`
+  }
 
   const init: RequestInit = {
     method: req.method,
     headers,
     body: ["GET", "HEAD"].includes(req.method) ? undefined : await req.arrayBuffer(),
-    signal: AbortSignal.timeout(10000), 
+    signal: AbortSignal.timeout(10000),
   }
 
   try {

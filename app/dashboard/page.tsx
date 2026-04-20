@@ -1,12 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { AuthGuard } from "@/components/auth-guard"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { getCurrentUser, logout } from "@/lib/auth"
+import { BrandLogo } from "@/components/brand-logo"
+import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
@@ -15,6 +17,7 @@ import { LanguageSelector } from "@/components/language-selector"
 import { useLanguage } from "@/contexts/language-context"
 import { useTranslation } from "@/lib/i18n/translations"
 import {
+  Sparkles,
   Plus,
   Home,
   Users,
@@ -30,7 +33,6 @@ import {
   Grid3x3,
   LayoutGrid,
   Cable as Cube,
-  BrainCircuit,
 } from "lucide-react"
 
 import { ErrorBoundary } from "@/components/error-boundary"
@@ -64,7 +66,7 @@ export default function DashboardPage() {
     router.push("/")
   }
 
-  const projects = [
+  const defaultProjects = [
     {
       id: 1,
       name: "Modern Villa",
@@ -94,8 +96,22 @@ export default function DashboardPage() {
     },
   ]
 
+  const [activeProjectsList, setActiveProjectsList] = useState<any[]>(defaultProjects)
+  const [activeCount, setActiveCount] = useState("3")
+
+  useEffect(() => {
+     try {
+        const stored = localStorage.getItem("siid_projects");
+        if (stored) {
+           const parsed = JSON.parse(stored);
+           setActiveProjectsList([...parsed, ...defaultProjects]);
+           setActiveCount((3 + parsed.length).toString());
+        }
+     } catch(e) {}
+  }, [])
+
   const stats = [
-    { label: "Active Projects", value: "3", icon: FolderOpen, color: "text-primary" },
+    { label: "Active Projects", value: activeCount, icon: FolderOpen, color: "text-primary" },
     { label: "Completed", value: "12", icon: Home, color: "text-green-600" },
     { label: "In Review", value: "1", icon: Clock, color: "text-amber-600" },
     { label: "Contractors", value: "8", icon: Users, color: "text-blue-600" },
@@ -145,22 +161,7 @@ export default function DashboardPage() {
           <aside className="fixed left-0 top-0 h-full w-64 border-r border-border bg-muted/30 overflow-y-auto flex flex-col">
             <div className="p-6">
               <Link href="/" className="flex items-center gap-2 mb-8">
-                <img
-                  src="/images/siid-flash-logo.png"
-                  alt="SIID FLASH Logo"
-                  className="h-12 w-auto object-contain"
-                  onError={(e) => {
-                    const img = e.currentTarget as HTMLImageElement
-                    if (!img.dataset.fallbackShown) {
-                      img.dataset.fallbackShown = "true"
-                      img.style.display = "none"
-                      const fallback = document.createElement("span")
-                      fallback.className = "text-lg font-bold text-primary"
-                      fallback.textContent = "SIID FLASH"
-                      img.parentElement?.appendChild(fallback)
-                    }
-                  }}
-                />
+                <BrandLogo className="h-12 w-auto" />
               </Link>
 
               <nav className="space-y-1">
@@ -204,6 +205,8 @@ export default function DashboardPage() {
                   </button>
                 </Link>
 
+
+
                 <button
                   onClick={() => setActiveTab("timeline")}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === "timeline"
@@ -233,12 +236,6 @@ export default function DashboardPage() {
                   </button>
                 </Link>
 
-                <Link href="/dashboard/ai-worker-allocation">
-                  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all border border-muted-foreground/10 bg-indigo-500/5 hover:bg-indigo-500/10 dark:text-indigo-300">
-                    <BrainCircuit className="w-5 h-5 flex-shrink-0 text-indigo-500" />
-                    <span className="text-sm font-medium">AI Worker Allocation</span>
-                  </button>
-                </Link>
 
                 <Link href="/dashboard/careers">
                   <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
@@ -316,10 +313,10 @@ export default function DashboardPage() {
                     <Users className="w-4 h-4 mr-2" />
                     Add Member
                   </Button>
-                  <Link href="/dashboard/new-project">
-                    <Button className="bg-accent hover:bg-accent-dark text-white">
-                      <Plus className="w-5 h-5 mr-2" />
-                      New Project
+                  <Link href="/projects/create">
+                    <Button className="bg-emerald-600 hover:bg-emerald-500 text-white">
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      New AI Project
                     </Button>
                   </Link>
                 </div>
@@ -496,7 +493,7 @@ export default function DashboardPage() {
                       <ComparisonView />
                     </div>
                     <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
-                      {projects.map((project) => (
+                      {activeProjectsList.map((project) => (
                         <Card
                           key={project.id}
                           className={`overflow-hidden border-border hover:shadow-lg transition-shadow ${viewMode === "list" ? "flex flex-row" : ""
@@ -584,6 +581,8 @@ export default function DashboardPage() {
                   <DocumentManager />
                 </ErrorBoundary>
               )}
+
+
             </div>
           </main>
 

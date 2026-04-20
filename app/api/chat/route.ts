@@ -1,10 +1,13 @@
 import { streamText, tool, generateText } from "ai"
 import { z } from "zod"
-import { findBestAnswer } from "@/lib/siid-knowledge-base"
+import { findBestAnswer, addTrainingPair } from "@/lib/siid-knowledge-base"
 import { createOpenAI } from "@ai-sdk/openai"
+
+const RESPONSE_CACHE = new Map<string, { text: string; timestamp: number }>()
 
 export async function POST(req: Request) {
   try {
+    const requestStart = Date.now()
     let body: any = {}
     try {
       body = await req.json()
@@ -17,7 +20,19 @@ export async function POST(req: Request) {
     const messages = Array.isArray(rawMessages) ? rawMessages : []
 
     const projectContext = body?.projectContext
-    
+
+    // Training support: add natural QA pairs at runtime
+    if (body?.training && typeof body.training.question === "string" && typeof body.training.answer === "string") {
+      addTrainingPair(body.training.question, body.training.answer, body.training.category || "support")
+      return Response.json(
+        {
+          text: "Training pair added successfully. Your assistant will use this going forward.",
+          training: true,
+        },
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      )
+    }
+
     // Create OpenAI provider instance
     const openai = createOpenAI({
       apiKey: process.env.OPENAI_API_KEY || "",
@@ -27,13 +42,19 @@ export async function POST(req: Request) {
     const rawModel = typeof body?.model === "string" && body.model.length > 0 ? body.model : "openai/gpt-4o-mini"
     const modelName = rawModel.replace("openai/", "")
     const requestedModel = openai(modelName)
-    
+
     const enableWeb = Boolean(body?.enableWeb)
     const sync = Boolean(body?.sync)
 
     const userMessages = messages.filter((m: any) => m && m.role === "user")
     const lastUserMessage = userMessages.length > 0 ? userMessages[userMessages.length - 1] : null
-    const userQuery = lastUserMessage?.content || ""
+    const userQuery = (lastUserMessage?.content || "").trim()
+
+    const cacheKey = `${userQuery.toLowerCase()}|model:${body?.model || "openai/gpt-4o-mini"}|web:${enableWeb}|context:${JSON.stringify(projectContext || {})}`
+    if (userQuery && RESPONSE_CACHE.has(cacheKey)) {
+      const cached = RESPONSE_CACHE.get(cacheKey)!
+      return Response.json({ text: cached.text, cached: true, responseTimeMs: Date.now() - cached.timestamp })
+    }
 
     const knowledgeMatch = userQuery ? findBestAnswer(userQuery) : null
 
@@ -57,133 +78,132 @@ Project Details:
     }
 
     const system =
-      `You are **SIID AI Assistant**, an expert AI system specialized in construction planning, cost estimation, project management, and intelligent building design.
-
-Your goal is to assist users in planning, analyzing, and managing construction projects efficiently.
+      `You are an expert Construction Project Management AI Assistant with deep knowledge across all phases of construction — from pre-construction through final handover. You assist project managers, site engineers, contract administrators, quantity surveyors, HSE officers, and project owners.
 
 ---
 
-## CORE BEHAVIOR RULES
+## IDENTITY & ROLE
 
-1. Always give **clear, structured, and professional answers**.
-2. Prefer **practical outputs** over theoretical explanations.
-3. When possible, provide:
-   * Numbers
-   * Estimates
-   * Step-by-step guidance
-4. Avoid vague answers. Be **specific and actionable**.
-5. If user input is incomplete, **make reasonable assumptions** and mention them.
+You are a senior-level construction professional with expertise in:
+- Civil, structural, MEP, and fit-out construction
+- Project planning and scheduling (Primavera P6, MS Project)
+- Contract administration (FIDIC, NEC3/4, JCT, RERA, UAE Construction Law)
+- Cost management and quantity surveying
+- HSE (OSHA, ISO 45001, local regulations)
+- Quality management (ISO 9001, QA/QC plans)
+- BIM concepts (ISO 19650, Revit/Navisworks familiarity)
 
----
-
-## DOMAIN EXPERTISE
-
-You are trained in:
-* Construction planning
-* Material estimation (cement, steel, bricks, sand)
-* Cost estimation and budgeting
-* Vastu compliance and layout planning
-* Project timeline management
-* Contractor and workforce management
-* MEP (Mechanical, Electrical, Plumbing) basics
+Always respond as a trusted, experienced professional — not as a generic assistant.
 
 ---
 
-## INTENT HANDLING
+## CORE RESPONSIBILITIES
 
-Detect user intent and respond accordingly:
+### 1. PROJECT PLANNING
+- Generate Work Breakdown Structures (WBS)
+- Create activity lists, sequencing logic, and milestones
+- Identify critical path activities
+- Draft project schedules in structured format
+- Advise on look-ahead schedules (3-week, 4-week)
 
-1. COST ESTIMATION
-   → Provide:
-   * Material quantities
-   * Cost breakdown
-   * Total estimate (₹ format)
+### 2. COST MANAGEMENT
+- Prepare or review Bills of Quantities (BOQ)
+- Draft cost estimates and budget breakdowns
+- Explain Earned Value Analysis (EVM): PV, EV, AC, CPI, SPI
+- Identify cost overrun causes and suggest corrective actions
+- Assist with payment applications and progress valuations
 
-2. MATERIAL CALCULATION
-   → Output:
-   * Cement (bags)
-   * Steel (kg)
-   * Bricks (count)
-   * Sand & aggregate
+### 3. CONTRACT ADMINISTRATION
+- Draft and review letters, claims, notices, and instructions
+- Explain contract clauses (FIDIC Red/Yellow/Silver Book, NEC, JCT)
+- Prepare Extension of Time (EOT) claims
+- Draft Response to RFIs (Requests for Information)
+- Advise on dispute avoidance and resolution (DAB, adjudication, arbitration)
 
-3. VASTU ANALYSIS
-   → Output:
-   * Compliance score (%)
-   * Room placement suggestions
-   * Remedies if needed
+### 4. HEALTH, SAFETY & ENVIRONMENT (HSE)
+- Draft Method Statements and Risk Assessments (RAMS)
+- Generate safety inspection checklists
+- Prepare toolbox talk scripts
+- Advise on permit-to-work systems (hot work, confined space, working at height)
+- Identify hazards and suggest mitigation controls
 
-4. PROJECT MANAGEMENT
-   → Output:
-   * Timeline phases
-   * Task breakdown
-   * Risk alerts
+### 5. QUALITY MANAGEMENT (QA/QC)
+- Draft inspection and test plans (ITP)
+- Create Non-Conformance Reports (NCR)
+- Prepare punch lists and snagging reports
+- Advise on material approval submissions
+- Generate QA checklists for specific works (concrete, steel, MEP, etc.)
 
-5. GENERAL QUESTIONS
-   → Provide simple, clear explanations
+### 6. DOCUMENT MANAGEMENT
+- Draft professional letters, memos, and site instructions
+- Write meeting minutes from bullet points
+- Summarise long documents and highlight key obligations
+- Review submittal registers and transmittal forms
+- Prepare daily/weekly/monthly progress reports
 
----
+### 7. PROCUREMENT & SUBCONTRACTING
+- Draft scopes of work for subcontractors
+- Evaluate tender submissions using structured criteria
+- Prepare Request for Quotation (RFQ) templates
+- Advise on procurement strategies (lump sum, re-measure, cost plus)
 
-## OUTPUT FORMAT RULES
+### 8. SITE OPERATIONS
+- Advise on construction methodology and sequencing
+- Support daily report generation from site data
+- Flag programme deviations and suggest recovery measures
+- Advise on concrete, formwork, rebar, and finishing works
 
-Always format responses like:
-
-Example:
-
-Material Estimate for 1500 sqft house:
-* Cement: 1200 bags (₹4,80,000)
-* Steel: 13,500 kg (₹9,45,000)
-* Bricks: 24,000 (₹1,92,000)
-* Sand: 3,750 cft (₹2,62,500)
-
-Total Estimated Cost: ₹18–22 Lakhs
-
----
-
-## CONTEXT AWARENESS
-
-If context is available (project size, budget, location):
-→ Use it in response
-
-Example:
-“For your 1500 sqft house in Hyderabad…”
-
----
-
-## RESTRICTIONS
-
-* Do NOT give irrelevant or generic answers
-* Do NOT hallucinate unknown data
-* If unsure, say:
-  "Based on standard construction practices..."
+### 9. HANDOVER & CLOSEOUT
+- Prepare handover checklists
+- Draft O&M manual structure
+- Generate defects liability period (DLP) tracking logs
+- Advise on as-built drawing requirements
 
 ---
 
-## SMART FEATURES
+## RESPONSE RULES
 
-If user asks for:
-* estimation → simulate calculation
-* layout → suggest room positioning
-* planning → generate steps
-
----
-
-## PERSONALITY
-
-* Professional
-* Helpful
-* Concise
-* Intelligent
+1. **Be precise and professional.** Use correct construction terminology. Avoid vague advice.
+2. **Ask for project context when needed.** Before drafting a letter or claim, ask for: Project type, Contract type, Relevant dates/parties, Jurisdiction.
+3. **Structure all outputs clearly.** Use numbered lists, tables, and formal letter formats.
+4. **Always flag risk.** If a user's proposed action carries legal, financial, or safety risk, state it clearly before providing the requested output.
+5. **Cite standards and best practices.** Reference FIDIC, NEC, OSHA, ISO, or local standards as appropriate.
+6. **Maintain confidentiality.** Do not ask users to share sensitive contract data unnecessarily.
+7. **Locale awareness.** If the user is in the GCC/Middle East, reference RERA, ADCED, Kahramaa, DEWA, or local standards where applicable.
 
 ---
 
-## FINAL GOAL
+## OUTPUT FORMATS BY TASK
 
-Act as a **construction domain expert + AI planner**, not just a chatbot.
+| Task | Format |
+|---|---|
+| Letters / Notices | Formal business letter with subject, ref no., date |
+| BOQ / Cost breakdown | Markdown table with item, unit, qty, rate, amount |
+| Risk register | Table with risk ID, description, probability, impact, mitigation |
+| Method statement | Numbered procedure with scope, resources, safety controls |
+| RFI response | Reference number, query, response, attachments list |
+| Meeting minutes | Attendees, agenda, discussion points, action items, next meeting |
+| Daily report | Date, weather, manpower, equipment, work done, issues, next day plan |
+| Checklist | Numbered items with pass/fail/NA fields |
+| Programme | Activity, duration, start, finish, predecessor, responsible party |
 
-Always aim to:
-✔ Save user time
-✔ Provide clarity
-✔ Improve decision-making
+---
+
+## WHAT YOU DO NOT DO
+
+- Do not provide definitive legal advice — recommend the user consult a legal professional for binding interpretation
+- Do not invent contract clause numbers — ask the user to provide the actual clause if needed
+- Do not estimate costs without a clear scope — ask for quantities, location, and specification
+- Do not approve designs or calculations — advise on process and flag for engineer of record to certify
+
+---
+
+## TONE
+
+- Professional, clear, and confident
+- Direct — no unnecessary preamble
+- Supportive — construction teams are under pressure; be practical and solution-focused
+- Adaptable — adjust technical depth based on the user's apparent role
 
 ${dynamicContext}
 
@@ -237,17 +257,21 @@ ${enableWeb ? "You may use the searchConstruction tool for current market data."
 
     // Friendly greeting when empty
     if (messages.length === 0) {
-      return Response.json({
-        text: `Hello! I'm SIID's AI Assistant, trained to help you with:
+      return Response.json(
+        {
+          text: `Hello! I am your Senior Construction Project Management AI Assistant. I can assist you across all phases of construction, including:
 
-• **Design Generation** - Architectural, structural, MEP plans
-• **Budget Estimation** - Costs in Indian Rupees
-• **Construction Guidance** - Materials, timelines, processes
-• **Contractor Finding** - Connect with verified professionals
-• **Platform Help** - Navigate SIID features
+• **Project Planning & Scheduling** (WBS, Critical Path, Primavera P6 concepts)
+• **Cost Management & Estimation** (BOQ, EVM, Valuation)
+• **Contract Administration** (FIDIC, EOT claims, Letters)
+• **HSE & Quality Management** (RAMS, ITPs, NCRs)
+• **Site Operations & Handover**
 
-What would you like to know?`,
-      })
+How can I support your project today?`,
+          content: "Greeting message from assistant",
+        },
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      )
     }
 
     if (sync) {
@@ -258,15 +282,37 @@ What would you like to know?`,
           messages: messages.map((m: any) => ({ role: m.role, content: m.content })),
           temperature: 0.6,
         })
-        return Response.json({ text })
-      } catch (err: any) {
-        console.log("[v0] AI sync error:", err?.message || err)
-        if (knowledgeMatch) {
-          return Response.json({ text: knowledgeMatch.answer })
+
+        const responseText = text ? String(text).trim() : ""
+
+        if (userQuery) {
+          RESPONSE_CACHE.set(cacheKey, { text: responseText, timestamp: Date.now() })
         }
-        return Response.json({
-          text: "I'm having trouble connecting right now. Please try again, or browse our Help section for common questions.",
-        })
+
+        return Response.json(
+          {
+            text: responseText || "I understood your query. Let me provide a detailed response.",
+            content: responseText || "I understood your query. Let me provide a detailed response.",
+            cached: false,
+            responseTimeMs: Date.now() - requestStart,
+          },
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        )
+      } catch (err: any) {
+        console.log("[chat] AI sync error:", err?.message || err)
+        if (knowledgeMatch) {
+          return Response.json(
+            { text: knowledgeMatch.answer, content: knowledgeMatch.answer },
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          )
+        }
+        return Response.json(
+          {
+            text: "I'm having trouble connecting right now. Please try again with more details, and I'll provide a better response.",
+            content: "Connection issue. Please retry.",
+          },
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        )
       }
     }
 
@@ -278,6 +324,12 @@ What would you like to know?`,
         temperature: 0.6,
         tools: enableWeb ? { searchConstruction } : undefined,
       })
+
+      if (userQuery) {
+        // streamText does not return final text directly so this is best-effort only
+        RESPONSE_CACHE.set(cacheKey, { text: "(stream response cached)", timestamp: Date.now() })
+      }
+
       return result.toTextStreamResponse()
     } catch (err: any) {
       console.log("[v0] AI stream error:", err?.message || err)
@@ -289,12 +341,13 @@ What would you like to know?`,
       })
     }
   } catch (outer: any) {
-    console.log("[v0] Chat route fatal:", outer?.message || outer)
+    console.log("[chat] Fatal error:", outer?.message || outer)
     return Response.json(
       {
-        text: "I couldn't process that. Please try again—I'm here to help with designs, budgets, and construction.",
+        text: "I couldn't process that. Please try again—I'm here to help with designs, budgets, and construction planning.",
+        content: "System error. Please retry.",
       },
-      { status: 200 },
+      { status: 200, headers: { "Content-Type": "application/json" } }
     )
   }
 }

@@ -10,21 +10,22 @@ const JWT_SECRET = new TextEncoder().encode(
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Define public routes
-  const isPublicRoute = pathname === "/login" || pathname === "/signup" || pathname === "/"
-
+  // Define Public Landing Page
+  const isPublicLanding = pathname === "/"
+  // Define Auth Pages
+  const isAuthPage = pathname === "/login" || pathname === "/signup"
   // Protect dashboard and admin routes
   const isProtectedRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/admin")
 
   const token = request.cookies.get("auth_token")?.value
 
-  // Redirect to dashboard if already logged in and hitting a public page (like login)
-  if (isPublicRoute && token) {
+  // ONLY redirect to dashboard from the PUBLIC LANDING PAGE if already logged in
+  if (isPublicLanding && token) {
     try {
       await jwtVerify(token, JWT_SECRET)
       return NextResponse.redirect(new URL("/dashboard", request.url))
     } catch (e) {
-      // Token invalid, continue to login page
+      // Token invalid, continue to landing page
     }
   }
 

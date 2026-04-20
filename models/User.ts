@@ -1,42 +1,37 @@
-import mongoose, { Schema, model, models } from "mongoose"
+import mongoose from "mongoose"
 
-const UserSchema = new Schema(
+const UserSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Name is required"],
+      required: [true, "Please provide a name"],
     },
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: [true, "Please provide an email"],
       unique: true,
       lowercase: true,
-      trim: true,
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
-      select: false, // Don't return password by default
+      required: [true, "Please provide a password"],
     },
     role: {
       type: String,
-      enum: ["admin", "user", "contractor"],
+      enum: ["user", "admin", "contractor", "supervisor"],
       default: "user",
     },
     status: {
       type: String,
-      enum: ["active", "suspended", "pending"],
+      enum: ["active", "inactive", "pending"],
       default: "active",
     },
     settings_data: {
-      type: String, // Store industrial settings as JSON string
-      default: "{}",
-    },
+        type: String,
+        default: "{}"
+    }
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 )
 
-// Important for Next.js hot-reloading: check if model already exists
-export default models.User || model("User", UserSchema)
+export default mongoose.models.User || mongoose.model("User", UserSchema)

@@ -25,8 +25,8 @@ let APPLICATIONS: Application[] = [
     matchScore: 95,
     status: "pending",
     appliedDate: "2024-01-16",
-    email: "michael.chen@email.com",
-    phone: "+91 90000 00001",
+    email: "venkatbodduluri78@gmail.com",
+    phone: "+91 90323 06961",
     skills: ["Structural Analysis", "AutoCAD", "Revit", "PE Licensed"],
   },
 ]

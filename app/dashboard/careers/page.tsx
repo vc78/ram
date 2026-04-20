@@ -86,8 +86,8 @@ export default function RecruitmentPage() {
           matchScore: 95,
           status: "pending",
           appliedDate: "2024-01-16",
-          email: "michael.chen@email.com",
-          phone: "+91 90000 00000",
+          email: "venkatbodduluri78@gmail.com",
+          phone: "+91 90323 06961",
           resume: "resume.pdf",
           skills: ["Structural Analysis"],
         },
@@ -251,7 +251,7 @@ export default function RecruitmentPage() {
                     <div className="mb-4">
                       <p className="text-sm font-medium mb-2">Requirements:</p>
                       <div className="flex flex-wrap gap-2">
-                        {job.requirements.map((req, idx) => (
+                        {job.requirements.map((req: string, idx: number) => (
                           <Badge key={idx} variant="outline" className="text-xs">
                             {req}
                           </Badge>
@@ -299,7 +299,7 @@ export default function RecruitmentPage() {
                           <span className="text-lg font-semibold text-primary">
                             {app.candidateName
                               .split(" ")
-                              .map((n) => n[0])
+                              .map((n: string) => n[0])
                               .join("")}
                           </span>
                         </div>
@@ -353,7 +353,7 @@ export default function RecruitmentPage() {
                     <div className="mb-4">
                       <p className="text-sm font-medium mb-2">Skills:</p>
                       <div className="flex flex-wrap gap-2">
-                        {app.skills.map((skill, idx) => (
+                        {app.skills.map((skill: string, idx: number) => (
                           <Badge key={idx} variant="outline" className="text-xs">
                             {skill}
                           </Badge>

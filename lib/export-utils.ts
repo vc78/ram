@@ -3,6 +3,13 @@ import autoTable from "jspdf-autotable"
 import * as XLSX from "xlsx"
 import JSZip from "jszip"
 import saveAs from "file-saver"
+import {
+  createDocumentHeader,
+  createDocumentFooter,
+  addSection,
+  addDataTable,
+  addInfoBox,
+} from "./document-template"
 
 export interface ProjectData {
   id: string
@@ -16,165 +23,117 @@ export interface ProjectData {
 }
 
 /**
- * Export project data to PDF format
+ * Export project data to PDF format with professional template
  */
 export async function exportProjectToPDF(project: ProjectData): Promise<void> {
   const doc = new jsPDF()
   const pageWidth = doc.internal.pageSize.getWidth()
   const pageHeight = doc.internal.pageSize.getHeight()
-  let yPosition = 20
 
-  // Title
-  doc.setFontSize(20)
-  doc.setFont("helvetica", "bold")
-  doc.text(project.name, pageWidth / 2, yPosition, { align: "center" })
-  yPosition += 10
+  let yPosition = createDocumentHeader(doc, project.name, `Project Type: ${project.type.toUpperCase()}`)
 
-  // Project Type
-  doc.setFontSize(12)
-  doc.setFont("helvetica", "normal")
-  doc.text(`Project Type: ${project.type.toUpperCase()}`, pageWidth / 2, yPosition, { align: "center" })
-  yPosition += 15
+  // Project Details
+  const details = {
+    "Project Location": project.location,
+    "Budget Allocation": project.budget,
+    "Project Description": project.description,
+    "Created Date": project.createdAt ? new Date(project.createdAt).toLocaleDateString() : "N/A",
+  }
 
-  // Project Details Section
-  doc.setFontSize(14)
-  doc.setFont("helvetica", "bold")
-  doc.text("Project Details", 14, yPosition)
-  yPosition += 8
-
-  doc.setFontSize(10)
-  doc.setFont("helvetica", "normal")
-  const details = [
-    ["Location", project.location],
-    ["Budget", project.budget],
-    ["Description", project.description],
-    ["Created", project.createdAt ? new Date(project.createdAt).toLocaleDateString() : "N/A"],
-  ]
-
-  autoTable(doc, {
-    startY: yPosition,
-    head: [["Property", "Value"]],
-    body: details,
-    theme: "grid",
-    headStyles: { fillColor: [59, 130, 246] },
-    margin: { left: 14, right: 14 },
-  })
-
-  yPosition = (doc as any).lastAutoTable.finalY + 15
+  yPosition = addInfoBox(doc, yPosition, details, pageWidth, pageHeight)
 
   // Cost Estimation
   if (project.designs?.estimatedCost) {
-    if (yPosition > pageHeight - 60) {
-      doc.addPage()
-      yPosition = 20
-    }
-
-    doc.setFontSize(14)
-    doc.setFont("helvetica", "bold")
-    doc.text("Cost Estimation", 14, yPosition)
-    yPosition += 8
-
     const costData = [
-      ["Construction", `$${project.designs.estimatedCost.construction.toLocaleString()}`],
-      ["Materials", `$${project.designs.estimatedCost.materials.toLocaleString()}`],
-      ["Labor", `$${project.designs.estimatedCost.labor.toLocaleString()}`],
-      ["Total", `$${project.designs.estimatedCost.total.toLocaleString()}`],
+      {
+        "Category": "Construction",
+        "Amount": `$${project.designs.estimatedCost.construction.toLocaleString()}`
+      },
+      {
+        "Category": "Materials",
+        "Amount": `$${project.designs.estimatedCost.materials.toLocaleString()}`
+      },
+      {
+        "Category": "Labor",
+        "Amount": `$${project.designs.estimatedCost.labor.toLocaleString()}`
+      },
+      {
+        "Category": "Total",
+        "Amount": `$${project.designs.estimatedCost.total.toLocaleString()}`
+      },
     ]
 
-    autoTable(doc, {
-      startY: yPosition,
-      head: [["Category", "Amount"]],
-      body: costData,
-      theme: "grid",
-      headStyles: { fillColor: [59, 130, 246] },
-      margin: { left: 14, right: 14 },
-    })
-
-    yPosition = (doc as any).lastAutoTable.finalY + 15
+    yPosition = addDataTable(
+      doc,
+      yPosition,
+      costData,
+      ["Category", "Amount"],
+      pageHeight
+    )
   }
 
   // Timeline
   if (project.designs?.timeline) {
-    if (yPosition > pageHeight - 60) {
-      doc.addPage()
-      yPosition = 20
-    }
-
-    doc.setFontSize(14)
-    doc.setFont("helvetica", "bold")
-    doc.text("Project Timeline", 14, yPosition)
-    yPosition += 8
-
     const timelineData = [
-      ["Design Phase", project.designs.timeline.design],
-      ["Permits & Approvals", project.designs.timeline.permits],
-      ["Construction", project.designs.timeline.construction],
-      ["Total Duration", project.designs.timeline.total],
+      {
+        "Phase": "Design Phase",
+        "Duration": project.designs.timeline.design
+      },
+      {
+        "Phase": "Permits & Approvals",
+        "Duration": project.designs.timeline.permits
+      },
+      {
+        "Phase": "Construction",
+        "Duration": project.designs.timeline.construction
+      },
+      {
+        "Phase": "Total Duration",
+        "Duration": project.designs.timeline.total
+      },
     ]
 
-    autoTable(doc, {
-      startY: yPosition,
-      head: [["Phase", "Duration"]],
-      body: timelineData,
-      theme: "grid",
-      headStyles: { fillColor: [59, 130, 246] },
-      margin: { left: 14, right: 14 },
-    })
+    yPosition = addDataTable(
+      doc,
+      yPosition,
+      timelineData,
+      ["Phase", "Duration"],
+      pageHeight
+    )
   }
 
-  // Add new page for architectural details
-  doc.addPage()
-  yPosition = 20
-
-  doc.setFontSize(14)
-  doc.setFont("helvetica", "bold")
-  doc.text("Architectural Design", 14, yPosition)
-  yPosition += 8
-
+  // Architectural Design
   if (project.designs?.architectural) {
     const arch = project.designs.architectural
-    doc.setFontSize(10)
-    doc.setFont("helvetica", "normal")
-
-    // Floor Plan
-    doc.setFont("helvetica", "bold")
-    doc.text("Floor Plan:", 14, yPosition)
-    yPosition += 6
-    doc.setFont("helvetica", "normal")
-    const floorPlanLines = doc.splitTextToSize(arch.floorPlan || "N/A", pageWidth - 28)
-    doc.text(floorPlanLines, 14, yPosition)
-    yPosition += floorPlanLines.length * 5 + 8
-
-    // Layout
-    if (yPosition > pageHeight - 40) {
-      doc.addPage()
-      yPosition = 20
-    }
-    doc.setFont("helvetica", "bold")
-    doc.text("Layout:", 14, yPosition)
-    yPosition += 6
-    doc.setFont("helvetica", "normal")
-    const layoutLines = doc.splitTextToSize(arch.layout || "N/A", pageWidth - 28)
-    doc.text(layoutLines, 14, yPosition)
-    yPosition += layoutLines.length * 5 + 8
+    const archContent = [
+      `Floor Plan: ${arch.floorPlan || "N/A"}`,
+      `Layout: ${arch.layout || "N/A"}`,
+    ]
+    yPosition = addSection(doc, yPosition, "Architectural Design", archContent, pageWidth, pageHeight)
 
     // Room Dimensions
-    if (arch.dimensions?.rooms && yPosition < pageHeight - 60) {
-      doc.setFont("helvetica", "bold")
-      doc.text("Room Dimensions:", 14, yPosition)
-      yPosition += 8
+    if (arch.dimensions?.rooms) {
+      const roomData = arch.dimensions.rooms.map((room: any) => ({
+        "Room Name": room.name,
+        "Dimensions": room.dimensions,
+        "Area": `${room.area} sq ft`
+      }))
 
-      const roomData = arch.dimensions.rooms.map((room: any) => [room.name, room.dimensions, `${room.area} sq ft`])
-
-      autoTable(doc, {
-        startY: yPosition,
-        head: [["Room", "Dimensions", "Area"]],
-        body: roomData,
-        theme: "grid",
-        headStyles: { fillColor: [59, 130, 246] },
-        margin: { left: 14, right: 14 },
-      })
+      yPosition = addDataTable(
+        doc,
+        yPosition,
+        roomData,
+        ["Room Name", "Dimensions", "Area"],
+        pageHeight
+      )
     }
+  }
+
+  // Add footer to all pages
+  const pageCount = (doc as any).getNumberOfPages?.() || 1
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i)
+    createDocumentFooter(doc, `Project Report: ${project.name}`)
   }
 
   // Save the PDF

@@ -7,101 +7,79 @@ interface BrandLogoProps extends React.HTMLAttributes<HTMLDivElement> {
   height?: number | string
 }
 
-export function BrandLogo({ className, width = "100%", height = "100%", ...props }: BrandLogoProps) {
+export function BrandLogo({ className, width = "120", height = "40", ...props }: BrandLogoProps) {
   return (
-    <div className={cn("flex items-center gap-2", className)} {...props}>
+    <div className={cn("flex items-center gap-2 flex-shrink-0", className)} {...props}>
       <svg
         width={width}
         height={height}
-        viewBox="0 0 400 100"
+        viewBox="0 0 500 150"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full"
+        className="w-auto h-full max-w-xs"
       >
         <defs>
-          <linearGradient id="primaryGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#3b82f6" />
-            <stop offset="100%" stopColor="#1d4ed8" />
+          <linearGradient id="logoGold" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FFB84C" />
+            <stop offset="100%" stopColor="#F59E0B" />
           </linearGradient>
-          <linearGradient id="flashGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#f59e0b" />
-            <stop offset="100%" stopColor="#ea580c" />
-          </linearGradient>
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="4" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
         </defs>
 
-        {/* --- LOGO ICON --- */}
+        {/* --- LOGO ICON (Buildings & Stars) --- */}
         <g transform="translate(10, 10)">
-          {/* Hexagon Isometric Base */}
-          <path
-            d="M 40 0 L 80 23 L 80 69 L 40 92 L 0 69 L 0 23 Z"
-            fill="url(#primaryGrad)"
-            opacity="0.95"
-          />
-          {/* 3D Inner structure */}
-          <path d="M 0 23 L 40 46 L 80 23 L 40 0 Z" fill="#60a5fa" opacity="0.5" />
-          <path d="M 40 92 L 40 46 L 80 23" stroke="#bfdbfe" strokeWidth="2" fill="none" opacity="0.5" />
+          {/* Buildings Left */}
+          <rect x="50" y="30" width="40" height="90" fill="url(#logoGold)" rx="2" />
+          <rect x="100" y="10" width="40" height="110" fill="url(#logoGold)" rx="2" />
+          
+          {/* Building Lines Left */}
+          {Array.from({ length: 8 }).map((_, i) => (
+            <line key={`l1-${i}`} x1="55" y1={40 + i * 10} x2="85" y2={40 + i * 10} stroke="white" strokeWidth="1.5" />
+          ))}
+          {Array.from({ length: 10 }).map((_, i) => (
+            <line key={`l2-${i}`} x1="105" y1={20 + i * 10} x2="135" y2={20 + i * 10} stroke="white" strokeWidth="1.5" />
+          ))}
 
-          {/* S Interlocking Line */}
-          <path
-            d="M 25 20 L 40 10 L 55 20 L 55 40 L 40 50 L 25 60 L 25 80 L 40 90 L 55 80"
-            stroke="white"
-            strokeWidth="7"
-            strokeLinecap="round"
-            fill="none"
-            strokeLinejoin="round"
-          />
+          {/* Stars Column */}
+          <g transform="translate(160, 10)">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <path
+                key={`star-${i}`}
+                d="M15 0L18.5 10.5H29L20.5 17L24 28L15 21.5L6 28L9.5 17L1 10.5H11.5L15 0Z"
+                fill="url(#logoGold)"
+                transform={`translate(0, ${i * 24})`}
+              />
+            ))}
+          </g>
 
-          {/* Flash bolt striking through the center */}
-          <path
-            d="M 52 15 L 28 55 L 45 55 L 35 95 L 60 45 L 45 45 Z"
-            fill="url(#flashGrad)"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinejoin="round"
-            filter="url(#glow)"
-          />
+          {/* Buildings Right */}
+          <rect x="210" y="10" width="40" height="110" fill="url(#logoGold)" rx="2" />
+          <rect x="260" y="30" width="40" height="90" fill="url(#logoGold)" rx="2" />
+
+          {/* Building Lines Right */}
+          {Array.from({ length: 10 }).map((_, i) => (
+            <line key={`r1-${i}`} x1="215" y1={20 + i * 10} x2="245" y2={20 + i * 10} stroke="white" strokeWidth="1.5" />
+          ))}
+          {Array.from({ length: 8 }).map((_, i) => (
+            <line key={`r2-${i}`} x1="265" y1={40 + i * 10} x2="295" y2={40 + i * 10} stroke="white" strokeWidth="1.5" />
+          ))}
+
+          {/* Decorative Divider */}
+          <line x1="0" y1="130" x2="350" y2="130" stroke="url(#logoGold)" strokeWidth="2" strokeLinecap="round" />
+          <circle cx="175" cy="130" r="4" fill="url(#logoGold)" />
         </g>
 
         {/* --- TYPOGRAPHY --- */}
         <text
-          x="105"
-          y="56"
-          fontFamily="system-ui, -apple-system, sans-serif"
-          fontSize="44"
+          x="175"
+          y="180"
+          fontFamily="Impact, Anton, system-ui, sans-serif"
+          fontSize="72"
           fontWeight="900"
-          fill="currentColor"
-          letterSpacing="-1.5"
-          className="text-foreground dark:fill-white fill-slate-900"
+          fill="#FFB84C"
+          textAnchor="middle"
+          letterSpacing="8"
         >
           SIID
-        </text>
-        <text
-          x="195"
-          y="56"
-          fontFamily="system-ui, -apple-system, sans-serif"
-          fontSize="44"
-          fontWeight="900"
-          fill="#3b82f6"
-          letterSpacing="-1.5"
-        >
-          FLASH
-        </text>
-
-        {/* --- SUBTITLE (Optional structural motif) --- */}
-        <text
-          x="108"
-          y="78"
-          fontFamily="system-ui, -apple-system, sans-serif"
-          fontSize="11"
-          fontWeight="700"
-          fill="#64748b"
-          letterSpacing="4.5"
-        >
-          INTELLIGENCE PLATFORM
         </text>
       </svg>
     </div>

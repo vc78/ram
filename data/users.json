@@ -34,5 +34,28 @@
     "role": "user",
     "status": "active",
     "created_at": "2026-03-25T13:40:42.182Z"
+  },
+  {
+    "id": "u1774615580311",
+    "name": "VENKAT  CHOWDARY BODDULURI",
+    "email": "venkatchowdary9177@gmail.com",
+    "password": "$2b$12$Q5W0lfAB6pfGhy.22c9WnOTRAy/bI3oZX2bAq0PeXHHKJKuZz9KWC"
+  },
+  {
+    "id": "u1774775622830",
+    "name": "VENKAT  CHOWDARY BODDULURI",
+    "email": "admin@example.com",
+    "password": "$2b$12$jtR16UL8VWFDyE3jyY8tNutstj/qhImUpRuk1kCWXhdN74Hr4c9yC",
+    "role": "user",
+    "status": "active"
+  },
+  {
+    "id": "u-admin2",
+    "name": "Admin Two",
+    "email": "admin2@siid.com",
+    "password": "$2b$10$UQn3L72fKAeshd1u50gamOmfEmWd.UvxtSN5ma7I6JQN2lGaMU66i",
+    "role": "admin",
+    "status": "active",
+    "created_at": "2026-03-31T00:00:00.000Z"
   }
 ]

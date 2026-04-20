@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .settings import settings
 from .db import Base, engine, get_db
-from .routers import careers, contractors, dashboard, letters, auth, analytics
+from .routers import careers, contractors, dashboard, letters, auth, analytics, admin
 try:
     from .routers import projects
 except Exception:
@@ -37,6 +37,7 @@ app.include_router(dashboard.router, prefix="/api/v1")
 app.include_router(letters.router, prefix="/api/v1")
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(analytics.router, prefix="/api/v1")
+app.include_router(admin.router, prefix="/api/v1")
 if projects is not None:
     app.include_router(projects.router, prefix="/api/v1")
 

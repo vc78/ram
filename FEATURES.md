@@ -426,7 +426,7 @@ Potential additions:
 
 For issues or questions:
 - Check the FAQ section
-- Contact support@siidflash.com
+- Contact venkatbodduluri78@gmail.com
 - Submit feedback through the app
 - Join our community forum
 

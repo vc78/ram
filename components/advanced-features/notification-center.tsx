@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+import { useToast } from "@/hooks/use-toast"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -80,9 +81,92 @@ const MOCK_NOTIFICATIONS: Notification[] = [
   },
 ]
 
+const POTENTIAL_NOTIFICATIONS: Omit<Notification, "id" | "timestamp" | "read" | "time">[] = [
+  {
+    type: "info",
+    title: "AI Budget Optimization",
+    message: "Machine learning has identified a potential 5% saving on material costs for the East Wing.",
+    mlInsights: {
+      urgencyScore: 82,
+      category: "Observation",
+      suggestedAction: "Review Savings"
+    }
+  },
+  {
+    type: "warning",
+    title: "Weather Alert",
+    message: "Heavy rain predicted tomorrow. Foundation work might be delayed.",
+    mlInsights: {
+      urgencyScore: 88,
+      category: "Action Required",
+      suggestedAction: "Adjust Schedule"
+    }
+  },
+  {
+    type: "success",
+    title: "Subcontractor Assigned",
+    message: "Global Electricians Ltd has accepted the contract for the penthouse.",
+    mlInsights: {
+      urgencyScore: 40,
+      category: "Observation",
+      suggestedAction: "View Contract"
+    }
+  },
+  {
+    type: "reminder",
+    title: "Permit Renewal",
+    message: "Site drainage permit expires in 3 days. Renewal is recommended.",
+    mlInsights: {
+      urgencyScore: 95,
+      category: "Action Required",
+      suggestedAction: "Renew Now"
+    }
+  },
+  {
+    type: "info",
+    title: "Structural Sync Complete",
+    message: "BIM models for Phase 2 have been synchronized with the latest engineering specs.",
+    mlInsights: {
+      urgencyScore: 65,
+      category: "Observation",
+      suggestedAction: "View Model"
+    }
+  }
+]
+
 export function NotificationCenter() {
+  const { toast } = useToast()
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS)
   const [sortMode, setSortMode] = useState<"time" | "smart">("smart")
+
+  // Automatic Notification Generator (Within 1 min)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Pick a random notification from the pool
+      const randomBase = POTENTIAL_NOTIFICATIONS[Math.floor(Math.random() * POTENTIAL_NOTIFICATIONS.length)]
+      
+      const newNotification: Notification = {
+        ...randomBase,
+        id: Math.random().toString(36).substr(2, 9),
+        timestamp: Date.now(),
+        read: false,
+        time: "Just now"
+      }
+
+      // Add to state
+      setNotifications(prev => [newNotification, ...prev])
+
+      // Show toast pop-up
+      toast({
+        title: newNotification.title,
+        description: newNotification.message,
+        variant: newNotification.type === "warning" ? "destructive" : "default",
+      })
+
+    }, 45000) // 45 seconds to ensure within 1min requirement
+
+    return () => clearInterval(interval)
+  }, [toast])
 
   const unreadCount = notifications.filter((n) => !n.read).length
 

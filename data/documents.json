@@ -1,50 +1,46 @@
 [
   {
-    "id": "dc4b2c2a-0b9c-4074-8c8c-9be5bc0cc9f5",
-    "name": "Material-Estimate-My Project-12_3_2026 (1).pdf",
+    "id": "a3f9827b-2762-46bd-9dc8-6fc7428978e9",
+    "name": "Material-Estimate-My Project-12_3_2026 (1) (1).pdf",
     "type": "design",
     "format": "pdf",
     "status": "draft",
-    "date": "2026-03-12",
+    "date": "2026-04-01",
     "size": "0.01 MB",
     "version": "v1.0",
     "uploadedBy": "VENKAT  CHOWDARY BODDULURI",
-    "url": "/uploads/Material-Estimate-My Project-12_3_2026 (1).pdf",
+    "url": "/uploads/Material-Estimate-My Project-12_3_2026 (1) (1).pdf",
     "mlAnalysis": {
-      "summary": "This document appears to be a standard pdf document. Standard procedural or inspection document.",
-      "confidenceScore": 90.5,
+      "summary": "Digital Audit Analysis (Layout-LM v3): This document is a high-precision pdf file. Non-blueprint procedural document analyzed via standard NLP Pipeline.",
+      "confidenceScore": 96.8,
       "risks": [
-        "General compliance review recommended."
+        "Visual audit non-applicable. Recommend manual compliance check."
       ],
-      "financialObligations": [],
-      "extractedSpecs": [
-        "No major structural specifications detected."
-      ],
+      "extractedSpecs": [],
+      "detectedZones": [],
       "docClass": "General Document"
     }
   },
   {
-    "id": "483b2e46-08ac-47f7-b245-6d9bc3c6a709",
-    "name": "Oose assignment 4.pdf",
+    "id": "023e2fc1-e0be-46fb-95d9-3f8ab9017502",
+    "name": "Material-Estimate-My Project-1_4_2026.pdf",
     "type": "design",
     "format": "pdf",
     "status": "draft",
-    "date": "2026-03-11",
-    "size": "1.86 MB",
-    "version": "v1.0",
-    "uploadedBy": "VENKAT  CHOWDARY BODDULURI",
-    "url": "/uploads/Oose assignment 4.pdf"
-  },
-  {
-    "id": "0ba088fc-446b-4b47-bce5-78a88ea7e035",
-    "name": "intern.docx",
-    "type": "design",
-    "format": "docx",
-    "status": "draft",
-    "date": "2026-03-11",
+    "date": "2026-04-01",
     "size": "0.01 MB",
     "version": "v1.0",
     "uploadedBy": "VENKAT  CHOWDARY BODDULURI",
-    "url": "/uploads/intern.docx"
+    "url": "/uploads/Material-Estimate-My Project-1_4_2026.pdf",
+    "mlAnalysis": {
+      "summary": "Digital Audit Analysis (Layout-LM v3): This document is a high-precision pdf file. Non-blueprint procedural document analyzed via standard NLP Pipeline.",
+      "confidenceScore": 95.8,
+      "risks": [
+        "Visual audit non-applicable. Recommend manual compliance check."
+      ],
+      "extractedSpecs": [],
+      "detectedZones": [],
+      "docClass": "General Document"
+    }
   }
 ]

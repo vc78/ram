@@ -87,8 +87,8 @@ export default function TermsPage() {
             <h2 className="text-2xl font-bold mb-4">Contact Information</h2>
             <p className="text-muted-foreground leading-relaxed">
               For questions about these Terms of Service, contact us at{" "}
-              <a href="mailto:legal@siid.com" className="text-primary hover:underline">
-                legal@siid.com
+              <a href="mailto:venkatbodduluri78@gmail.com" className="text-primary hover:underline">
+                venkatbodduluri78@gmail.com
               </a>
             </p>
           </section>

@@ -7,6 +7,7 @@ import "./globals.css"
 import PageTheme from "@/components/page-theme"
 import { LanguageProvider } from "@/contexts/language-context"
 import ErrorBoundary from "@/components/error-boundary"
+import { Toaster } from "@/components/ui/toaster"
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -39,6 +40,7 @@ export default function RootLayout({
               <PageTheme />
               <MediaFallbackInjector />
               {children}
+              <Toaster />
             </LanguageProvider>
           </Suspense>
         </ErrorBoundary>

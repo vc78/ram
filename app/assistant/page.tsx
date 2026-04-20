@@ -28,13 +28,12 @@ import {
 type Message = { id: string; role: "user" | "assistant"; content: string }
 
 const CATEGORIES = [
-  { id: "platform", label: "Platform", icon: Sparkles },
-  { id: "design", label: "Design", icon: Building2 },
-  { id: "construction", label: "Construction", icon: Home },
-  { id: "budget", label: "Budget", icon: IndianRupee },
-  { id: "contractors", label: "Contractors", icon: Users },
-  { id: "features", label: "Features", icon: Zap },
-  { id: "technical", label: "Technical", icon: FileText },
+  { id: "planning", label: "Planning", icon: BookOpen },
+  { id: "cost", label: "Cost & EVM", icon: IndianRupee },
+  { id: "contracts", label: "Contracts", icon: FileText },
+  { id: "hse", label: "HSE / Safety", icon: Zap },
+  { id: "quality", label: "QA/QC", icon: Building2 },
+  { id: "operations", label: "Site Ops", icon: Users },
   { id: "support", label: "Support", icon: HelpCircle },
 ]
 
@@ -164,10 +163,10 @@ export default function AssistantPage() {
               <CardHeader className="border-b">
                 <CardTitle className="flex items-center gap-2">
                   <Bot className="w-5 h-5 text-primary" />
-                  Ask me anything about SIID
+                  Construction Project Management Assistant
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  I'm trained on construction, architecture, budgets, and the SIID platform
+                  Expert advice on planning, contracts, HSE, QA/QC, and site operations.
                 </p>
               </CardHeader>
 
@@ -177,9 +176,9 @@ export default function AssistantPage() {
                   {messages.length === 0 ? (
                     <div className="text-center py-8">
                       <Bot className="w-16 h-16 mx-auto text-primary/20 mb-4" />
-                      <h3 className="text-lg font-medium mb-2">Welcome to SIID Assistant</h3>
+                      <h3 className="text-lg font-medium mb-2">Welcome to your PM Assistant</h3>
                       <p className="text-muted-foreground mb-6">
-                        Ask me about designs, budgets, contractors, or how to use SIID
+                        Ask me to draft EOT claims, build WBS schedules, or check QA/QC plans.
                       </p>
 
                       {/* Quick Questions */}
@@ -274,7 +273,7 @@ export default function AssistantPage() {
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask about designs, budgets, construction..."
+                    placeholder="Ask to draft a letter, calculate EVM, or list HSE hazards..."
                     className="flex-1"
                     disabled={isLoading}
                   />

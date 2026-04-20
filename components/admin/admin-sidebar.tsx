@@ -2,16 +2,17 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { 
-  LayoutDashboard, 
-  Users, 
-  FolderOpen, 
-  BarChart3, 
-  Settings, 
+import {
+  LayoutDashboard,
+  Users,
+  FolderOpen,
+  BarChart3,
+  Settings,
   ShieldCheck,
   TrendingUp,
   FileText,
   Bell,
+  Clock,
   LogOut
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -27,6 +28,7 @@ export function AdminSidebar() {
     { href: "/admin/users", label: "User Control", icon: Users },
     { href: "/admin/projects", label: "Project Fleet", icon: FolderOpen },
     { href: "/admin/analytics", label: "Core Analytics", icon: BarChart3 },
+    { href: "/admin/logs", label: "Activity Logs", icon: Clock },
     { href: "/admin/reports", label: "System Reports", icon: FileText },
     { href: "/admin/settings", label: "Terminal Settings", icon: Settings },
   ]
@@ -50,11 +52,10 @@ export function AdminSidebar() {
           return (
             <Link key={link.href} href={link.href}>
               <button
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${
-                  isActive 
-                    ? "bg-blue-600/10 text-blue-400 border border-blue-600/20" 
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive
+                    ? "bg-blue-600/10 text-blue-400 border border-blue-600/20"
                     : "hover:bg-slate-900 text-slate-400 hover:text-slate-200"
-                }`}
+                  }`}
               >
                 <Icon className={`w-5 h-5 ${isActive ? "text-blue-500" : "group-hover:text-slate-200"}`} />
                 <span className="text-sm font-medium">{link.label}</span>
@@ -66,18 +67,18 @@ export function AdminSidebar() {
 
       <div className="p-4 border-t border-slate-800 space-y-4">
         <div className="p-4 bg-slate-900/50 rounded-xl border border-slate-800">
-           <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-slate-500">
-             <TrendingUp className="w-3 h-3" />
-             SYSTEM LOAD
-           </div>
-           <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
-             <div className="h-full bg-blue-600 w-1/3" />
-           </div>
-           <div className="mt-2 text-[10px] text-slate-600 text-center">v2.4.0-production</div>
+          <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-slate-500">
+            <TrendingUp className="w-3 h-3" />
+            SYSTEM LOAD
+          </div>
+          <div className="h-1.5 bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-600 w-1/3" />
+          </div>
+          <div className="mt-2 text-[10px] text-slate-600 text-center">v2.4.0-production</div>
         </div>
 
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className="w-full justify-start gap-3 text-slate-400 hover:text-red-400 hover:bg-red-400/5"
           onClick={async () => {
             await logout()

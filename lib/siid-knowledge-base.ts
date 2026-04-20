@@ -5,7 +5,7 @@ export interface KnowledgeEntry {
   keywords: string[]
   question: string
   answer: string
-  category: "platform" | "design" | "construction" | "budget" | "contractors" | "features" | "technical" | "support"
+  category: "platform" | "design" | "construction" | "budget" | "contractors" | "features" | "technical" | "support" | "planning" | "cost" | "contracts" | "hse" | "quality" | "operations"
 }
 
 export interface QAPair {
@@ -22,6 +22,65 @@ export interface QAPair {
 }
 
 export const SIID_KNOWLEDGE_BASE: KnowledgeEntry[] = [
+  // Project Management & Planning
+  {
+    keywords: ["wbs", "work breakdown structure", "schedule", "p6", "planning", "critical path"],
+    question: "How do I create a Work Breakdown Structure (WBS)?",
+    answer: `To create an effective WBS for construction:
+1. Identify the major project deliverables (e.g., Substructure, Superstructure, MEP, Finishes).
+2. Decompose deliverables into sub-components (e.g., Superstructure -> Columns, Slabs, Beams).
+3. Break down further into actionable work packages (e.g., Slabs -> Formwork, Rebar, Concrete Pour, Curing).
+4. Assign estimated durations and dependencies (predecessors/successors) for the Critical Path Method (CPM).
+Let me know the project type, and I can draft a specific WBS for you!`,
+    category: "planning",
+  },
+  {
+    keywords: ["evm", "earned value", "spi", "cpi", "cost performance", "schedule performance"],
+    question: "How do I calculate EVM (Earned Value Management)?",
+    answer: `Earned Value Management (EVM) tracks project performance against the baseline.
+Key formulas:
+• PV (Planned Value) = Authorized budget assigned to scheduled work.
+• EV (Earned Value) = Budget authorized for work actually completed.
+• AC (Actual Cost) = Actual cost incurred for the completed work.
+• SPI (Schedule Performance Index) = EV / PV. (SPI < 1 means behind schedule)
+• CPI (Cost Performance Index) = EV / AC. (CPI < 1 means over budget)
+Provide your PV, EV, and AC, and I will analyze the variances for you.`,
+    category: "cost",
+  },
+  {
+    keywords: ["fidic", "eot", "extension of time", "claim", "delay"],
+    question: "How do I process an Extension of Time (EOT) claim under FIDIC?",
+    answer: `Under FIDIC (e.g., Red Book 1999/2017), the procedure for an EOT is:
+1. Notice: The Contractor must give notice of the delay event within 28 days of becoming aware of it (Sub-Clause 20.1 / 20.2).
+2. Detailed Claim: Submit a fully detailed claim within 42 days (or agreed time), including schedule delay analysis and supporting records.
+3. Engineer's Determination: The Engineer reviews and responds within 42 days, either approving in principle or requesting more info.
+Always support claims with a time-impact analysis on the approved baseline schedule. Need help drafting the Notice of Delay? Just ask.`,
+    category: "contracts",
+  },
+  {
+    keywords: ["hse", "safety", "toolbox", "rams", "risk assessment", "hazard"],
+    question: "What should be included in a Method Statement and Risk Assessment (RAMS)?",
+    answer: `A comprehensive RAMS must cover:
+1. Safe Work Procedure (Method Statement): Step-by-step sequence of the task, resources required, and responsibilities.
+2. Risk Assessment: Identify hazards (e.g., falling from height, electrical shock).
+3. Risk Rating: Assess Probability vs Impact.
+4. Mitigation & Controls: Hierarchy of controls (Elimination, Substitution, Engineering Controls, Admin Controls, PPE).
+5. Emergency Rescue Plan & Permit to Work (PTW) requirements.
+Tell me your specific activity (e.g., "Deep Trench Excavation"), and I will draft a full RAMS table.`,
+    category: "hse",
+  },
+  {
+    keywords: ["ncrs", "non conformance", "quality", "itp", "inspection"],
+    question: "How do I manage an NCR (Non-Conformance Report)?",
+    answer: `To manage an NCR formally:
+1. Identify and document the deviation from the approved drawing or specification.
+2. Issue the NCR to the responsible party instantly, with photos/evidence.
+3. Request a Corrective Action Plan (CAP) from the contractor including Root Cause Analysis.
+4. Review and approve the proposed rework/repair method.
+5. Re-inspect after the rework and formally close the NCR on the quality log.
+Need an ITP (Inspection and Test Plan) for a specific trade? Let me know!`,
+    category: "quality",
+  },
   // Platform & Features
   {
     keywords: ["what is siid", "about siid", "siid platform", "tell me about siid"],
@@ -504,8 +563,7 @@ In project requirements, select "Vastu Compliant" under preferences, and the AI 
 • FAQ section on homepage
 • Video tutorials
 
-**Direct Support:**
-• Email: support@siid.com
+• Email: venkatbodduluri78@gmail.com
 • WhatsApp: +91 9032306961
 • Contact form at /contact
 
@@ -2265,21 +2323,61 @@ export function getCategories(): string[] {
   return Array.from(categories).sort()
 }
 
-// Function to find the best matching answer (from existing code)
+const CUSTOM_KNOWLEDGE_BASE: KnowledgeEntry[] = []
+
+export function getFullKnowledgeBase(): KnowledgeEntry[] {
+  return [...SIID_KNOWLEDGE_BASE, ...CUSTOM_KNOWLEDGE_BASE]
+}
+
+export function addKnowledgeEntry(entry: KnowledgeEntry): void {
+  CUSTOM_KNOWLEDGE_BASE.push(entry)
+}
+
+export function addTrainingPair(
+  question: string,
+  answer: string,
+  category: KnowledgeEntry["category"] = "support",
+): void {
+  const entry: KnowledgeEntry = {
+    keywords: question
+      .toLowerCase()
+      .split(/[^a-zA-Z0-9]+/)
+      .filter((token) => token.length > 2),
+    question: question.trim(),
+    answer: answer.trim(),
+    category,
+  }
+  addKnowledgeEntry(entry)
+}
+
+// Function to find the best matching answer with both core and custom knowledge
 export function findBestAnswer(query: string): KnowledgeEntry | null {
   const queryLower = query.toLowerCase()
 
-  // Score each entry based on keyword matches
   let bestMatch: KnowledgeEntry | null = null
   let highestScore = 0
 
-  for (const entry of SIID_KNOWLEDGE_BASE) {
+  for (const entry of getFullKnowledgeBase()) {
     let score = 0
+    const searchable = (`${entry.question} ${entry.answer} ${entry.keywords.join(" ")}`).toLowerCase()
+
+    if (searchable.includes(queryLower)) {
+      score += 80
+    }
+
     for (const keyword of entry.keywords) {
       if (queryLower.includes(keyword.toLowerCase())) {
-        score += keyword.split(" ").length // Multi-word keywords get higher score
+        score += keyword.split(" ").length * 10
       }
     }
+
+    const queryWords = queryLower.split(" ").filter((w) => w.length > 2)
+    for (const word of queryWords) {
+      if (searchable.includes(word)) {
+        score += 6
+      }
+    }
+
     if (score > highestScore) {
       highestScore = score
       bestMatch = entry
@@ -2291,10 +2389,28 @@ export function findBestAnswer(query: string): KnowledgeEntry | null {
 
 // Get all entries for a category (from existing code)
 export function getEntriesByCategory(category: KnowledgeEntry["category"]): KnowledgeEntry[] {
-  return SIID_KNOWLEDGE_BASE.filter((entry) => entry.category === category)
+  return getFullKnowledgeBase().filter((entry) => entry.category === category)
 }
 
 // Get suggested questions (from existing code)
 export function getSuggestedQuestions(): string[] {
-  return SIID_KNOWLEDGE_BASE.slice(0, 8).map((entry) => entry.question)
+  return getFullKnowledgeBase().slice(0, 8).map((entry) => entry.question)
+}
+
+export function getFollowUpQuestions(query: string, limit = 4): string[] {
+  const best = findBestAnswer(query)
+  const base = getFullKnowledgeBase()
+
+  const filtered = best
+    ? base.filter((entry) => entry.question !== best.question && entry.category === best.category)
+    : base.filter((entry) => !query.toLowerCase().includes(entry.question.toLowerCase()))
+
+  const related = filtered.slice(0, limit).map((entry) => entry.question)
+
+  if (related.length < limit) {
+    const fallback = getSuggestedQuestions().filter((q) => !related.includes(q) && q.toLowerCase() !== query.toLowerCase())
+    return [...related, ...fallback.slice(0, limit - related.length)]
+  }
+
+  return related
 }

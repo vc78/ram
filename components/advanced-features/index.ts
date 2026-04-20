@@ -10,6 +10,10 @@ import { NotificationCenter } from "./notification-center"
 import { ProjectMilestones } from "./project-milestones"
 import { QuickActions } from "./quick-actions"
 import { WeatherWidget } from "./weather-widget"
+import { SiteMonitoring } from "./site-monitoring"
+import { DigitalTwin } from "./digital-twin"
+import { AROverlay } from "./ar-overlay"
+import { ProjectInsights } from "./project-insights"
 
 export {
   MaterialCalculator,
@@ -24,4 +28,8 @@ export {
   ProjectMilestones,
   QuickActions,
   WeatherWidget,
+  SiteMonitoring,
+  DigitalTwin,
+  AROverlay,
+  ProjectInsights,
 }

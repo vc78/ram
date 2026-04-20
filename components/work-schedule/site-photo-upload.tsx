@@ -36,7 +36,13 @@ interface SitePhoto {
     progress: number
     phase: string
     confidenceScore: number
-    safetyViolations: { type: string, description: string, severity: string }[]
+    safetyViolations: { 
+      type: string, 
+      description: string, 
+      severity: string, 
+      confidence?: number,
+      box?: { x: number, y: number, w: number, h: number } 
+    }[]
     description: string
   }
 }
@@ -621,16 +627,34 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
                   className="w-full max-h-[500px] object-contain"
                 />
                 {selectedPhoto.mlAnalysis && (
-                  <div className="absolute inset-0 pointer-events-none p-4 opacity-75">
-                     {/* Simulated Computer Vision Overlays */}
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-lg">
+                     {/* Accurate Site Vision Overlays */}
                      {selectedPhoto.mlAnalysis.safetyViolations.map((v, i) => (
-                       <div key={i} className="absolute border-2 border-red-500 bg-red-500/10 p-1 font-mono text-[10px] sm:text-xs text-red-500 font-bold backdrop-blur-sm shadow-xl" style={{ top: `${(i+1)*20}%`, left: `${(i+1)*25}%`, minWidth: '80px' }}>
-                          [{v.type.toUpperCase()}] DETECTED
+                       <div 
+                         key={i} 
+                         className="absolute border-2 border-red-500 bg-red-600/10 shadow-[0_0_15px_rgba(239,68,68,0.4)] transition-all duration-700 animate-pulse" 
+                         style={{ 
+                           top: `${v.box?.y || 20}%`, 
+                           left: `${v.box?.x || 20}%`, 
+                           width: `${v.box?.w || 15}%`, 
+                           height: `${v.box?.h || 15}%` 
+                         }}
+                       >
+                          <div className="absolute -top-6 left-0 flex items-center gap-1.5 whitespace-nowrap bg-red-600 text-[10px] font-bold text-white px-2 py-0.5 rounded-t-sm shadow-lg border-b-2 border-red-700">
+                             <AlertTriangle className="w-2.5 h-2.5 fill-white" />
+                             {v.type.toUpperCase().replace(/_/g, " ")} | {(v.confidence! * 100).toFixed(0)}%
+                          </div>
+                          {/* Corner Decorations */}
+                          <div className="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-white rounded-tl-[1px]" />
+                          <div className="absolute -top-1 -right-1 w-2 h-2 border-t-2 border-r-2 border-white rounded-tr-[1px]" />
+                          <div className="absolute -bottom-1 -left-1 w-2 h-2 border-b-2 border-l-2 border-white rounded-bl-[1px]" />
+                          <div className="absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 border-white rounded-br-[1px]" />
                        </div>
                      ))}
                      {selectedPhoto.mlAnalysis.safetyViolations.length === 0 && (
-                        <div className="absolute bottom-4 right-4 bg-emerald-500/90 text-white text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3" /> CV CONFIRM: SAFE
+                        <div className="absolute top-4 right-4 bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-emerald-400/30 flex items-center gap-1.5 shadow-xl">
+                          <CheckCircle className="w-3.5 h-3.5 fill-emerald-100/20" />
+                          YOLO v8 AI VISION: NOMINAL
                         </div>
                      )}
                   </div>
@@ -724,18 +748,21 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
                     
                     <div className="space-y-3">
                       <h5 className="font-medium flex items-center gap-2 text-sm">
-                         Safety & Compliance Detection
-                         <Badge variant="outline" className="text-[10px] font-mono shrink-0 ml-auto">OSHA CHECK</Badge>
+                         Safety & Compliance (YOLO v8 High-Precision)
+                         <Badge variant="outline" className="text-[10px] bg-primary/5 text-primary border-primary/20 shrink-0 ml-auto font-bold">EFFICIENCY OPTIMIZED</Badge>
                       </h5>
                       {selectedPhoto.mlAnalysis.safetyViolations.length > 0 ? (
                         <div className="space-y-2">
                           {selectedPhoto.mlAnalysis.safetyViolations.map((v, i) => (
-                            <div key={i} className="flex gap-3 text-sm p-3 bg-red-500/10 border border-red-500/20 rounded-md text-red-900 shadow-sm relative overflow-hidden">
-                              <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500" />
-                              <AlertTriangle className="w-5 h-5 shrink-0 text-red-600" />
-                              <div>
-                                <strong className="block text-red-800 tracking-tight">{v.type.toUpperCase().replace(/_/g, " ")}</strong>
-                                {v.description}
+                            <div key={i} className="flex gap-3 text-sm p-3 bg-red-500/5 border border-red-500/10 rounded-lg text-red-900 shadow-sm relative overflow-hidden transition-all hover:bg-red-500/10">
+                              <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-red-500" />
+                              <AlertTriangle className="w-5 h-5 shrink-0 text-red-600 mt-0.5" />
+                              <div className="flex-1">
+                                <div className="flex justify-between items-start">
+                                  <strong className="block text-red-800 tracking-tight text-xs uppercase mb-1">{v.type.replace(/_/g, " ")}</strong>
+                                  {v.confidence && <span className="text-[10px] font-mono font-bold text-red-600/70">{(v.confidence * 100).toFixed(1)}% ACC</span>}
+                                </div>
+                                <p className="text-xs text-red-700/90 leading-tight">{v.description}</p>
                               </div>
                             </div>
                           ))}

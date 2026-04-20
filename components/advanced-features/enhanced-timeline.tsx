@@ -42,6 +42,7 @@ import {
 import { useLanguage } from "@/contexts/language-context"
 import { useTranslation } from "@/lib/i18n/translations"
 import { useToast } from "@/hooks/use-toast"
+import { generateProfessionalDocument } from "@/lib/document-template"
 
 interface TimelinePhase {
   id: string
@@ -214,7 +215,7 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
         body: JSON.stringify({ phases })
       })
       if (!res.ok) throw new Error("Failed to predict risks")
-      
+
       const result = await res.json()
       setPhases(result.enhanced_phases)
       toast({
@@ -254,57 +255,36 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
   // Feature 5: Export to PDF
   const exportToPDF = async () => {
     try {
-      const { jsPDF } = await import("jspdf")
-      const autoTable = (await import("jspdf-autotable")).default
-
-      const doc = new jsPDF()
-
-      // Header
-      doc.setFontSize(20)
-      doc.setFont("helvetica", "bold")
-      doc.text("Construction Timeline Report", 105, 20, { align: "center" })
-
-      doc.setFontSize(10)
-      doc.setFont("helvetica", "normal")
-      doc.text(`Generated: ${new Date().toLocaleDateString()}`, 105, 28, { align: "center" })
-      doc.text(`Overall Progress: ${calculateOverallProgress()}%`, 105, 34, { align: "center" })
-
-      // Budget Summary
       const budgetData = calculateBudgetVariance()
-      doc.setFontSize(12)
-      doc.setFont("helvetica", "bold")
-      doc.text("Budget Summary", 14, 45)
+      const overallProgress = calculateOverallProgress()
 
-      autoTable(doc, {
-        startY: 50,
-        head: [["Category", "Amount (₹)"]],
-        body: [
-          ["Total Budget", budgetData.budget.toLocaleString()],
-          ["Actual Cost", budgetData.actual.toLocaleString()],
-          ["Variance", budgetData.variance.toLocaleString()],
+      const phaseData = phases.map((phase) => ({
+        "Phase Name": phase.name,
+        "Duration": phase.duration,
+        "Progress": `${phase.progress}%`,
+        "Status": phase.status,
+        "Budget": phase.budget ? `₹${phase.budget.toLocaleString()}` : "N/A",
+      }))
+
+      const pdf = await generateProfessionalDocument({
+        title: "Construction Timeline Report",
+        subtitle: `Overall Progress: ${overallProgress}% | Generated: ${new Date().toLocaleDateString()}`,
+        sections: [
+          {
+            heading: "Budget Summary",
+            content: [
+              `Total Budget: ₹${budgetData.budget.toLocaleString()}`,
+              `Actual Cost: ₹${budgetData.actual.toLocaleString()}`,
+              `Variance: ₹${budgetData.variance.toLocaleString()}`,
+            ]
+          }
         ],
+        data: phaseData,
+        columns: ["Phase Name", "Duration", "Progress", "Status", "Budget"],
+        footerText: `Timeline Report | Overall Progress: ${overallProgress}%`,
       })
 
-      // Phases Table
-      doc.setFontSize(12)
-      doc.setFont("helvetica", "bold")
-      doc.text("Phase Details", 14, (doc as any).lastAutoTable.finalY + 15)
-
-      const tableData = phases.map((phase) => [
-        phase.name,
-        phase.duration,
-        `${phase.progress}%`,
-        phase.status,
-        phase.budget ? `₹${phase.budget.toLocaleString()}` : "N/A",
-      ])
-
-      autoTable(doc, {
-        startY: (doc as any).lastAutoTable.finalY + 20,
-        head: [["Phase", "Duration", "Progress", "Status", "Budget"]],
-        body: tableData,
-      })
-
-      doc.save(`timeline-report-${Date.now()}.pdf`)
+      pdf.save(`timeline-report-${Date.now()}.pdf`)
 
       toast({
         title: "PDF Exported",
@@ -629,7 +609,7 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
                       <div className="text-sm font-bold text-foreground">{phase.progress}%</div>
                     </div>
                     <div className="p-1 rounded bg-background shadow-sm border border-border">
-                       {getStatusIcon(phase.status)}
+                      {getStatusIcon(phase.status)}
                     </div>
                     {expandedPhase === phase.id ? (
                       <ChevronUp className="w-5 h-5 text-muted-foreground" />
@@ -710,9 +690,8 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
                             }}
                           >
                             <div
-                              className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                                task.completed ? "bg-green-500 border-green-500" : "border-muted-foreground/30"
-                              }`}
+                              className={`w-5 h-5 rounded border-2 flex items-center justify-center ${task.completed ? "bg-green-500 border-green-500" : "border-muted-foreground/30"
+                                }`}
                             >
                               {task.completed && <CheckCircle2 className="w-4 h-4 text-white" />}
                             </div>
@@ -753,62 +732,62 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
 
                     {/* Advanced Features (30+) Data Container */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-border/50">
-                       {/* Feature 28 & 29: Weather Risk and Change Orders */}
-                       <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors">
-                          <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                            <CloudSunRain className="w-3 h-3" /> External Factors
-                          </h4>
-                          <div className="space-y-2">
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-muted-foreground">ML Weather Risk</span>
-                              <Badge variant="outline" className={phase.weatherRisk === 'Moderate' || phase.weatherRisk === 'High' ? "border-amber-500/50 text-amber-600 bg-amber-50 dark:bg-amber-950/50" : "border-emerald-500/50 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50"}>
-                                 {phase.weatherRisk || "Low"}
-                              </Badge>
-                            </div>
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-muted-foreground"><History className="w-3 h-3 inline mr-1"/>Change Orders</span>
-                              <span className="font-bold">{phase.changeRequests || 0} Logged</span>
-                            </div>
+                      {/* Feature 28 & 29: Weather Risk and Change Orders */}
+                      <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                          <CloudSunRain className="w-3 h-3" /> External Factors
+                        </h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-muted-foreground">ML Weather Risk</span>
+                            <Badge variant="outline" className={phase.weatherRisk === 'Moderate' || phase.weatherRisk === 'High' ? "border-amber-500/50 text-amber-600 bg-amber-50 dark:bg-amber-950/50" : "border-emerald-500/50 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50"}>
+                              {phase.weatherRisk || "Low"}
+                            </Badge>
                           </div>
-                       </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-muted-foreground"><History className="w-3 h-3 inline mr-1" />Change Orders</span>
+                            <span className="font-bold">{phase.changeRequests || 0} Logged</span>
+                          </div>
+                        </div>
+                      </div>
 
-                       {/* Feature 30 & 31: Supply Chain & Quality Control */}
-                       <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors">
-                          <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                            <ShieldCheck className="w-3 h-3" /> Auditing & QC
-                          </h4>
-                          <div className="space-y-2">
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-muted-foreground">Quality Score (AI)</span>
-                              <span className={`font-bold ${phase.qualityScore && phase.qualityScore > 90 ? 'text-emerald-500' : 'text-amber-500'}`}>{phase.qualityScore || 98}%</span>
-                            </div>
-                            <div className="flex justify-between items-center text-sm">
-                              <span className="text-muted-foreground">Safety Incidents</span>
-                              <span className="font-bold text-foreground">0</span>
-                            </div>
+                      {/* Feature 30 & 31: Supply Chain & Quality Control */}
+                      <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                          <ShieldCheck className="w-3 h-3" /> Auditing & QC
+                        </h4>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-muted-foreground">Quality Score (AI)</span>
+                            <span className={`font-bold ${phase.qualityScore && phase.qualityScore > 90 ? 'text-emerald-500' : 'text-amber-500'}`}>{phase.qualityScore || 98}%</span>
                           </div>
-                       </div>
+                          <div className="flex justify-between items-center text-sm">
+                            <span className="text-muted-foreground">Safety Incidents</span>
+                            <span className="font-bold text-foreground">0</span>
+                          </div>
+                        </div>
+                      </div>
 
-                       {/* Feature 32 & 33: Materials & Subcontractors */}
-                       <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors">
-                          <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                            <Truck className="w-3 h-3" /> Logistics Layer
-                          </h4>
-                          <div className="space-y-2">
-                             {phase.materialsTracking && phase.materialsTracking.length > 0 ? (
-                               phase.materialsTracking.map((mat, i) => (
-                                 <div key={i} className="flex justify-between items-center text-xs">
-                                   <span className="truncate max-w-[100px] text-muted-foreground" title={mat.item}>{mat.item}</span>
-                                   <Badge variant="outline" className={`text-[10px] h-5 px-1 ${mat.status === 'Delivered' ? 'border-emerald-500/30 text-emerald-600 bg-emerald-50/50 dark:bg-transparent' : mat.status === 'In Transit' ? 'border-blue-500/30 text-blue-600 bg-blue-50/50 dark:bg-transparent' : 'border-amber-500/30 text-amber-600 bg-amber-50/50 dark:bg-transparent'}`}>
-                                     {mat.status}
-                                   </Badge>
-                                 </div>
-                               ))
-                             ) : (
-                               <div className="text-xs text-muted-foreground italic">No logistics flags active.</div>
-                             )}
-                          </div>
-                       </div>
+                      {/* Feature 32 & 33: Materials & Subcontractors */}
+                      <div className="space-y-3 bg-muted/30 p-4 rounded-xl border border-border/50 hover:bg-muted/50 transition-colors">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                          <Truck className="w-3 h-3" /> Logistics Layer
+                        </h4>
+                        <div className="space-y-2">
+                          {phase.materialsTracking && phase.materialsTracking.length > 0 ? (
+                            phase.materialsTracking.map((mat, i) => (
+                              <div key={i} className="flex justify-between items-center text-xs">
+                                <span className="truncate max-w-[100px] text-muted-foreground" title={mat.item}>{mat.item}</span>
+                                <Badge variant="outline" className={`text-[10px] h-5 px-1 ${mat.status === 'Delivered' ? 'border-emerald-500/30 text-emerald-600 bg-emerald-50/50 dark:bg-transparent' : mat.status === 'In Transit' ? 'border-blue-500/30 text-blue-600 bg-blue-50/50 dark:bg-transparent' : 'border-amber-500/30 text-amber-600 bg-amber-50/50 dark:bg-transparent'}`}>
+                                  {mat.status}
+                                </Badge>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-xs text-muted-foreground italic">No logistics flags active.</div>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Risks - Feature 26: Risk tracking */}

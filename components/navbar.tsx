@@ -16,7 +16,7 @@ export default function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20)
     }
-    
+
     // Check if user is logged in
     const storedUser = localStorage.getItem("user")
     if (storedUser) {
@@ -40,15 +40,20 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
           ? "bg-background/80 backdrop-blur-md border-b border-border/50 shadow-sm py-2"
           : "bg-transparent py-4"
-      }`}
+        }`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <BrandLogo className="h-14 w-auto object-contain transition-transform duration-300 hover:scale-105" />
+        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0">
+          <div className="h-10 md:h-12 w-auto">
+            <BrandLogo
+              className="h-full w-auto transition-transform duration-300 hover:scale-105"
+              width="120"
+              height="40"
+            />
+          </div>
         </Link>
         <nav className="hidden md:flex items-center gap-6">
           <Link href="/#features" className={`text-sm font-medium transition-all hover:-translate-y-0.5 ${isScrolled ? 'text-muted-foreground hover:text-foreground' : 'text-white/90 hover:text-white drop-shadow-sm'}`}>
@@ -80,9 +85,9 @@ export default function Navbar() {
                   {user.name.split(' ')[0]}'s Portal
                 </Button>
               </Link>
-              <Button 
+              <Button
                 onClick={handleLogout}
-                size="sm" 
+                size="sm"
                 className="bg-destructive/10 text-destructive hover:bg-destructive hover:text-white border border-destructive/20 transition-all"
               >
                 Logout
@@ -120,10 +125,9 @@ export default function Navbar() {
       </div>
 
       {/* Mobile Navigation Dropdown */}
-      <div 
-        className={`md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border shadow-lg transition-all duration-300 ease-in-out origin-top overflow-hidden ${
-          mobileMenuOpen ? "opacity-100 max-h-96 py-4" : "opacity-0 max-h-0 py-0 border-transparent"
-        }`}
+      <div
+        className={`md:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border shadow-lg transition-all duration-300 ease-in-out origin-top overflow-hidden ${mobileMenuOpen ? "opacity-100 max-h-96 py-4" : "opacity-0 max-h-0 py-0 border-transparent"
+          }`}
       >
         <div className="container mx-auto px-4 flex flex-col space-y-4">
           <Link
@@ -173,9 +177,9 @@ export default function Navbar() {
           </Link>
           <div className="flex items-center gap-3 pt-4 pb-2">
             {user ? (
-               <Button onClick={handleLogout} className="w-full bg-destructive text-white">
-                 Logout
-               </Button>
+              <Button onClick={handleLogout} className="w-full bg-destructive text-white">
+                Logout
+              </Button>
             ) : (
               <>
                 <Link href="/login" className="flex-1" onClick={() => setMobileMenuOpen(false)}>

@@ -3,6 +3,7 @@
 import type React from "react"
 import VantaBackground from "@/components/vanta-background"
 import { useState } from "react"
+import { BrandLogo } from "@/components/brand-logo"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -137,30 +138,7 @@ export default function SignupPage() {
 
           <Card className="p-8 border-border/40 bg-background/70 backdrop-blur-md shadow-xl ring-1 ring-white/5">
             <div className="flex items-center justify-center mb-8">
-              <img
-                src="/images/siid-flash-logo.png"
-                alt="SIID FLASH Logo"
-                className="h-16 w-auto object-contain"
-                onError={(e) => {
-                  const img = e.currentTarget as HTMLImageElement
-                  if (!img.dataset.fallbackShown) {
-                    img.dataset.fallbackShown = "true"
-                    img.style.display = "none"
-                    const fallback = document.createElement("div")
-                    fallback.className = "flex flex-col items-center gap-2"
-                    fallback.innerHTML = `
-                      <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
-                        <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
-                          <path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/>
-                        </svg>
-                      </div>
-                      <h2 class="text-2xl font-bold">SIID FLASH</h2>
-                    `
-                    img.parentElement?.appendChild(fallback)
-                  }
-                }}
-              />
+              <BrandLogo className="h-16 w-auto" />
             </div>
 
             <div className="text-center mb-8">

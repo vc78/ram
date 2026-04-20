@@ -24,6 +24,8 @@ export function MaterialCalculator() {
   const [floors, setFloors] = useState(2)
   const [qualityLevel, setQualityLevel] = useState("standard")
   const [foundationType, setFoundationType] = useState("shallow")
+  const [city, setCity] = useState("hyderabad")
+  const [soilType, setSoilType] = useState("red")
   const [estimate, setEstimate] = useState<MaterialEstimate | null>(null)
   const [metadata, setMetadata] = useState<{confidence: number, margin: number} | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -41,7 +43,7 @@ export function MaterialCalculator() {
       const res = await fetch("/api/predict-materials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ area, floors, qualityLevel, foundationType })
+        body: JSON.stringify({ area, floors, qualityLevel, foundationType, city, soilType })
       })
       if (!res.ok) throw new Error("Failed to calculate materials")
       const prediction = await res.json()
@@ -229,6 +231,26 @@ export function MaterialCalculator() {
                 <SelectItem value="pile">Pile (Multi-story/Weak Soil)</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>City (Cost Index)</Label>
+              <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Mumbai" />
+            </div>
+            <div>
+              <Label>Soil Type</Label>
+              <Select value={soilType} onValueChange={setSoilType}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="red">Red Soil</SelectItem>
+                  <SelectItem value="black">Black Soil</SelectItem>
+                  <SelectItem value="clay">Clay</SelectItem>
+                  <SelectItem value="rocky">Rocky</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <Button onClick={calculateMaterials} className="w-full" disabled={isLoading}>
             {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Computing ML Prediction...</> : "Predict Materials (ML)"}

@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { useEffect, useState } from "react"
+import { BrandLogo } from "@/components/brand-logo"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
@@ -172,9 +173,7 @@ export default function LoginPage() {
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />
             
             <div className="flex flex-col items-center mb-8">
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 border border-primary/20 shadow-inner">
-                 <Construction className="w-9 h-9 text-primary" />
-              </div>
+              <BrandLogo className="h-16 w-auto mb-4" />
               <h1 className="text-3xl font-extrabold tracking-tight text-foreground text-center">
                 Welcome Back to SIID
               </h1>

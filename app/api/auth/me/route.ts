@@ -24,17 +24,17 @@ export async function GET(req: Request) {
     // 1. Try MongoDB connection
     let isDbConnected = false
     try {
-      await dbConnect()
-      isDbConnected = true
+      const conn = await dbConnect()
+      if (conn) isDbConnected = true
     } catch (e) {
-      console.warn("MongoDB connection failed in auth-me, using fallback.")
+      // Catch real connection failures silently to rely on the fallback
     }
 
     if (isDbConnected) {
       try {
         user = await User.findById(userId)
       } catch (e) {
-        console.error("MongoDB query failed in auth-me:", e)
+        console.error("MongoDB query error:", e)
       }
     }
 

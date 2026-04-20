@@ -93,8 +93,8 @@ function MetricVisualization({ feature, value }: { feature: any; value: any }) {
     }))
 
     return (
-      <div className="h-[200px] w-full mt-4">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[200px] min-h-[200px] w-full mt-4">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <PieChart>
             <Pie
               data={data}
@@ -129,8 +129,8 @@ function MetricVisualization({ feature, value }: { feature: any; value: any }) {
     ]
 
     return (
-      <div className="h-[200px] w-full mt-4">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[200px] min-h-[200px] w-full mt-4">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <BarChart data={data}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" />
             <XAxis dataKey="name" fontSize={12} tickLine={false} axisLine={false} />
@@ -164,8 +164,8 @@ function MetricVisualization({ feature, value }: { feature: any; value: any }) {
     }))
 
     return (
-      <div className="h-[200px] w-full mt-4">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[200px] min-h-[200px] w-full mt-4">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <BarChart data={data} layout="vertical">
             <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#374151" />
             <XAxis type="number" hide />
@@ -193,8 +193,8 @@ function MetricVisualization({ feature, value }: { feature: any; value: any }) {
     ]
 
     return (
-      <div className="h-[200px] w-full mt-4">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[200px] min-h-[200px] w-full mt-4">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorBurn" x1="0" y1="0" x2="0" y2="1">
@@ -225,8 +225,8 @@ function MetricVisualization({ feature, value }: { feature: any; value: any }) {
     ]
 
     return (
-      <div className="h-[200px] w-full mt-4">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[200px] min-h-[200px] w-full mt-4">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#374151" />
             <XAxis dataKey="period" fontSize={12} tickLine={false} axisLine={false} />
@@ -265,8 +265,8 @@ function MetricVisualization({ feature, value }: { feature: any; value: any }) {
     ]
 
     return (
-      <div className="h-[200px] w-full mt-4">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[200px] min-h-[200px] w-full mt-4">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <RadarChart cx="50%" cy="50%" outerRadius="80%" data={radarData}>
             <PolarGrid stroke="#374151" />
             <PolarAngleAxis dataKey="subject" tick={{ fill: "#9ca3af", fontSize: 12 }} />
@@ -296,8 +296,8 @@ function MetricVisualization({ feature, value }: { feature: any; value: any }) {
       const data = [{ name: "Progress", value: rate }, { name: "Remaining", value: 100 - rate }]
 
       return (
-        <div className="h-[120px] w-full mt-4 flex items-center justify-center">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="h-[120px] min-h-[120px] w-full mt-4 flex items-center justify-center">
+          <ResponsiveContainer width="100%" height="100%" minWidth={0}>
             <PieChart>
               <Pie
                 data={data}

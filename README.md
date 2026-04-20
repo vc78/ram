@@ -156,7 +156,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Email**: support@siidflash.com
+- **Email**: venkatbodduluri78@gmail.com
 - **Documentation**: [docs.siidflash.com](https://docs.siidflash.com)
 - **Community**: [community.siidflash.com](https://community.siidflash.com)
 - **Twitter**: [@siidflash](https://twitter.com/siidflash)

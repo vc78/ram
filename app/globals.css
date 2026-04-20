@@ -9,9 +9,11 @@
   --font-mono: var(--font-geist-mono);
 
   /* Color System - Professional and Aspirational */
-  --color-primary: #1e3a8a; /* deep blue */
+  --color-primary: #1e3a8a;
+  /* deep blue */
   --color-primary-dark: #142861;
-  --color-accent: #0ea5a4; /* teal accent */
+  --color-accent: #0ea5a4;
+  /* teal accent */
   --color-accent-dark: #0b7f7e;
 
   --color-background: #ffffff;
@@ -34,7 +36,8 @@
   --secondary-foreground: oklch(0.205 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: #e11d48; /* controlled red for errors */
+  --destructive: #e11d48;
+  /* controlled red for errors */
   --destructive-foreground: #ffffff;
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -66,13 +69,15 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: #3b82f6; /* brighter blue for dark surfaces */
+  --primary: #3b82f6;
+  /* brighter blue for dark surfaces */
   --primary-foreground: #0a0f1c;
   --secondary: #121a2c;
   --secondary-foreground: #f7fafc;
   --muted: #121a2c;
   --muted-foreground: #9fb1cc;
-  --accent: #14b8a6; /* brighter teal on dark */
+  --accent: #14b8a6;
+  /* brighter teal on dark */
   --accent-foreground: #031b1a;
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
@@ -99,9 +104,11 @@
 
 .theme-default,
 .theme-home {
-  --primary: #1e3a8a; /* deep blue */
+  --primary: #1e3a8a;
+  /* deep blue */
   --primary-foreground: #ffffff;
-  --accent: #0ea5a4; /* teal */
+  --accent: #0ea5a4;
+  /* teal */
   --accent-foreground: #062726;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -111,9 +118,11 @@
 }
 
 .theme-dashboard {
-  --primary: #0ea5a4; /* teal as primary */
+  --primary: #0ea5a4;
+  /* teal as primary */
   --primary-foreground: #031b1a;
-  --accent: #1e3a8a; /* deep blue accent */
+  --accent: #1e3a8a;
+  /* deep blue accent */
   --accent-foreground: #ffffff;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -123,9 +132,11 @@
 }
 
 .theme-project {
-  --primary: #f59e0b; /* amber focus for projects */
+  --primary: #f59e0b;
+  /* amber focus for projects */
   --primary-foreground: #1f1300;
-  --accent: #1e3a8a; /* blue accent */
+  --accent: #1e3a8a;
+  /* blue accent */
   --accent-foreground: #ffffff;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -135,9 +146,11 @@
 }
 
 .theme-contractors {
-  --primary: #16a34a; /* green for contractor flows */
+  --primary: #16a34a;
+  /* green for contractor flows */
   --primary-foreground: #07140b;
-  --accent: #0ea5a4; /* teal accent */
+  --accent: #0ea5a4;
+  /* teal accent */
   --accent-foreground: #031b1a;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -189,9 +202,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
@@ -215,6 +230,7 @@
     from {
       opacity: 0;
     }
+
     to {
       opacity: 1;
     }
@@ -225,6 +241,7 @@
       opacity: 0;
       transform: translateY(30px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -236,6 +253,7 @@
       opacity: 0;
       transform: scale(0.9);
     }
+
     to {
       opacity: 1;
       transform: scale(1);
@@ -258,16 +276,17 @@
   }
 
   .smooth-hover {
-    transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, transform 220ms ease, box-shadow
-      220ms ease, opacity 180ms ease;
+    transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, transform 220ms ease, box-shadow 220ms ease, opacity 180ms ease;
   }
 
   .elevation-sm {
     box-shadow: 0 1px 2px rgba(2, 6, 23, 0.06), 0 1px 1px rgba(2, 6, 23, 0.04);
   }
+
   .elevation-md {
     box-shadow: 0 6px 16px rgba(2, 6, 23, 0.08), 0 2px 6px rgba(2, 6, 23, 0.06);
   }
+
   .elevation-lg {
     box-shadow: 0 16px 40px rgba(2, 6, 23, 0.12), 0 8px 20px rgba(2, 6, 23, 0.08);
   }
@@ -275,7 +294,87 @@
   .outline-primary {
     box-shadow: inset 0 0 0 1px var(--primary);
   }
+
   .outline-accent {
     box-shadow: inset 0 0 0 1px var(--accent);
+  }
+
+  /* Logo Scroller Styles - Enhanced Visibility */
+  .logo-scroll-track {
+    display: flex;
+    gap: 1rem;
+    animation: logoScroll 50s linear infinite;
+    will-change: transform;
+  }
+
+  @media (max-width: 768px) {
+    .logo-scroll-track {
+      gap: 0.5rem;
+      animation: logoScroll 45s linear infinite;
+    }
+  }
+
+  .logo-scroll-track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes logoScroll {
+    0% {
+      transform: translateX(0);
+    }
+
+    100% {
+      transform: translateX(calc(-1120px));
+    }
+  }
+
+  @media (max-width: 768px) {
+    @keyframes logoScroll {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(calc(-800px));
+      }
+    }
+  }
+
+  /* Logo item styling for better visibility */
+  .logo-item {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-item img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(1);
+    transition: filter 0.3s ease;
+  }
+
+  .logo-item:hover img {
+    filter: brightness(1.2);
+  }
+
+  /* Brand logo smooth display */
+  .brand-logo-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+
+  .brand-logo-container svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Section backgrounds for better contrast */
+  .logo-scroller-section {
+    background: color-mix(in oklab, var(--color-background) 95%, var(--color-muted) 5%);
+    border-color: color-mix(in oklab, var(--color-border) 70%, transparent 30%);
   }
 }

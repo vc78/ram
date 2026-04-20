@@ -9,6 +9,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  serverExternalPackages: ["mysql2"],
+  outputFileTracingRoot: process.cwd(),
   // Allow dev assets to be requested from your LAN device (adjust origin/port as needed)
   allowedDevOrigins: [
     "http://192.168.1.12:3000",

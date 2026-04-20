@@ -6,75 +6,61 @@ import { signToken, setAuthCookies } from "@/lib/jwt"
 
 export async function POST(req: Request) {
   try {
-    // Attempt database connection with a shorter timeout or fallback
-    let isDbConnected = false
-    try {
-      await dbConnect()
-      isDbConnected = true
-    } catch (e) {
-      console.warn("MongoDB Connection failed, falling back to JSON DB:", e)
-    }
-
     const { email, password } = await req.json()
 
     if (!email || !password) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
-    let user: any = null
     const lowerEmail = email.toLowerCase()
+    let user: any = null
 
-    // 1. Try MongoDB first if connected
+    // 1. Try MongoDB connection
+    let isDbConnected = false
+    try {
+      const conn = await dbConnect()
+      if (conn) isDbConnected = true
+    } catch (e) {
+      // Catch real connection failures silently to rely on the fallback
+    }
+
+    // 2. Load from MongoDB if connected
     if (isDbConnected) {
       try {
-        user = await User.findOne({ email: lowerEmail }).select("+password")
+        user = await User.findOne({ email: lowerEmail })
       } catch (e) {
-        console.error("MongoDB Query failed:", e)
+        console.error("MongoDB query error:", e)
       }
     }
 
-    // 2. Fallback to lib/db.ts (local JSON file) if not found in MongoDB
+    // 3. Fallback to lib/db.ts (local JSON file)
     if (!user) {
       const { getAll } = require("@/lib/db")
       const localUsers = getAll("users")
       user = localUsers.find((u: any) => u.email.toLowerCase() === lowerEmail)
-      
-      // Adapt local user to mongoose-like format if found
-      if (user) {
-        user._id = user.id || user._id
-        // Handle both hashed (signup) and plain (seed) passwords
-        const isMatch = password === user.password || await bcrypt.compare(password, user.password)
-        if (!isMatch) {
-          return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
-        }
-      }
-    } else {
-      // Compare password for MongoDB user (always hashed)
-      const isMatch = await bcrypt.compare(password, user.password)
-      if (!isMatch) {
-        return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
-      }
     }
-    
+
     if (!user) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
     }
 
-    if (user.status !== "active") {
-      return NextResponse.json({ error: "Your account is currently " + user.status }, { status: 403 })
+    // 4. Verification Check (Handles both hashed and plain fallback if necessary)
+    const isMatch = await bcrypt.compare(password, user.password).catch(() => password === user.password)
+    if (!isMatch) {
+      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
     }
 
-    // Generate token
+    // 5. Generate token (use _id or id)
     const token = await signToken({
       userId: (user._id || user.id).toString(),
       email: user.email,
       role: user.role,
     })
 
-    // Set HTTP-only cookie
+    // 6. Set HTTP-only cookie
     await setAuthCookies(token)
 
-    // Return sanitized user object
+    // 7. Return sanitized user object
     const sanitizedUser = {
       id: (user._id || user.id).toString(),
       name: user.name,
