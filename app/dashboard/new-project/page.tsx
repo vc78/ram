@@ -1139,6 +1139,31 @@ export default function ConstructionIntelligencePlatform() {
                        </Card>
                     </div>
 
+                    {/* NEW FEATURE: WORKFLOW DESCRIPTION */}
+                    <Card className="p-10 rounded-[3rem] bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-white/20 shadow-2xl space-y-8">
+                       <div className="flex items-center gap-3">
+                          <div className="p-3 bg-primary/10 rounded-2xl text-primary"><Sparkles className="w-6 h-6" /></div>
+                          <h3 className="text-3xl font-black tracking-tighter">SIID Digital Lifecycle Summary</h3>
+                       </div>
+                       
+                       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {[
+                             { title: "Initialization", desc: "Project DNA established with GPS coordinates, plot scaling, and structural intent.", icon: Plus, step: "1" },
+                             { title: "Technical Calibration", desc: "Over 50+ AEC parameters configured including concrete grade, automation level, and HVAC.", icon: Settings2, step: "2" },
+                             { title: "ML Estimation", desc: "Advanced neural networks analyzed material quantum and budget variance for cost optimization.", icon: Calculator, step: "3" },
+                             { title: "Generative Design", desc: "AI-driven visual engines produced hyper-realistic 3D renders and technical blueprints.", icon: Brush, step: "4" },
+                             { title: "Finalization", desc: "Project Dossier compiled with industrial-grade precision for site execution readiness.", icon: CheckCircle2, step: "5" }
+                          ].map((phase, i) => (
+                             <div key={i} className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-3 relative overflow-hidden">
+                                <div className="absolute top-2 right-2 text-4xl font-black opacity-5 text-slate-900 dark:text-white">{phase.step}</div>
+                                <phase.icon className="w-8 h-8 text-primary" />
+                                <h4 className="text-lg font-black">{phase.title}</h4>
+                                <p className="text-xs text-muted-foreground leading-relaxed">{phase.desc}</p>
+                             </div>
+                          ))}
+                       </div>
+                    </Card>
+
                     <Card className="p-10 rounded-[2.5rem] bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-white/20 shadow-2xl space-y-10">
                        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-6">
                           <h3 className="text-2xl font-black tracking-tight flex items-center gap-3"><Calendar className="w-7 h-7 text-primary" /> Proposed Construction Timeline</h3>
