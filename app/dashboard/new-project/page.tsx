@@ -451,6 +451,50 @@ export default function ConstructionIntelligencePlatform() {
     doc.save(`${formData.projectName.replace(/\s+/g, '_')}_Dossier_SIID.pdf`)
   }
 
+  const downloadProjectManifest = () => {
+    const doc = new jsPDF()
+    const primaryColor: [number, number, number] = [30, 58, 138]
+    
+    doc.setFillColor(30, 58, 138)
+    doc.rect(0, 0, 210, 40, 'F')
+    doc.setFontSize(22)
+    doc.setTextColor(255, 255, 255)
+    doc.text("PROJECT INITIATION MANIFEST", 105, 25, { align: "center" })
+
+    doc.setTextColor(30, 58, 138)
+    doc.setFontSize(16)
+    doc.text(`Project Name: ${formData.projectName}`, 20, 55)
+    doc.setFontSize(12)
+    doc.text(`Location: ${formData.location}`, 20, 65)
+    doc.text(`Building Type: ${formData.buildingType}`, 20, 75)
+    doc.text(`Plot Area: ${formData.plotArea} Sq. Ft.`, 20, 85)
+    
+    doc.text("CORE CONFIGURATIONS:", 20, 105)
+    const configs = [
+      ["Concrete Grade", formData.concreteGrade],
+      ["Steel Grade", formData.steelGrade],
+      ["Automation", formData.automationLevel],
+      ["Sustainability", formData.sustainabilityLevel],
+      ["Safety Grade", formData.fireSafetyGrade],
+      ["Power Backup", formData.powerBackup],
+      ["Water Resource", formData.waterResource]
+    ]
+
+    autoTable(doc, {
+      startY: 110,
+      head: [["Technical Parameter", "Selected Value"]],
+      body: configs,
+      theme: 'grid',
+      headStyles: { fillColor: primaryColor }
+    })
+
+    doc.setFontSize(10)
+    doc.setTextColor(150)
+    doc.text("This manifest is an initial snapshot of the project parameters. SIID FLASH v4.2.0", 105, 280, { align: "center" })
+
+    doc.save(`${formData.projectName.replace(/\s+/g, '_')}_Project_Manifest.pdf`)
+  }
+
   const downloadReport = () => {
     if (!estimationResult) return;
     const doc = new jsPDF()
@@ -960,7 +1004,15 @@ export default function ConstructionIntelligencePlatform() {
                     <Button variant="ghost" onClick={() => setStep(1)} className="rounded-xl font-bold h-12 px-8">Back</Button>
                     <div className="flex gap-4">
                        <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary text-[10px] px-3 font-mono hidden md:flex items-center tracking-tighter">ULTIMATE: 50+ AEC PARAMETERS ENGAGED</Badge>
-                       <Button className="h-14 px-12 bg-primary text-white rounded-2xl font-black shadow-xl hover:scale-105 transition-transform" onClick={() => setStep(3)}>Launch Intelligence Engine</Button>
+                       <Button 
+                         className="h-14 px-12 bg-primary text-white rounded-2xl font-black shadow-xl hover:scale-105 transition-transform" 
+                         onClick={() => {
+                           downloadProjectManifest();
+                           setStep(3);
+                         }}
+                       >
+                         Approve & Launch Control Center
+                       </Button>
                     </div>
                   </div>
                 </div>
@@ -1011,9 +1063,9 @@ export default function ConstructionIntelligencePlatform() {
                              { label: "Aggregate", val: estimationResult.materialQuantity.aggregate, unit: "Cft", icon: Droplets, color: "text-indigo-500" }
                            ].map((item, i) => (
                              <Card key={i} className="p-6 rounded-3xl bg-white/70 dark:bg-slate-900/70 border-white/20 shadow-xl relative overflow-hidden group hover:scale-105 transition-all">
-                                <p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest mb-4">{item.label}</p>
-                                <div className={cn("text-3xl font-black", item.color)}>{item.val}</div>
-                                <p className="text-[10px] font-bold text-muted-foreground uppercase">{item.unit}</p>
+                                 <p className="text-[10px] uppercase font-black text-muted-foreground tracking-widest mb-4">{item.label}</p>
+                                 <div className={cn("text-3xl font-black", item.color)}>{item.val}</div>
+                                 <p className="text-[10px] font-bold text-muted-foreground uppercase">{item.unit}</p>
                              </Card>
                            ))}
                         </div>
@@ -1024,6 +1076,39 @@ export default function ConstructionIntelligencePlatform() {
                            <div className="text-4xl font-extrabold tracking-tighter">₹{estimationResult.budgetRange.min}L - ₹{estimationResult.budgetRange.max}L</div>
                            <p className="text-indigo-100 text-xs mt-2 italic">Acuracy based on CURRENT market volatility Index.</p>
                         </Card>
+
+                        {/* REAL-TIME FEATURE: CONTRACTOR RECOMMENDATIONS */}
+                        <div className="space-y-6">
+                           <div className="flex items-center justify-between">
+                              <h3 className="text-2xl font-black tracking-tight">Recommended Contractors</h3>
+                              <Badge className="bg-primary/10 text-primary animate-pulse">LIVE MATCHING</Badge>
+                           </div>
+                           <div className="grid md:grid-cols-3 gap-6">
+                              {[
+                                { name: "BuildFast Infrastructure", rating: 4.8, specialization: "Modern High-Rise", contact: "+91 98765 43210", icon: Building2 },
+                                { name: "Vastu Home Crafts", rating: 4.9, specialization: "Vastu-Compliant Villas", contact: "+91 87654 32109", icon: Home },
+                                { name: "GreenBuild Solutions", rating: 4.7, specialization: "Sustainable & Solar Ready", contact: "+91 76543 21098", icon: Sun }
+                              ].map((contractor, i) => (
+                                <Card key={i} className="p-6 rounded-3xl bg-white/50 dark:bg-black/50 border-white/20 shadow-lg hover:shadow-2xl transition-all border-l-4 border-l-primary">
+                                   <div className="flex items-center gap-3 mb-4">
+                                      <div className="p-3 bg-primary/10 rounded-2xl text-primary">
+                                         <contractor.icon className="w-5 h-5" />
+                                      </div>
+                                      <div>
+                                         <p className="font-black text-sm">{contractor.name}</p>
+                                         <div className="flex items-center gap-1 text-[10px] text-orange-500 font-bold">
+                                            ★ {contractor.rating}
+                                         </div>
+                                      </div>
+                                   </div>
+                                   <p className="text-[10px] text-muted-foreground uppercase font-black mb-2">{contractor.specialization}</p>
+                                   <Button variant="outline" className="w-full rounded-xl text-[10px] font-black h-10 border-primary/20 hover:bg-primary hover:text-white">
+                                      CONNECT NOW
+                                   </Button>
+                                </Card>
+                              ))}
+                           </div>
+                        </div>
 
                         <div className="flex justify-between items-center pt-8 border-t border-slate-200 dark:border-slate-800">
                            <Button variant="ghost" onClick={() => setEstimationResult(null)} className="rounded-xl font-bold h-12">Recalculate</Button>
