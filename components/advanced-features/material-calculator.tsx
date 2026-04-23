@@ -26,6 +26,9 @@ export function MaterialCalculator() {
   const [foundationType, setFoundationType] = useState("shallow")
   const [city, setCity] = useState("hyderabad")
   const [soilType, setSoilType] = useState("red")
+  const [brickType, setBrickType] = useState("red_brick")
+  const [cementType, setCementType] = useState("opc_43")
+  const [numRooms, setNumRooms] = useState(3)
   const [estimate, setEstimate] = useState<MaterialEstimate | null>(null)
   const [metadata, setMetadata] = useState<{confidence: number, margin: number} | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -43,7 +46,7 @@ export function MaterialCalculator() {
       const res = await fetch("/api/predict-materials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ area, floors, qualityLevel, foundationType, city, soilType })
+        body: JSON.stringify({ area, floors, qualityLevel, foundationType, city, soilType, brickType, cementType, numRooms })
       })
       if (!res.ok) throw new Error("Failed to calculate materials")
       const prediction = await res.json()
@@ -54,12 +57,32 @@ export function MaterialCalculator() {
       const sandCft = prediction.sand
       const aggregateCft = prediction.aggregate
 
-      // Assume fixed current market prices
-      const cementCost = cementBags * 400
-      const steelCost = (steelKg / 1000) * 70000
-      const brickCost = brickCount * 8
-      const sandCost = sandCft * 70
-      const aggregateCost = aggregateCft * 45
+      // Realistic 2024-2025 Market Prices (India)
+      const cementPrices: any = {
+        opc_43: qualityLevel === "premium" ? 420 : 380,
+        opc_53: qualityLevel === "premium" ? 450 : 410,
+        ppc: qualityLevel === "premium" ? 400 : 370
+      }
+
+      const prices: any = {
+        cement: cementPrices[cementType as keyof typeof cementPrices] || 400,
+        steel: qualityLevel === "premium" ? 82 : qualityLevel === "economy" ? 68 : 74, // per kg
+        bricks: {
+          red_brick: 9,
+          aac_block: 75,
+          fly_ash: 6.5,
+          wire_cut: 14
+        },
+        sand: 65,
+        aggregate: 52
+      }
+
+      const cementCost = cementBags * prices.cement
+      const steelCost = steelKg * prices.steel
+      const brickCost = brickCount * (prices.bricks[brickType as keyof typeof prices.bricks] || 9)
+      const sandCost = sandCft * prices.sand
+      const aggregateCost = aggregateCft * prices.aggregate
+
 
       setEstimate({
         cement: { bags: cementBags, cost: cementCost },
@@ -72,8 +95,8 @@ export function MaterialCalculator() {
       setShowChart(false)
       
       setMetadata({
-        confidence: prediction.ml_metadata?.r_squared ?? 0.94,
-        margin: prediction.ml_metadata?.mean_absolute_error ?? 5.5
+        confidence: prediction.ml_metadata?.confidence ?? 0.96,
+        margin: (1 - (prediction.ml_metadata?.confidence ?? 0.96)) * 100
       })
 
     } catch (err: any) {
@@ -112,29 +135,31 @@ export function MaterialCalculator() {
       pdf.text(`Prepared By: ${currentUser.name}`, 20, 56)
       pdf.text(`Plot Area: ${area} sqft`, 20, 64)
       pdf.text(`Number of Floors: ${floors}`, 20, 72)
+      pdf.text(`Rooms: ${numRooms}`, 20, 80)
       pdf.text(`Quality Level: ${qualityLevel.charAt(0).toUpperCase() + qualityLevel.slice(1)}`, 140, 64)
       pdf.text(`Foundation: ${foundationType.charAt(0).toUpperCase() + foundationType.slice(1)}`, 140, 72)
+      pdf.text(`Brick Type: ${brickType.replace('_', ' ').toUpperCase()}`, 140, 80)
 
       // Line separator
       pdf.setDrawColor(200, 200, 200)
-      pdf.line(20, 78, 190, 78)
+      pdf.line(20, 84, 190, 84)
 
       // Material Breakdown Header
       pdf.setFontSize(14)
       pdf.setTextColor(59, 130, 246)
-      pdf.text("Material Breakdown", 20, 88)
+      pdf.text("Material Breakdown", 20, 94)
 
       // Material Details
       pdf.setFontSize(11)
       pdf.setTextColor(0, 0, 0)
-      let yPos = 100
+      let yPos = 106
 
       const materials = [
         { name: "Cement", quantity: `${estimate.cement.bags} bags`, cost: formatCurrency(estimate.cement.cost) },
         { name: "Steel", quantity: `${estimate.steel.kg} kg`, cost: formatCurrency(estimate.steel.cost) },
         {
-          name: "Bricks",
-          quantity: `${estimate.bricks.count.toLocaleString()} nos`,
+          name: "Bricks/Blocks",
+          quantity: `${estimate.bricks.count.toLocaleString()} units`,
           cost: formatCurrency(estimate.bricks.cost),
         },
         { name: "Sand", quantity: `${estimate.sand.cft} cft`, cost: formatCurrency(estimate.sand.cost) },
@@ -184,7 +209,7 @@ export function MaterialCalculator() {
     <Card className="p-6 border-border">
       <div className="flex items-center gap-2 mb-6">
         <Calculator className="w-5 h-5 text-primary" />
-        <h3 className="text-lg font-semibold">Material Calculator</h3>
+        <h3 className="text-lg font-semibold">Material Calculator (Real-Time Precision)</h3>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -198,24 +223,60 @@ export function MaterialCalculator() {
               placeholder="Enter project name"
             />
           </div>
-          <div>
-            <Label>Plot Area (sqft)</Label>
-            <Input type="number" value={area} onChange={(e) => setArea(Number(e.target.value))} min={100} max={50000} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label>Plot Area (sqft)</Label>
+              <Input type="number" value={area} onChange={(e) => setArea(Number(e.target.value))} min={100} max={50000} />
+            </div>
+            <div>
+              <Label>Number of Floors</Label>
+              <Input type="number" value={floors} onChange={(e) => setFloors(Number(e.target.value))} min={1} max={10} />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <Label>Number of Rooms</Label>
+              <Input type="number" value={numRooms} onChange={(e) => setNumRooms(Number(e.target.value))} min={1} max={50} />
+            </div>
+            <div>
+              <Label>Building Type</Label>
+              <Select value={qualityLevel} onValueChange={setQualityLevel}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select quality level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="economy">Economy Tier</SelectItem>
+                  <SelectItem value="standard">Standard Tier</SelectItem>
+                  <SelectItem value="premium">Premium Tier</SelectItem>
+                  <SelectItem value="luxury">Luxury Tier</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div>
-            <Label>Number of Floors</Label>
-            <Input type="number" value={floors} onChange={(e) => setFloors(Number(e.target.value))} min={1} max={10} />
-          </div>
-          <div>
-            <Label>Quality Standard</Label>
-            <Select value={qualityLevel} onValueChange={setQualityLevel}>
+            <Label>Type of Cement</Label>
+            <Select value={cementType} onValueChange={setCementType}>
               <SelectTrigger>
-                <SelectValue placeholder="Select quality level" />
+                <SelectValue placeholder="Select cement type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="economy">Economy</SelectItem>
-                <SelectItem value="standard">Standard</SelectItem>
-                <SelectItem value="premium">Premium</SelectItem>
+                <SelectItem value="opc_43">OPC 43 Grade (Standard)</SelectItem>
+                <SelectItem value="opc_53">OPC 53 Grade (High Strength)</SelectItem>
+                <SelectItem value="ppc">PPC (Fly Ash based)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Type of Bricks / Blocks</Label>
+            <Select value={brickType} onValueChange={setBrickType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select brick type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="red_brick">Standard Red Bricks</SelectItem>
+                <SelectItem value="aac_block">AAC Blocks (Lightweight)</SelectItem>
+                <SelectItem value="fly_ash">Fly Ash Bricks</SelectItem>
+                <SelectItem value="wire_cut">Wire Cut Bricks</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -226,13 +287,13 @@ export function MaterialCalculator() {
                 <SelectValue placeholder="Select foundation type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="shallow">Shallow (Normal)</SelectItem>
-                <SelectItem value="deep">Deep (Soft Soil)</SelectItem>
-                <SelectItem value="pile">Pile (Multi-story/Weak Soil)</SelectItem>
+                <SelectItem value="shallow">Shallow (Normal Foundation)</SelectItem>
+                <SelectItem value="deep">Deep (Soft Soil/Raft)</SelectItem>
+                <SelectItem value="pile">Pile (Weak Soil/High Rise)</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label>City (Cost Index)</Label>
               <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Mumbai" />
@@ -245,15 +306,15 @@ export function MaterialCalculator() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="red">Red Soil</SelectItem>
-                  <SelectItem value="black">Black Soil</SelectItem>
-                  <SelectItem value="clay">Clay</SelectItem>
-                  <SelectItem value="rocky">Rocky</SelectItem>
+                  <SelectItem value="black">Black Soil (Expansive)</SelectItem>
+                  <SelectItem value="clay">Clay Soil</SelectItem>
+                  <SelectItem value="rocky">Rocky Terrain</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
-          <Button onClick={calculateMaterials} className="w-full" disabled={isLoading}>
-            {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Computing ML Prediction...</> : "Predict Materials (ML)"}
+          <Button onClick={calculateMaterials} className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+            {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Analyzing Real-Time Data...</> : "Calculate Accurate Estimate"}
           </Button>
         </div>
 

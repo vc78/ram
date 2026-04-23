@@ -41,6 +41,7 @@ import {
   MaterialCalculator,
   EnhancedTimeline,
   VastuChecker,
+  GeoVastuEngine,
   DocumentManager,
   ComparisonView,
   NotificationCenter,
@@ -562,10 +563,12 @@ export default function DashboardPage() {
 
               {activeTab === "tools" && (
                 <ErrorBoundary>
-                  <div className="grid lg:grid-cols-2 gap-6">
+                  <div className="grid lg:grid-cols-2 gap-6 mb-6">
                     <MaterialCalculator />
                     <VastuChecker />
                   </div>
+                  {/* NEW REAL-TIME GEO-VASTU ENGINE (Separate Service) */}
+                  <GeoVastuEngine />
                 </ErrorBoundary>
               )}
 

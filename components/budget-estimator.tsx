@@ -20,42 +20,63 @@ import {
 } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
-type Tier = "Moderate" | "Intermediate" | "Premium"
+type Tier = "Economy" | "Standard" | "Premium" | "Luxury"
+type BrickType = "Standard Red" | "AAC Block" | "Fly Ash"
 
 const formatINR = (n: number) =>
   new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n)
 
 const tierDetails: Record<Tier, { rate: number; description: string; features: string[] }> = {
-  Moderate: {
-    rate: 1500,
-    description: "Basic quality materials",
-    features: ["Standard finishes", "Basic fixtures", "Essential amenities"],
+  Economy: {
+    rate: 1750,
+    description: "Budget-friendly construction",
+    features: ["Standard cement/steel", "Local tiles", "Essential electricals"],
   },
-  Intermediate: {
-    rate: 2200,
-    description: "Good quality materials",
-    features: ["Quality finishes", "Branded fixtures", "Modern amenities"],
+  Standard: {
+    rate: 2400,
+    description: "High quality standard",
+    features: ["Branded materials", "Vitrified tiles", "Modular switches"],
   },
   Premium: {
-    rate: 3000,
-    description: "Premium materials",
-    features: ["Luxury finishes", "Premium fixtures", "Smart home ready"],
+    rate: 3200,
+    description: "Elite quality materials",
+    features: ["Premium brands", "Italian marble/Granite", "Smart fixtures"],
   },
+  Luxury: {
+    rate: 4500,
+    description: "Ultra-luxury bespoke design",
+    features: ["Designer finishes", "Imported materials", "Full automation"],
+  },
+}
+
+const brickMultipliers: Record<BrickType, number> = {
+  "Standard Red": 1.0,
+  "AAC Block": 0.94, // AAC is often slightly cheaper due to less mortar/labor
+  "Fly Ash": 0.98,
 }
 
 export default function BudgetEstimator() {
   const [area, setArea] = useState(1500)
-  const [tier, setTier] = useState<Tier>("Intermediate")
+  const [tier, setTier] = useState<Tier>("Standard")
+  const [brickType, setBrickType] = useState<BrickType>("Standard Red")
+  const [numRooms, setNumRooms] = useState(3)
 
-  const rate = tierDetails[tier].rate
-  const total = area * rate
-  const materials = Math.round(total * 0.6)
-  const labor = Math.round(total * 0.3)
+  const baseRate = tierDetails[tier].rate
+  const brickM = brickMultipliers[brickType]
+  
+  // Room impact: extra internal walls
+  const baselineRooms = Math.ceil(area / 350)
+  const roomFactor = 1 + (Math.max(0, numRooms - baselineRooms) * 0.02)
+
+  const finalRate = baseRate * brickM * roomFactor
+  const total = area * finalRate
+  const materials = Math.round(total * 0.65)
+  const labor = Math.round(total * 0.25)
   const misc = Math.round(total * 0.1)
 
   const breakdown = [
-    { label: "Materials", value: materials, percentage: 60, icon: Package, color: "bg-blue-500" },
-    { label: "Labor", value: labor, percentage: 30, icon: Users, color: "bg-green-500" },
+    { label: "Materials", value: materials, percentage: 65, icon: Package, color: "bg-blue-500" },
+    { label: "Labor", value: labor, percentage: 25, icon: Users, color: "bg-green-500" },
     { label: "Miscellaneous", value: misc, percentage: 10, icon: Wrench, color: "bg-amber-500" },
   ]
 
@@ -106,48 +127,68 @@ export default function BudgetEstimator() {
 
           <Separator />
 
-          {/* Section 2: Quality Tier Selection */}
+          {/* Section 2: Building Parameters */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
               <Layers className="h-4 w-4" />
-              <span>Quality Tier</span>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Info className="h-3.5 w-3.5" />
-                </TooltipTrigger>
-                <TooltipContent side="right" className="max-w-[200px]">
-                  <p className="text-xs">
-                    Select construction quality level. Higher tiers include better materials and finishes.
-                  </p>
-                </TooltipContent>
-              </Tooltip>
+              <span>Building Parameters</span>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <span className="text-xs text-muted-foreground">Type of Bricks</span>
+                <div className="flex flex-wrap gap-2">
+                  {(Object.keys(brickMultipliers) as BrickType[]).map((b) => (
+                    <button
+                      key={b}
+                      onClick={() => setBrickType(b)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
+                        brickType === b ? "bg-primary text-primary-foreground border-primary" : "bg-muted/50 border-border hover:border-primary/50"
+                      }`}
+                    >
+                      {b}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <span className="text-xs text-muted-foreground">Rooms: {numRooms}</span>
+                <Slider
+                  value={[numRooms]}
+                  onValueChange={(v) => setNumRooms(v[0])}
+                  min={1}
+                  max={12}
+                  step={1}
+                  className="py-1"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {(Object.keys(tierDetails) as Tier[]).map((t) => (
                 <button
                   key={t}
                   type="button"
                   onClick={() => setTier(t)}
-                  className={`relative p-4 rounded-xl border-2 transition-all text-left ${
+                  className={`relative p-3 rounded-xl border-2 transition-all text-left ${
                     t === tier
                       ? "border-primary bg-primary/5 shadow-sm"
                       : "border-border hover:border-primary/50 bg-background"
                   }`}
                 >
-                  {t === tier && <div className="absolute top-2 right-2 h-2 w-2 rounded-full bg-primary" />}
-                  <div className="font-semibold text-sm mb-1">{t}</div>
-                  <div className="text-xs text-muted-foreground">{formatINR(tierDetails[t].rate)}/sqft</div>
+                  {t === tier && <div className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary" />}
+                  <div className="font-semibold text-[10px] mb-0.5">{t}</div>
+                  <div className="text-[10px] text-muted-foreground">{formatINR(tierDetails[t].rate)}/sqft</div>
                 </button>
               ))}
             </div>
 
             {/* Tier Features */}
             <div className="p-3 rounded-lg bg-muted/30 border border-dashed">
-              <div className="text-xs font-medium mb-2">{tier} tier includes:</div>
+              <div className="text-[10px] font-medium mb-2 uppercase tracking-wider text-muted-foreground">{tier} tier features:</div>
               <div className="flex flex-wrap gap-2">
                 {tierDetails[tier].features.map((feature) => (
-                  <Badge key={feature} variant="outline" className="text-xs font-normal">
+                  <Badge key={feature} variant="outline" className="text-[10px] font-normal py-0">
                     {feature}
                   </Badge>
                 ))}
@@ -181,10 +222,10 @@ export default function BudgetEstimator() {
                 <div key={item.label} className="p-3 rounded-xl bg-muted/50 space-y-1">
                   <div className="flex items-center gap-2">
                     <div className={`h-2 w-2 rounded-full ${item.color}`} />
-                    <span className="text-xs text-muted-foreground">{item.label}</span>
+                    <span className="text-[10px] text-muted-foreground">{item.label}</span>
                   </div>
-                  <div className="font-semibold text-sm">{formatINR(item.value)}</div>
-                  <div className="text-xs text-muted-foreground">{item.percentage}%</div>
+                  <div className="font-semibold text-xs">{formatINR(item.value)}</div>
+                  <div className="text-[10px] text-muted-foreground">{item.percentage}%</div>
                 </div>
               ))}
             </div>
@@ -201,12 +242,13 @@ export default function BudgetEstimator() {
               </div>
               <div className="flex items-center gap-1 text-xs text-green-600">
                 <TrendingUp className="h-3 w-3" />
-                <span>Market Rate</span>
+                <span>Market Rate 2024-25</span>
               </div>
             </div>
             <div className="text-3xl font-bold text-primary mb-1">{formatINR(total)}</div>
-            <div className="text-xs text-muted-foreground">
-              Based on {formatINR(rate)}/sqft × {area.toLocaleString()} sqft
+            <div className="text-[10px] text-muted-foreground">
+              Based on {formatINR(Math.round(finalRate))}/sqft × {area.toLocaleString()} sqft
+              {roomFactor > 1 && ` (includes ${Math.round((roomFactor - 1) * 100)}% partition wall impact)`}
             </div>
           </div>
 

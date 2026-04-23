@@ -15,12 +15,34 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { ExternalLink, Star, Phone, Mail, Award, MapPin as MapPinIcon, Landmark, Wallet, PiggyBank, ReceiptText, ChevronRight, PieChart, ShieldCheck, Maximize2, Minimize2 } from "lucide-react"
+
+
+
+
 
 export default function CreateProjectWorkflow() {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [isSimulatingAI, setIsSimulatingAI] = useState(false)
   const [isExporting, setIsExporting] = useState(false)
+  const [isLaunched, setIsLaunched] = useState(false)
+  const [loanTenure, setLoanTenure] = useState(20)
+  const [interestRate, setInterestRate] = useState(8.5)
+  const [eligibilityStatus, setEligibilityStatus] = useState<'idle' | 'checking' | 'verified'>('idle')
+  const [contactingId, setContactingId] = useState<number | null>(null)
+  const [isMaximized, setIsMaximized] = useState(false)
+
+
+
+
 
   // -- STATES --
   const [plot, setPlot] = useState({
@@ -1115,11 +1137,13 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
                         localStorage.setItem("siid_projects", JSON.stringify(existing));
                       } catch(e) { console.error("Could not save to localStorage", e) }
 
-                      toast.success("Intelligence Platform Linked & Synced!")
-                      router.push("/dashboard")
+                      setIsLaunched(true)
+                      exportToPdf()
+                      toast.success("Intelligence Platform Linked & Project Launched!")
                    }} className="h-12 px-8 bg-primary text-primary-foreground shadow-lg hover:bg-primary/90">
-                     Approve & Launch Control Center
-                   </Button>
+                      Approve & Launch Control Center
+                    </Button>
+
                   </div>
                 </motion.div>
                 )}
@@ -1270,6 +1294,205 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
             </div>
          </div>
       </div>
+      <Dialog open={isLaunched} onOpenChange={setIsLaunched}>
+        <DialogContent className={`flex flex-col bg-background/98 backdrop-blur-2xl border-primary/30 shadow-2xl p-0 gap-0 transition-all duration-500 ease-in-out ${
+          isMaximized 
+          ? "max-w-none w-screen h-screen rounded-none border-none" 
+          : "max-w-6xl w-[95vw] h-[90vh] rounded-3xl overflow-hidden"
+        }`}>
+          {/* STICKY HEADER */}
+          <div className="p-8 border-b border-border/50 flex flex-col items-center text-center bg-background/50 backdrop-blur-md relative">
+            {/* MAXIMIZE TOGGLE */}
+            <Button 
+               variant="ghost" 
+               size="icon" 
+               onClick={() => setIsMaximized(!isMaximized)}
+               className="absolute top-6 right-6 hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
+            >
+               {isMaximized ? <Minimize2 className="w-5 h-5" /> : <Maximize2 className="w-5 h-5" />}
+            </Button>
+
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-3 relative">
+               <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping opacity-30" />
+               <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30">
+                  <CheckCircle2 className="w-6 h-6 text-primary-foreground" />
+               </div>
+            </div>
+            <DialogTitle className="text-3xl font-black tracking-tight">Project Intelligence Locked!</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground mt-1 max-w-2xl">
+              Your comprehensive construction blueprint is finalized. We've unlocked your **Hyper-Local Financing** and **Contractor Match-Making**.
+            </DialogDescription>
+          </div>
+
+          {/* SCROLLABLE CONTENT AREA */}
+          <div className="flex-1 overflow-y-auto p-8 space-y-16 bg-gradient-to-b from-transparent to-muted/10 custom-scrollbar">
+            
+            {/* SECTION 1: FINANCING ROADMAP */}
+            <section className="space-y-8">
+              <div className="flex items-center justify-between border-b border-border pb-6">
+                 <div className="flex items-center gap-4">
+                    <div className="p-3 bg-emerald-500/10 rounded-2xl text-emerald-600 shadow-sm border border-emerald-500/20">
+                       <Landmark className="w-7 h-7" />
+                    </div>
+                    <div>
+                       <h3 className="text-2xl font-black tracking-tight">Financing Optimizer</h3>
+                       <p className="text-sm text-muted-foreground">Dynamic EMI & Loan-to-Value Matrix</p>
+                    </div>
+                 </div>
+                 <div className="hidden sm:flex items-center gap-3 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-xl text-xs font-black border border-emerald-100 shadow-sm">
+                    <PieChart className="w-4 h-4" />
+                    INSTANT LTV VERIFICATION
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div className="lg:col-span-8">
+                  <Card className="p-8 bg-slate-950 text-white border-none shadow-2xl rounded-3xl relative overflow-hidden h-full">
+                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full -mr-32 -mt-32 blur-[100px] opacity-50" />
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-10">
+                        <div className="space-y-8">
+                           <div className="space-y-5">
+                              <div className="flex justify-between items-end">
+                                 <Label className="text-slate-400 font-black uppercase tracking-widest text-[11px]">Construction Loan (80%)</Label>
+                                 <span className="text-2xl font-black text-emerald-400 tabular-nums">₹{Math.round(totalCost * 0.8).toLocaleString()}</span>
+                              </div>
+                              <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden border border-white/5">
+                                 <motion.div initial={{ width: 0 }} animate={{ width: '80%' }} className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full" />
+                              </div>
+                           </div>
+                           <div className="space-y-5">
+                              <div className="flex justify-between items-center">
+                                 <Label className="text-slate-400 font-bold text-[11px] uppercase tracking-wider">Loan Tenure</Label>
+                                 <span className="text-white font-black text-sm px-2 py-1 bg-white/10 rounded-md border border-white/5">{loanTenure} Years</span>
+                              </div>
+                              <input type="range" min="5" max="30" step="1" value={loanTenure} onChange={(e) => setLoanTenure(parseInt(e.target.value))} className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-primary border border-white/5" />
+                           </div>
+                           <div className="space-y-5">
+                              <div className="flex justify-between items-center">
+                                 <Label className="text-slate-400 font-bold text-[11px] uppercase tracking-wider">Interest Rate</Label>
+                                 <span className="text-white font-black text-sm px-2 py-1 bg-white/10 rounded-md border border-white/5">{interestRate}%</span>
+                              </div>
+                              <input type="range" min="7" max="15" step="0.1" value={interestRate} onChange={(e) => setInterestRate(parseFloat(e.target.value))} className="w-full h-1.5 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-primary border border-white/5" />
+                           </div>
+                        </div>
+                        <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-8 border border-white/10 flex flex-col justify-center items-center text-center space-y-4 shadow-inner">
+                           <div className="p-3 bg-white/10 rounded-2xl mb-2"><Wallet className="w-6 h-6 text-emerald-400" /></div>
+                           <p className="text-slate-400 font-black uppercase tracking-[0.2em] text-[10px]">Projected Monthly EMI</p>
+                           <motion.div key={loanTenure + interestRate} initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-4xl font-black text-white tracking-tighter tabular-nums">
+                              ₹{Math.round((totalCost * 0.8) * (interestRate/12/100) * Math.pow(1 + (interestRate/12/100), loanTenure * 12) / (Math.pow(1 + (interestRate/12/100), loanTenure * 12) - 1)).toLocaleString()}
+                           </motion.div>
+                           <div className="pt-6 border-t border-white/5 w-full">
+                              <p className="text-[11px] text-slate-500 font-bold flex justify-between"><span>Total Payable:</span> <span className="text-slate-300">₹{Math.round((Math.round((totalCost * 0.8) * (interestRate/12/100) * Math.pow(1 + (interestRate/12/100), loanTenure * 12) / (Math.pow(1 + (interestRate/12/100), loanTenure * 12) - 1)) * (loanTenure * 12))).toLocaleString()}</span></p>
+                           </div>
+                        </div>
+                     </div>
+                  </Card>
+                </div>
+
+                <div className="lg:col-span-4 flex flex-col gap-6">
+                   <div className="bg-card border border-border p-6 rounded-3xl shadow-sm space-y-6">
+                      <h4 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-3"><PiggyBank className="w-5 h-5 text-primary" /> Preferred Lenders</h4>
+                      <div className="space-y-3">
+                         {[{ name: "HDFC Bank", rate: "8.40%", logo: "H" }, { name: "SBI Home Loans", rate: "8.55%", logo: "S" }, { name: "ICICI Bank", rate: "8.65%", logo: "I" }].map(bank => (
+                           <div key={bank.name} className="flex items-center justify-between p-4 border rounded-2xl hover:bg-muted/50 transition-all duration-300 group cursor-pointer hover:border-primary/50">
+                              <div className="flex items-center gap-4">
+                                 <div className="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center font-black text-primary group-hover:bg-primary group-hover:text-white transition-all">{bank.logo}</div>
+                                 <div><p className="text-sm font-black">{bank.name}</p><p className="text-[11px] text-muted-foreground font-medium">ROI: <span className="text-emerald-600 font-bold">{bank.rate}</span></p></div>
+                              </div>
+                              <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                           </div>
+                         ))}
+                      </div>
+                      <Button onClick={() => { setEligibilityStatus('checking'); setTimeout(() => { setEligibilityStatus('verified'); toast.success("Financial Profile Pre-Verified!"); }, 2500); }} disabled={eligibilityStatus !== 'idle'} className={`w-full h-14 rounded-2xl font-black text-xs tracking-widest uppercase transition-all duration-500 shadow-xl ${ eligibilityStatus === 'verified' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-primary hover:bg-primary/90' }`}>
+                         {eligibilityStatus === 'idle' && <><Zap className="w-4 h-4 mr-3" /> One-Click Eligibility</>}
+                         {eligibilityStatus === 'checking' && <><Loader2 className="w-4 h-4 mr-3 animate-spin" /> Analyzing Credit...</>}
+                         {eligibilityStatus === 'verified' && <><CheckCircle2 className="w-4 h-4 mr-3" /> Profile Pre-Verified</>}
+                      </Button>
+                   </div>
+                </div>
+              </div>
+            </section>
+
+            {/* SECTION 2: NEURAL CONTRACTOR MATCHING */}
+            <section className="space-y-8">
+              <div className="flex items-center justify-between border-b border-border pb-6">
+                 <div className="flex items-center gap-4">
+                    <div className="p-3 bg-primary/10 rounded-2xl text-primary shadow-sm border border-primary/20">
+                       <Award className="w-7 h-7" />
+                    </div>
+                    <div>
+                       <h3 className="text-2xl font-black tracking-tight">Neural-Match Contractors</h3>
+                       <p className="text-sm text-muted-foreground">Certified Professionals in {plot.city}</p>
+                    </div>
+                 </div>
+                 <div className="hidden sm:block text-xs font-black text-primary bg-primary/10 px-4 py-2 rounded-xl border border-primary/20 tracking-widest uppercase">Vetted Professionals Only</div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[{ id: 1, name: "Apex Buildtech Solutions", rating: 4.9, reviews: 128, specialty: "Luxury Residential & Green Building", tags: ["Eco-Friendly", "Premium"], image: "https://images.unsplash.com/photo-1541888086225-ee5dc24bd4ab?auto=format&fit=crop&q=80" }, { id: 2, name: "Skyline Infra Project", rating: 4.7, reviews: 95, specialty: "High-Rise & Structural Excellence", tags: ["On-Time", "Certified"], image: "https://images.unsplash.com/photo-1503387762-592dea58ef23?auto=format&fit=crop&q=80" }, { id: 3, name: "VastuVeda Construction", rating: 4.8, reviews: 210, specialty: "Vastu Compliant Traditional Homes", tags: ["Vastu Pro", "Detailing"], image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80" }].map((contractor) => (
+                  <Card key={contractor.id} className="overflow-hidden border border-border/50 hover:border-primary/40 transition-all duration-500 group shadow-lg hover:shadow-2xl rounded-3xl flex flex-col bg-card">
+                    <div className="h-44 w-full relative overflow-hidden">
+                      <img src={contractor.image} alt={contractor.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      <div className="absolute bottom-4 left-4 flex gap-2">
+                        {contractor.tags.map(tag => ( <span key={tag} className="text-[9px] font-black bg-primary text-primary-foreground px-2 py-1 rounded-md uppercase tracking-wider shadow-lg">{tag}</span> ))}
+                      </div>
+                    </div>
+                    <div className="p-6 space-y-4 flex-1 flex flex-col">
+                      <div className="space-y-1">
+                        <h4 className="font-black text-lg leading-tight group-hover:text-primary transition-colors">{contractor.name}</h4>
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center text-amber-500"> {[...Array(5)].map((_, i) => <Star key={i} className={`w-3.5 h-3.5 ${i < Math.floor(contractor.rating) ? 'fill-amber-500' : ''}`} />)} </div>
+                          <span className="text-xs font-black">{contractor.rating}</span>
+                          <span className="text-xs text-muted-foreground">({contractor.reviews})</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">{contractor.specialty}</p>
+                      <div className="pt-6 border-t border-border/50 mt-auto">
+                        <Button onClick={() => { setContactingId(contractor.id); setTimeout(() => { setContactingId(null); toast.success(`Request Securely Shared with ${contractor.name}!`); }, 2000); }} disabled={contactingId !== null} variant="outline" className="w-full h-11 rounded-xl font-bold text-xs tracking-tight group/btn border-2 hover:border-primary transition-all overflow-hidden relative">
+                           <span className={`flex items-center justify-center transition-all duration-300 ${contactingId === contractor.id ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}> <Mail className="w-4 h-4 mr-2 group-hover/btn:translate-x-1 transition-transform" /> Connect Securely </span>
+                           {contactingId === contractor.id && ( <div className="absolute inset-0 flex items-center justify-center bg-primary text-primary-foreground"> <Loader2 className="w-5 h-5 animate-spin mr-2" /> Encrypting... </div> )}
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </section>
+
+            {/* DOWNLOAD SECTION */}
+            <div className="bg-slate-900 text-white p-10 rounded-[2.5rem] border border-white/5 flex flex-col lg:flex-row items-center justify-between gap-10 shadow-3xl shadow-primary/10 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -mr-48 -mt-48" />
+              <div className="flex items-center gap-8 relative z-10">
+                <div className="p-5 bg-primary text-white rounded-3xl shadow-2xl shadow-primary/30 rotate-3 transition-transform"> <ReceiptText className="w-10 h-10" /> </div>
+                <div className="space-y-2">
+                  <h4 className="text-3xl font-black tracking-tight">Executive Master Dossier</h4>
+                  <p className="text-sm text-slate-400 max-w-lg leading-relaxed">Download your hyper-encrypted project package including structural vectors, BoQ ratios, local zoning clearances, and the complete financial roadmap.</p>
+                </div>
+              </div>
+              <Button onClick={exportToPdf} size="lg" className="h-16 px-10 font-black shadow-2xl hover:scale-105 active:scale-95 transition-all bg-white text-slate-950 hover:bg-slate-100 rounded-2xl relative z-10 min-w-[250px]">
+                <FileDown className="w-6 h-6 mr-3" /> DOWNLOAD PACKAGE
+              </Button>
+            </div>
+          </div>
+
+          {/* STICKY FOOTER */}
+          <div className="p-8 bg-muted border-t border-border/50 flex flex-col sm:flex-row gap-8 items-center justify-between">
+            <div className="flex items-center gap-4 text-muted-foreground">
+               <div className="w-10 h-10 rounded-full border-2 border-primary/20 flex items-center justify-center"> <ShieldCheck className="w-5 h-5 text-primary" /> </div>
+               <p className="text-[10px] font-bold uppercase tracking-widest max-w-[300px]"> All estimates are AI-vetted and geo-locked to {plot.city.toUpperCase()} market data. </p>
+            </div>
+            <Button onClick={() => router.push("/dashboard")} className="px-12 h-16 text-base font-black bg-foreground text-background hover:opacity-90 shadow-2xl rounded-2xl transition-all hover:gap-6 group">
+              GO TO DASHBOARD <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform" />
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+
+
+
     </div>
   )
+
 }

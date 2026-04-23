@@ -19,12 +19,13 @@ import {
   Menu,
   Cog,
   BarChart3,
+  Globe,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import VantaBackground from "@/components/vanta-background"
 import ConstructionAssistant from "@/components/construction-assistant"
-import PromotionalPopup from "@/components/promotional-popup"
+
 import MediaFallbackInjector from "@/components/media-fallback-injector"
 
 import KpiCounters from "@/components/kpi-counters"
@@ -38,7 +39,9 @@ import InsightsSearch from "@/components/insights-search"
 import TestimonialsCarousel from "@/components/testimonials-carousel"
 import LiveTicker from "@/components/live-ticker"
 import Navbar from "@/components/navbar"
+import { Badge } from "@/components/ui/badge"
 import { useWelcomeVoice } from "@/hooks/use-welcome-voice"
+
 
 export default function LandingPage() {
   useWelcomeVoice()
@@ -156,7 +159,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       <MediaFallbackInjector />
-      <PromotionalPopup />
+
       {/* Extracted modular Navbar */}
       <Navbar />
 
@@ -460,7 +463,7 @@ export default function LandingPage() {
       </section >
 
       {/* Features Section */}
-      < section id="features" className="py-20 bg-background" >
+      <section id="features" className="py-20 bg-background" >
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto mb-8">
             <LiveTicker />
@@ -504,7 +507,8 @@ export default function LandingPage() {
             </Card>
           </div>
         </div>
-      </section >
+      </section>
+
 
       <section className="py-16 bg-muted">
         <div className="container mx-auto px-4">
@@ -576,6 +580,8 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+
 
       {/* How It Works Section */}
       <section id="how-it-works" className="py-20 bg-background">

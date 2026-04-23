@@ -101,6 +101,21 @@ export default function ConstructionIntelligencePlatform() {
     steelGrade: "Fe550D",
     foundationDepth: "5-7 ft",
     wallMaterial: "AAC Blocks",
+    cementType: "OPC 43 Grade",
+    numRooms: "3",
+    laborContractType: "item_rate_standard",
+    topography: "flat",
+    roadAccess: "wide_truck_access",
+    projectDuration: "12",
+    wastageTolerance: "5",
+    laborSkill: "standard_availability",
+    curingMethod: "manual_water",
+    groundwaterLevel: "normal_150ft",
+    plumbingBrand: "standard_commercial",
+    woodwork: "upvc_standard",
+    projectStartDate: "1",
+    statutoryApproval: "municipal_panchayat",
+    temporarySetup: true,
     paintQuality: "Weather Shield Royale",
     waterProofingGrade: "Tier-1 Membrane",
     windowGlassType: "Double Glazed Low-E",
@@ -375,9 +390,9 @@ export default function ConstructionIntelligencePlatform() {
     doc.addPage()
     doc.text("3. INDUSTRIAL RESOURCE QUANTUM", 20, 20)
     const materials = [
-      ["OPC/PPC Cement", `${estimationResult.materialQuantity.cement} Bags`, "Grade-53 Quality Assurance"],
+      [`${formData.cementType} Cement`, `${estimationResult.materialQuantity.cement} Bags`, "Quality Assurance Checked"],
       ["Fe-500D Structural Steel", `${estimationResult.materialQuantity.steel} Kg`, "Seismic Load Tolerance"],
-      ["Kiln-Baked Bricks", `${estimationResult.materialQuantity.bricks} Units`, "Standard Dimensional Stability"],
+      [`${formData.wallMaterial}`, `${estimationResult.materialQuantity.bricks} Units`, "Standard Dimensional Stability"],
       ["River/M-Sand Grade-II", `${estimationResult.materialQuantity.sand} Cft`, "Washed & Filtered"],
       ["Coarse Aggregates (20mm)", `${estimationResult.materialQuantity.aggregate} Cft`, "Machine Crushed Blue Granite"],
       ["Plumbing Rough-in Kit", "Complete Site Kit", "CPVC/SWR Piping Scheduled"],
@@ -415,6 +430,7 @@ export default function ConstructionIntelligencePlatform() {
       ["HVAC System", formData.hvacType, "Safety Grade", formData.fireSafetyGrade],
       ["Water Resource", formData.waterResource, "Security Tier", formData.securityLevel],
       ["Acoustic Target", formData.acousticTarget, "Maintenance", formData.maintenancePlan],
+      ["Labor Strategy", formData.laborContractType, "Terrain Type", formData.topography],
       ["Digital Twin", formData.digitalTwinSync ? "Enabled" : "Disabled", "Carbon Target", formData.carbonTarget]
     ]
     autoTable(doc, {
@@ -780,13 +796,43 @@ export default function ConstructionIntelligencePlatform() {
                         <h3 className="font-black text-xl">Technical Props</h3>
                       </div>
                       <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label className="text-[10px] uppercase font-black text-slate-400">Construction Quality</Label>
-                          <select className="w-full h-11 px-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 font-bold text-sm" value={formData.constructionQuality} onChange={(e) => setFormData({...formData, constructionQuality: e.target.value})}>
-                            <option>Standard</option>
-                            <option>High (Precision)</option>
-                            <option>Ultra (Industry 4.0)</option>
-                          </select>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Cement Grade</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.cementType} onChange={(e) => setFormData({...formData, cementType: e.target.value})}>
+                               <option value="OPC 43 Grade">OPC 43 Grade</option>
+                               <option value="OPC 53 Grade">OPC 53 Grade</option>
+                               <option value="PPC">PPC</option>
+                             </select>
+                           </div>
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Wall Material</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.wallMaterial} onChange={(e) => setFormData({...formData, wallMaterial: e.target.value})}>
+                               <option value="Standard Red Brick">Standard Red Brick</option>
+                               <option value="AAC Blocks">AAC Blocks</option>
+                               <option value="Fly Ash">Fly Ash</option>
+                               <option value="Wire Cut">Wire Cut</option>
+                             </select>
+                           </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="space-y-2">
+                            <Label className="text-[9px] uppercase font-black text-slate-400">Number of Rooms</Label>
+                            <Input
+                              type="number"
+                              className="h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold px-3"
+                              value={formData.numRooms}
+                              onChange={(e) => setFormData({ ...formData, numRooms: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-[9px] uppercase font-black text-slate-400">Construction Quality</Label>
+                            <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.constructionQuality} onChange={(e) => setFormData({...formData, constructionQuality: e.target.value})}>
+                              <option>Standard</option>
+                              <option>High (Precision)</option>
+                              <option>Ultra (Industry 4.0)</option>
+                            </select>
+                          </div>
                         </div>
                         <div className="space-y-2">
                           <Label className="text-[10px] uppercase font-black text-slate-400">Sustainability Rating</Label>
@@ -807,7 +853,7 @@ export default function ConstructionIntelligencePlatform() {
                         <h3 className="font-black text-xl">AEC Parameters</h3>
                       </div>
                       <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                            <div className="space-y-2">
                              <Label className="text-[9px] uppercase font-black text-slate-400">Automation</Label>
                              <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.automationLevel} onChange={(e) => setFormData({...formData, automationLevel: e.target.value})}>
@@ -861,6 +907,102 @@ export default function ConstructionIntelligencePlatform() {
                             <option>Engineered Wood</option>
                             <option>Polished Concrete</option>
                           </select>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Woodwork/Joinery</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.woodwork} onChange={(e) => setFormData({...formData, woodwork: e.target.value})}>
+                               <option value="upvc_standard">UPVC (Standard)</option>
+                               <option value="teak_wood">Teak Wood (Premium)</option>
+                               <option value="sal_wood">Sal Wood</option>
+                             </select>
+                           </div>
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Plumbing Brand</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.plumbingBrand} onChange={(e) => setFormData({...formData, plumbingBrand: e.target.value})}>
+                               <option value="standard_commercial">Standard Commercial</option>
+                               <option value="astral_premium">Astral / Finolex (Premium)</option>
+                             </select>
+                           </div>
+                        </div>
+                      </div>
+                    </Card>
+
+                    {/* SITE LOGISTICS & LABOR CARD */}
+                    <Card className="p-8 rounded-[2rem] bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border border-white/20 shadow-xl space-y-6">
+                      <div className="flex items-center gap-3">
+                        <div className="p-3 bg-yellow-500/10 rounded-2xl text-yellow-600"><HardHat className="w-5 h-5" /></div>
+                        <h3 className="font-black text-xl">Logistics & Labor</h3>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Labor Contract</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.laborContractType} onChange={(e) => setFormData({...formData, laborContractType: e.target.value})}>
+                               <option value="daily_wage_local">Daily Wage (Mestri)</option>
+                               <option value="item_rate_standard">Item Rate (Standard)</option>
+                               <option value="turnkey_premium">Turnkey (Lumpsum)</option>
+                             </select>
+                           </div>
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Road Access</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.roadAccess} onChange={(e) => setFormData({...formData, roadAccess: e.target.value})}>
+                               <option value="wide_truck_access">Wide (&gt;30ft)</option>
+                               <option value="narrow_tractor_access">Narrow (&lt;20ft)</option>
+                             </select>
+                           </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Topography</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.topography} onChange={(e) => setFormData({...formData, topography: e.target.value})}>
+                               <option value="flat">Flat Terrain</option>
+                               <option value="moderate_slope">Moderate Slope</option>
+                               <option value="steep_slope">Steep Slope</option>
+                             </select>
+                           </div>
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Wastage Tolerance</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.wastageTolerance} onChange={(e) => setFormData({...formData, wastageTolerance: e.target.value})}>
+                               <option value="2">Low (2%)</option>
+                               <option value="5">Standard (5%)</option>
+                               <option value="8">High (8%)</option>
+                             </select>
+                           </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Labor Skill</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.laborSkill} onChange={(e) => setFormData({...formData, laborSkill: e.target.value})}>
+                               <option value="standard_availability">Standard Availability</option>
+                               <option value="high_shortage">High Shortage (Premium)</option>
+                               <option value="specialized">Specialized Crew</option>
+                             </select>
+                           </div>
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Curing Method</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.curingMethod} onChange={(e) => setFormData({...formData, curingMethod: e.target.value})}>
+                               <option value="manual_water">Manual Water Curing</option>
+                               <option value="chemical_compounds">Chemical Compounds</option>
+                             </select>
+                           </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Groundwater Level</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.groundwaterLevel} onChange={(e) => setFormData({...formData, groundwaterLevel: e.target.value})}>
+                               <option value="normal_150ft">Normal (&gt;150ft)</option>
+                               <option value="high_water_table">High Table (Needs Dewatering)</option>
+                             </select>
+                           </div>
+                           <div className="space-y-2">
+                             <Label className="text-[10px] uppercase font-black text-slate-400">Start Date (Months away)</Label>
+                             <Input type="number" className="h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold px-3" value={formData.projectStartDate} onChange={(e) => setFormData({...formData, projectStartDate: e.target.value})} />
+                           </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-[10px] uppercase font-black text-slate-400">Project Duration (Months)</Label>
+                          <Input type="number" className="h-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold px-3" value={formData.projectDuration} onChange={(e) => setFormData({...formData, projectDuration: e.target.value})} />
                         </div>
                       </div>
                     </Card>
@@ -933,13 +1075,27 @@ export default function ConstructionIntelligencePlatform() {
                            <span className="text-xs font-bold font-mono">LOCAL ZONING AUTO</span>
                            <input type="checkbox" checked={formData.localZoningSync} onChange={(e) => setFormData({...formData, localZoningSync: e.target.checked})} className="w-5 h-5 accent-indigo-500" />
                         </div>
-                        <div className="space-y-2">
-                          <Label className="text-[10px] uppercase font-black text-slate-400">Carbon Target</Label>
-                          <select className="w-full h-10 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.carbonTarget} onChange={(e) => setFormData({...formData, carbonTarget: e.target.value})}>
-                             <option>Standard Footprint</option>
-                             <option>25% Reduction</option>
-                             <option>Net Zero Ready</option>
-                          </select>
+                        <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
+                           <span className="text-xs font-bold font-mono">TEMP SITE SETUP (Borewell/Elec)</span>
+                           <input type="checkbox" checked={formData.temporarySetup} onChange={(e) => setFormData({...formData, temporarySetup: e.target.checked})} className="w-5 h-5 accent-emerald-500" />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                           <div className="space-y-2">
+                             <Label className="text-[10px] uppercase font-black text-slate-400">Carbon Target</Label>
+                             <select className="w-full h-10 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.carbonTarget} onChange={(e) => setFormData({...formData, carbonTarget: e.target.value})}>
+                                <option>Standard Footprint</option>
+                                <option>25% Reduction</option>
+                                <option>Net Zero Ready</option>
+                             </select>
+                           </div>
+                           <div className="space-y-2">
+                             <Label className="text-[9px] uppercase font-black text-slate-400">Statutory Clearances</Label>
+                             <select className="w-full h-10 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-bold" value={formData.statutoryApproval} onChange={(e) => setFormData({...formData, statutoryApproval: e.target.value})}>
+                               <option value="municipal_panchayat">Municipal/Panchayat Standard</option>
+                               <option value="premium_fast_track">Premium Agent Fast-Track</option>
+                               <option value="high_rise_clearance">High-Rise Special Clearance</option>
+                             </select>
+                           </div>
                         </div>
                       </div>
                     </Card>
@@ -1074,7 +1230,73 @@ export default function ConstructionIntelligencePlatform() {
                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16" />
                            <h4 className="text-[10px] uppercase font-black tracking-widest opacity-80 mb-4">Total Estimated Budget</h4>
                            <div className="text-4xl font-extrabold tracking-tighter">₹{estimationResult.budgetRange.min}L - ₹{estimationResult.budgetRange.max}L</div>
-                           <p className="text-indigo-100 text-xs mt-2 italic">Acuracy based on CURRENT market volatility Index.</p>
+                           <p className="text-indigo-100 text-xs mt-2 italic">Accuracy based on CURRENT market volatility Index.</p>
+                        </Card>
+
+                        {/* NEW: DYNAMIC ITEMIZED BREAKDOWN & LIVE MARKET INTELLIGENCE */}
+                        <div className="grid md:grid-cols-2 gap-6">
+                           <Card className="p-8 rounded-3xl bg-white/70 dark:bg-slate-900/70 border-white/20 shadow-xl space-y-6">
+                             <div className="flex items-center justify-between">
+                                <h3 className="font-black text-xl">Itemized Cost Matrix</h3>
+                                <Badge variant="outline" className="text-[9px] uppercase tracking-widest">Real-Time Sync</Badge>
+                             </div>
+                             <div className="space-y-3">
+                                {[
+                                  { label: "Civil & Structural Shell", val: estimationResult.itemized.civil_work },
+                                  { label: "Advanced Finishes & Joinery", val: estimationResult.itemized.finishing },
+                                  { label: "Labor (Skill Adjusted)", val: estimationResult.itemized.labor_cost },
+                                  { label: "MEP Systems (Plumbing/HVAC)", val: estimationResult.itemized.mep_systems },
+                                  { label: "Statutory Permits & Clearances", val: estimationResult.itemized.govt_taxes_permits },
+                                  { label: "Site Logistics & Setup", val: estimationResult.itemized.site_setup_logistics },
+                                  { label: "Temporal Inflation Buffer", val: estimationResult.itemized.contingency }
+                                ].map((item, idx) => (
+                                  <div key={idx} className="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-slate-800">
+                                    <span className="text-xs font-bold text-slate-500">{item.label}</span>
+                                    <span className="text-sm font-black">₹{item.val} Lakhs</span>
+                                  </div>
+                                ))}
+                             </div>
+                           </Card>
+
+                           <div className="space-y-6">
+                             <Card className="p-8 rounded-3xl bg-white/70 dark:bg-slate-900/70 border-white/20 shadow-xl space-y-6">
+                               <div className="flex items-center gap-3">
+                                 <div className="p-3 bg-red-500/10 rounded-2xl text-red-600"><TrendingUp className="w-5 h-5" /></div>
+                                 <h3 className="font-black text-xl">B2B Market Intelligence</h3>
+                               </div>
+                               <div className="space-y-3">
+                                 {estimationResult.market_intelligence.commodity_spikes.map((spike: any, idx: number) => (
+                                   <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-slate-800">
+                                      <div>
+                                        <p className="text-xs font-black">{spike.material}</p>
+                                        <p className="text-[10px] text-red-500 font-bold">{spike.trend} Variance</p>
+                                      </div>
+                                      <Badge className="bg-primary/10 text-primary uppercase text-[9px] font-black">{spike.alert}</Badge>
+                                   </div>
+                                 ))}
+                                 <div className="mt-4 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20">
+                                   <p className="text-[10px] uppercase font-black text-orange-600 mb-1">Risk Assessor</p>
+                                   <p className="text-xs font-bold">Inflation Shield: {estimationResult.market_intelligence.inflation_buffer_applied}</p>
+                                 </div>
+                               </div>
+                             </Card>
+                           </div>
+                        </div>
+
+                        {/* NEW: ALGORITHMIC REASONING LOG */}
+                        <Card className="p-8 rounded-[2rem] bg-slate-950 text-slate-300 shadow-xl space-y-4">
+                           <div className="flex items-center gap-2 mb-4">
+                              <Terminal className="w-4 h-4 text-green-500" />
+                              <span className="text-xs font-mono font-bold text-slate-400">ML_ENGINE_OUTPUT_LOG</span>
+                           </div>
+                           <div className="space-y-2 font-mono text-[10px]">
+                              {estimationResult.reasoning.map((log: string, i: number) => (
+                                <div key={i} className="flex items-start gap-3">
+                                  <span className="text-blue-500 mt-0.5">{`>`}</span>
+                                  <p>{log}</p>
+                                </div>
+                              ))}
+                           </div>
                         </Card>
 
                         {/* REAL-TIME FEATURE: CONTRACTOR RECOMMENDATIONS */}

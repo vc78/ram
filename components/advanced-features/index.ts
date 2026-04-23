@@ -3,6 +3,7 @@ import { ConstructionTimeline } from "./construction-timeline"
 import { EnhancedTimeline } from "./enhanced-timeline"
 import { EnergyAnalyzer } from "./energy-analyzer"
 import { VastuChecker } from "./vastu-checker"
+import { GeoVastuEngine } from "./geo-vastu-engine"
 import { DocumentManager } from "./document-manager"
 import { ComparisonView } from "./comparison-view"
 import { ContractorRating } from "./contractor-rating"
@@ -21,6 +22,7 @@ export {
   EnhancedTimeline,
   EnergyAnalyzer,
   VastuChecker,
+  GeoVastuEngine,
   DocumentManager,
   ComparisonView,
   ContractorRating,
