@@ -1,0 +1,258 @@
+/* Mobile Responsive Utilities - Comprehensive Mobile Support */
+
+/* Touch-friendly sizing for interactive elements */
+@media (hover: none) and (pointer: coarse) {
+
+    /* Mobile devices with touch support */
+    button,
+    [role="button"],
+    a,
+    input[type="checkbox"],
+    input[type="radio"],
+    select,
+    textarea {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Increase padding for touch targets */
+    .touch-target {
+        @apply min-h-12 w-12 sm:min-h-10 sm:w-10;
+    }
+
+    /* Reduce hover effects on touch devices */
+    button:not(:active),
+    [role="button"]:not(:active) {
+        @apply hover:none;
+    }
+}
+
+/* Responsive form layouts */
+@media (max-width: 640px) {
+
+    /* Stack form groups vertically on mobile */
+    .form-group-mobile {
+        @apply flex flex-col space-y-3;
+    }
+
+    /* Full width inputs on mobile */
+    input,
+    textarea,
+    select {
+        @apply text-base;
+        /* Prevents zoom on iOS */
+    }
+
+    /* Stack checkboxes and radios */
+    .radio-group-mobile,
+    .checkbox-group-mobile {
+        @apply flex flex-col space-y-3;
+    }
+}
+
+/* Responsive typography */
+@media (max-width: 640px) {
+    h1 {
+        @apply text-2xl sm:text-3xl;
+    }
+
+    h2 {
+        @apply text-xl sm:text-2xl;
+    }
+
+    h3 {
+        @apply text-lg sm:text-xl;
+    }
+
+    h4 {
+        @apply text-base sm:text-lg;
+    }
+
+    /* Adjust line heights for readability on small screens */
+    h1,
+    h2,
+    h3 {
+        @apply leading-tight;
+    }
+
+    p {
+        @apply text-sm sm:text-base leading-relaxed;
+    }
+}
+
+/* Responsive spacing */
+@media (max-width: 640px) {
+
+    /* Reduce padding/margins on mobile */
+    .section-padding {
+        @apply px-4 py-6 sm:px-6 sm:py-8 md:px-8 md:py-12;
+    }
+
+    /* Responsive gap utilities */
+    .gap-responsive {
+        @apply gap-2 sm:gap-3 md:gap-4;
+    }
+
+    .gap-responsive-lg {
+        @apply gap-3 sm:gap-4 md:gap-6;
+    }
+}
+
+/* Responsive modals and overlays */
+@media (max-width: 640px) {
+
+    /* Full-screen modal on mobile */
+    .modal-responsive {
+        @apply fixed inset-0 rounded-none sm:rounded-lg;
+    }
+
+    /* Bottom sheet style for mobile */
+    .modal-bottom-sheet {
+        @apply fixed bottom-0 left-0 right-0 max-h-[90vh] rounded-t-lg sm:static sm:max-h-none sm:rounded-lg;
+    }
+}
+
+/* Responsive tables*/
+@media (max-width: 640px) {
+
+    /* Hide less important columns on mobile */
+    .table-hide-mobile {
+        @apply hidden sm:table-cell;
+    }
+
+    /* Stack table rows as cards on mobile */
+    .table-card-mobile {
+        @apply display: block;
+        border-bottom: 1px solid var(--border);
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Responsive navigation */
+@media (max-width: 640px) {
+
+    /* Hamburger menu position */
+    .mobile-nav-trigger {
+        @apply relative z-50 fixed top-16 right-4 md:hidden;
+    }
+
+    /* Menu spacing */
+    .mobile-nav {
+        @apply flex flex-col space-y-1 px-4 py-2;
+    }
+}
+
+/* Responsive images and media */
+@media (max-width: 640px) {
+
+    img,
+    video {
+        @apply max-w-full h-auto;
+    }
+
+    /* Aspect ratio containers */
+    .aspect-video-responsive {
+        @apply relative w-full bg-muted rounded-lg overflow-hidden;
+        aspect-ratio: 16 / 9;
+    }
+}
+
+/* Responsive grids */
+@media (max-width: 640px) {
+
+    /* Auto-fit grids that stack on mobile */
+    .grid-auto-fit {
+        @apply grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+    }
+
+    .grid-auto-fit-2 {
+        @apply grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4;
+    }
+
+    .grid-auto-fit-3 {
+        @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+    }
+}
+
+/* Safe area support for notched devices */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+
+    .safe-area-vertical {
+        padding-top: max(1rem, env(safe-area-inset-top));
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+
+    .safe-area-left {
+        padding-left: max(1rem, env(safe-area-inset-left));
+    }
+
+    .safe-area-right {
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+}
+
+/* Responsive sticky positioning */
+@media (max-width: 640px) {
+    .sticky-mobile {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+    }
+}
+
+/* Prevent zoom on input focus (iOS) */
+input,
+textarea,
+select,
+button {
+    font-size: 16px;
+}
+
+@media (min-width: 641px) {
+
+    input,
+    textarea,
+    select {
+        font-size: 14px;
+    }
+}
+
+/* Responsive shadows */
+@media (max-width: 640px) {
+    .shadow-responsive {
+        @apply shadow-sm sm:shadow-md;
+    }
+
+    .shadow-responsive-lg {
+        @apply shadow-md sm:shadow-lg;
+    }
+}
+
+/* Disable pointer events for non-interactive elements to improve touch response */
+svg:not([class]) {
+    pointer-events: none;
+}
+
+/* Ensure buttons/links have proper tap highlight on mobile */
+@media (hover: none) and (pointer: coarse) {
+
+    a,
+    button,
+    [role="button"] {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* Reduce motion on preference */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

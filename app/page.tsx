@@ -240,21 +240,21 @@ export default function LandingPage() {
             </div>
 
             <Card className="glass-effect elevation-lg p-6 md:p-8 border border-border/70 bg-background/70 animate-scale-in">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="rounded-lg p-4 outline-primary bg-background/60">
-                  <div className="text-2xl font-bold text-primary mb-1">3x</div>
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+                <div className="rounded-lg p-3 sm:p-4 outline-primary bg-background/60">
+                  <div className="text-xl sm:text-2xl font-bold text-primary mb-1">3x</div>
                   <div className="text-xs text-muted-foreground">Faster Design Cycles</div>
                 </div>
-                <div className="rounded-lg p-4 outline-accent bg-background/60">
-                  <div className="text-2xl font-bold text-accent mb-1">40%</div>
+                <div className="rounded-lg p-3 sm:p-4 outline-accent bg-background/60">
+                  <div className="text-xl sm:text-2xl font-bold text-accent mb-1">40%</div>
                   <div className="text-xs text-muted-foreground">Cost Reduction</div>
                 </div>
-                <div className="rounded-lg p-4 outline-primary bg-background/60">
-                  <div className="text-2xl font-bold text-primary mb-1">500+</div>
+                <div className="rounded-lg p-3 sm:p-4 outline-primary bg-background/60">
+                  <div className="text-xl sm:text-2xl font-bold text-primary mb-1">500+</div>
                   <div className="text-xs text-muted-foreground">Active Design Teams</div>
                 </div>
-                <div className="rounded-lg p-4 outline-accent bg-background/60">
-                  <div className="text-2xl font-bold text-accent mb-1">99%</div>
+                <div className="rounded-lg p-3 sm:p-4 outline-accent bg-background/60">
+                  <div className="text-xl sm:text-2xl font-bold text-accent mb-1">99%</div>
                   <div className="text-xs text-muted-foreground">Accurate Work</div>
                 </div>
               </div>
@@ -510,31 +510,31 @@ export default function LandingPage() {
       </section>
 
 
-      <section className="py-16 bg-muted">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Trusted by Industry Leaders</h2>
-            <p className="text-muted-foreground">Certified and recognized for excellence</p>
+      <section className="py-12 md:py-16 bg-muted">
+        <div className="container mx-auto px-4 sm:px-6 md:px-8">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 md:mb-4">Trusted by Industry Leaders</h2>
+            <p className="text-sm sm:text-base text-muted-foreground">Certified and recognized for excellence</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
-            <Card className="p-6 flex flex-col items-center justify-center text-center hover-lift">
-              <Award className="w-12 h-12 text-primary mb-3" />
-              <h4 className="font-semibold mb-1">ISO Certified</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">
+            <Card className="p-4 sm:p-6 flex flex-col items-center justify-center text-center hover-lift">
+              <Award className="w-10 sm:w-12 h-10 sm:h-12 text-primary mb-2 sm:mb-3" />
+              <h4 className="font-semibold text-sm sm:text-base mb-1">ISO Certified</h4>
               <p className="text-xs text-muted-foreground">Quality Management</p>
             </Card>
-            <Card className="p-6 flex flex-col items-center justify-center text-center hover-lift">
-              <Shield className="w-12 h-12 text-primary mb-3" />
-              <h4 className="font-semibold mb-1">Verified Partners</h4>
+            <Card className="p-4 sm:p-6 flex flex-col items-center justify-center text-center hover-lift">
+              <Shield className="w-10 sm:w-12 h-10 sm:h-12 text-primary mb-2 sm:mb-3" />
+              <h4 className="font-semibold text-sm sm:text-base mb-1">Verified Partners</h4>
               <p className="text-xs text-muted-foreground">Trusted Contractors</p>
             </Card>
-            <Card className="p-6 flex flex-col items-center justify-center text-center hover-lift">
-              <TrendingUp className="w-12 h-12 text-primary mb-3" />
-              <h4 className="font-semibold mb-1">Industry Leader</h4>
+            <Card className="p-4 sm:p-6 flex flex-col items-center justify-center text-center hover-lift">
+              <TrendingUp className="w-10 sm:w-12 h-10 sm:h-12 text-primary mb-2 sm:mb-3" />
+              <h4 className="font-semibold text-sm sm:text-base mb-1">Industry Leader</h4>
               <p className="text-xs text-muted-foreground">Design Innovation</p>
             </Card>
-            <Card className="p-6 flex flex-col items-center justify-center text-center hover-lift">
-              <Star className="w-12 h-12 text-primary mb-3" />
-              <h4 className="font-semibold mb-1">5-Star Rated</h4>
+            <Card className="p-4 sm:p-6 flex flex-col items-center justify-center text-center hover-lift">
+              <Star className="w-10 sm:w-12 h-10 sm:h-12 text-primary mb-2 sm:mb-3" />
+              <h4 className="font-semibold text-sm sm:text-base mb-1">5-Star Rated</h4>
               <p className="text-xs text-muted-foreground">Customer Reviews</p>
             </Card>
           </div>

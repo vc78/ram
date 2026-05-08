@@ -36,9 +36,32 @@ export function MaterialCalculator() {
   const [showChart, setShowChart] = useState(false)
   const { toast } = useToast()
 
+  const [isTraining, setIsTraining] = useState(false)
+  const [mlStatus, setMlStatus] = useState<any>(null)
+
   useEffect(() => {
     calculateMaterials()
   }, [])
+
+  const handleTrainModel = async () => {
+    setIsTraining(true)
+    try {
+      const res = await fetch("/api/train-ml", { method: "POST" })
+      if (!res.ok) throw new Error("Training failed")
+      const data = await res.json()
+      setMlStatus(data)
+      toast({
+        title: "Model Trained",
+        description: `Version ${data.new_version} is now active with real-time dataset optimization.`,
+      })
+      // Recalculate with new weights
+      calculateMaterials()
+    } catch (err: any) {
+      toast({ title: "Training Error", description: err.message, variant: "destructive" })
+    } finally {
+      setIsTraining(false)
+    }
+  }
 
   const calculateMaterials = async () => {
     setIsLoading(true)
@@ -207,9 +230,20 @@ export function MaterialCalculator() {
 
   return (
     <Card className="p-6 border-border">
-      <div className="flex items-center gap-2 mb-6">
-        <Calculator className="w-5 h-5 text-primary" />
-        <h3 className="text-lg font-semibold">Material Calculator (Real-Time Precision)</h3>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex items-center gap-2">
+          <Calculator className="w-5 h-5 text-primary" />
+          <h3 className="text-lg font-semibold">Material Calculator (Real-Time Precision)</h3>
+        </div>
+        <Button 
+          onClick={handleTrainModel} 
+          variant="secondary" 
+          size="sm" 
+          disabled={isTraining}
+          className="bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/30"
+        >
+          {isTraining ? <><Loader2 className="w-3 h-3 mr-2 animate-spin" /> Training...</> : <><BarChart3 className="w-3 h-3 mr-2" /> Train ML Algorithm</>}
+        </Button>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -316,6 +350,14 @@ export function MaterialCalculator() {
           <Button onClick={calculateMaterials} className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
             {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Analyzing Real-Time Data...</> : "Calculate Accurate Estimate"}
           </Button>
+          
+          {mlStatus && (
+            <div className="mt-2 p-2 rounded bg-green-500/10 border border-green-500/20 text-[10px] text-green-400 flex justify-between">
+              <span>ML Engine: v{mlStatus.new_version}</span>
+              <span>Last Trained: {mlStatus.last_trained}</span>
+              <span>Confidence: {(mlStatus.metrics.confidence * 100).toFixed(1)}%</span>
+            </div>
+          )}
         </div>
 
         {estimate && (

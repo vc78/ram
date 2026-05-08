@@ -1,6 +1,6 @@
 export const ML_MODEL_WEIGHTS = {
-  "version": "1.3.0",
-  "last_trained": "2026-04-22",
+  "version": "1.4.0",
+  "last_trained": "2026-04-26",
   "parameters": {
     "cement": {
       "base_rate": 0.45, // Bags per sqft

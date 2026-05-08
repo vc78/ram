@@ -1,8 +1,23 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "../styles/mobile-responsive.css";
 
 @custom-variant ltr (&:where([dir="ltr"] *));
 @custom-variant rtl (&:where([dir="rtl"] *));
+
+/* Mobile Viewport Settings */
+html {
+  @apply antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  @apply overflow-x-hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
 
 :root {
   --font-sans: var(--font-geist-sans);
@@ -376,5 +391,119 @@
   .logo-scroller-section {
     background: color-mix(in oklab, var(--color-background) 95%, var(--color-muted) 5%);
     border-color: color-mix(in oklab, var(--color-border) 70%, transparent 30%);
+  }
+
+  /* Mobile-First Responsive Utilities */
+  @media (max-width: 640px) {
+
+    /* Touch-friendly sizing */
+    .min-h-touch {
+      min-height: 44px;
+    }
+
+    .px-safe {
+      padding-left: var(--safe-left, 1rem);
+      padding-right: var(--safe-right, 1rem);
+    }
+
+    .pb-safe {
+      padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    }
+
+    .pt-safe {
+      padding-top: calc(1rem + env(safe-area-inset-top));
+    }
+
+    /* Responsive text sizes */
+    .text-heading-1 {
+      @apply text-2xl font-bold leading-tight;
+    }
+
+    .text-heading-2 {
+      @apply text-xl font-bold leading-tight;
+    }
+
+    .text-heading-3 {
+      @apply text-lg font-semibold leading-snug;
+    }
+
+    /* Mobile padding utilities */
+    .px-mobile {
+      @apply px-4;
+    }
+
+    .py-mobile {
+      @apply py-3;
+    }
+
+    /* Stack elements vertically on mobile */
+    .stack-mobile {
+      @apply flex flex-col space-y-4;
+    }
+
+    /* Full width inputs on mobile */
+    .input-mobile {
+      @apply w-full;
+    }
+
+    /* Touch-friendly buttons */
+    .btn-mobile {
+      @apply min-h-12 wi h-12;
+    }
+
+    /* Hide on mobile */
+    .hide-mobile {
+      @apply hidden;
+    }
+  }
+
+  @media (min-width: 641px) {
+
+    /* Show on larger screens */
+    .show-mobile {
+      @apply hidden;
+    }
+  }
+
+  /* Responsive Container */
+  .responsive-container {
+    @apply mx-auto w-full px-4 sm:px-6 md:px-8;
+  }
+
+  /* Mobile Grid Utilities */
+  .grid-responsive {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4;
+  }
+
+  .grid-responsive-2 {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2;
+  }
+
+  .grid-responsive-3 {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
+  /* Prevent layout shift */
+  .no-layout-shift {
+    scrollbar-gutter: stable;
+  }
+
+  /* Better touch targets */
+  @supports (cursor: pointer) {
+
+    a,
+    button,
+    [role="button"] {
+      @apply transition-colors duration-200;
+    }
+
+    @media (hover: hover) {
+
+      a:hover,
+      button:hover,
+      [role="button"]:hover {
+        @apply opacity-80;
+      }
+    }
   }
 }

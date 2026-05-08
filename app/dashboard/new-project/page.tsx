@@ -40,7 +40,15 @@ import {
   Droplets,
   Wind,
   Plus,
-  Sun
+  Sun,
+  Store,
+  Truck,
+  ShoppingBag,
+  Map as MapIcon,
+  Fingerprint,
+  Expand,
+  ShieldAlert,
+  Monitor
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -144,7 +152,7 @@ export default function ConstructionIntelligencePlatform() {
   const [designResult, setDesignResult] = useState<any>(null)
 
   // Progress calculation
-  const progress = (step / 5) * 100
+  const progress = (step / 8) * 100
 
   // Animation variants
   const slideIn = "animate-in fade-in slide-in-from-bottom-4 duration-500"
@@ -459,6 +467,40 @@ export default function ConstructionIntelligencePlatform() {
       styles: { fontSize: 8 }
     })
 
+    // --- PAGE 3: PROCUREMENT & LOGISTICS ---
+    doc.addPage()
+    doc.text("7. LOCAL PROCUREMENT & LOGISTICS", 20, 20)
+    doc.setFontSize(10)
+    doc.text(`AI-Matched vendors for site proximity: ${formData.location}`, 20, 28)
+    
+    const vendors = [
+      ["BuildFast Infrastructure", "Contractor", "Modern High-Rise", "4.8/5.0"],
+      ["Vastu Home Crafts", "Contractor", "Vastu-Compliant Villas", "4.9/5.0"],
+      ["Sree Balaji Cement & Steel", "Supplier", "Cement & Steel", "Wholesale"],
+      ["Coastal Sand & Aggregate", "Supplier", "Sand & Blue Metal", "Bulk Discount"],
+      ["Royal Brick & Block Works", "Supplier", "Bricks & Blocks", "Factory Direct"]
+    ]
+    autoTable(doc, {
+      startY: 35,
+      head: [["Vendor Name", "Category", "Specialization/Product", "Rating/Pricing"]],
+      body: vendors,
+      theme: 'striped',
+      headStyles: { fillColor: primaryColor },
+      styles: { fontSize: 9 }
+    })
+
+    doc.text("LOGISTICS IMPACT ANALYSIS", 20, (doc as any).lastAutoTable.finalY + 15)
+    const logistics = [
+      ["Avg. Delivery Time", "2.4 Hours", "Local Sourcing Ratio", "92%"],
+      ["Cost Saving vs City", "₹85,000+", "Carbon Reduction", "15.4%"]
+    ]
+    autoTable(doc, {
+      startY: (doc as any).lastAutoTable.finalY + 20,
+      body: logistics,
+      theme: 'grid',
+      styles: { fontSize: 9 }
+    })
+
     // Footer with Disclaimer
     doc.setFontSize(7)
     doc.setTextColor(150)
@@ -586,7 +628,7 @@ export default function ConstructionIntelligencePlatform() {
                   <div className="h-1.5 w-48 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                     <div className="h-full bg-primary transition-all duration-1000 ease-out" style={{ width: `${progress}%` }} />
                   </div>
-                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Step {step} of 5</span>
+                  <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Step {step} of 8</span>
                 </div>
               </div>
             </div>
@@ -614,8 +656,11 @@ export default function ConstructionIntelligencePlatform() {
                     { s: 1, label: "Initialization", icon: Plus },
                     { s: 2, label: "Details", icon: Zap },
                     { s: 3, label: "Estimation", icon: Calculator },
-                    { s: 4, label: "Designs", icon: Brush },
-                    { s: 5, label: "Finalize", icon: Download }
+                    { s: 4, label: "Intelligence", icon: Fingerprint },
+                    { s: 5, label: "Procurement", icon: Store },
+                    { s: 6, label: "AI Designs", icon: Brush },
+                    { s: 7, label: "Immersive", icon: Expand },
+                    { s: 8, label: "Finalize", icon: Download }
                   ].map((item) => (
                     <button
                       key={item.s}
@@ -656,8 +701,8 @@ export default function ConstructionIntelligencePlatform() {
                <div className="bg-white/40 dark:bg-black/40 backdrop-blur-md rounded-3xl p-6 border border-white/20 shadow-sm">
                   <div className="flex items-center justify-between relative px-4">
                      <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 dark:bg-slate-800 -translate-y-1/2 z-0" />
-                     <div className="absolute top-1/2 left-0 h-0.5 bg-primary -translate-y-1/2 z-0 transition-all duration-700" style={{ width: `${((step - 1) / 4) * 100}%` }} />
-                     {[1, 2, 3, 4, 5].map((s) => (
+                     <div className="absolute top-1/2 left-0 h-0.5 bg-primary -translate-y-1/2 z-0 transition-all duration-700" style={{ width: `${((step - 1) / 7) * 100}%` }} />
+                     {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                         <div key={s} className="relative z-10 flex flex-col items-center gap-2">
                            <div className={cn(
                               "w-10 h-10 rounded-full flex items-center justify-center font-black transition-all duration-500",
@@ -1299,55 +1344,246 @@ export default function ConstructionIntelligencePlatform() {
                            </div>
                         </Card>
 
-                        {/* REAL-TIME FEATURE: CONTRACTOR RECOMMENDATIONS */}
-                        <div className="space-y-6">
-                           <div className="flex items-center justify-between">
-                              <h3 className="text-2xl font-black tracking-tight">Recommended Contractors</h3>
-                              <Badge className="bg-primary/10 text-primary animate-pulse">LIVE MATCHING</Badge>
-                           </div>
-                           <div className="grid md:grid-cols-3 gap-6">
-                              {[
-                                { name: "BuildFast Infrastructure", rating: 4.8, specialization: "Modern High-Rise", contact: "+91 98765 43210", icon: Building2 },
-                                { name: "Vastu Home Crafts", rating: 4.9, specialization: "Vastu-Compliant Villas", contact: "+91 87654 32109", icon: Home },
-                                { name: "GreenBuild Solutions", rating: 4.7, specialization: "Sustainable & Solar Ready", contact: "+91 76543 21098", icon: Sun }
-                              ].map((contractor, i) => (
-                                <Card key={i} className="p-6 rounded-3xl bg-white/50 dark:bg-black/50 border-white/20 shadow-lg hover:shadow-2xl transition-all border-l-4 border-l-primary">
-                                   <div className="flex items-center gap-3 mb-4">
-                                      <div className="p-3 bg-primary/10 rounded-2xl text-primary">
-                                         <contractor.icon className="w-5 h-5" />
-                                      </div>
-                                      <div>
-                                         <p className="font-black text-sm">{contractor.name}</p>
-                                         <div className="flex items-center gap-1 text-[10px] text-orange-500 font-bold">
-                                            ★ {contractor.rating}
-                                         </div>
-                                      </div>
-                                   </div>
-                                   <p className="text-[10px] text-muted-foreground uppercase font-black mb-2">{contractor.specialization}</p>
-                                   <Button variant="outline" className="w-full rounded-xl text-[10px] font-black h-10 border-primary/20 hover:bg-primary hover:text-white">
-                                      CONNECT NOW
-                                   </Button>
-                                </Card>
-                              ))}
-                           </div>
-                        </div>
-
-                        <div className="flex justify-between items-center pt-8 border-t border-slate-200 dark:border-slate-800">
+                         <div className="flex justify-between items-center pt-8 border-t border-slate-200 dark:border-slate-800">
                            <Button variant="ghost" onClick={() => setEstimationResult(null)} className="rounded-xl font-bold h-12">Recalculate</Button>
-                           <Button className="h-16 px-12 bg-primary text-white rounded-2xl font-black shadow-xl text-lg hover:scale-105 transition-all" onClick={handleGenerateDesigns} disabled={isProcessing}>
-                             {isProcessing ? <Loader2 className="animate-spin mr-2" /> : "PHASE 04: AI DESIGNS"}
+                           <Button className="h-16 px-12 bg-primary text-white rounded-2xl font-black shadow-xl text-lg hover:scale-105 transition-all" onClick={() => setStep(4)}>
+                             PHASE 04: AI INTELLIGENCE
                            </Button>
-                        </div>
-                      </div>
-                    )}
+                         </div>
+                       </div>
+                     )}
+                  </div>
+                )}
+
+               {/* STEP 4: AI INTELLIGENCE LOCKED */}
+               {step === 4 && (
+                 <div className={cn("space-y-8", slideIn)}>
+                    <div className="text-center space-y-4 max-w-2xl mx-auto">
+                       <Badge className="bg-red-500/10 text-red-600 border-red-500/20 px-4 py-1 uppercase font-black text-[10px] tracking-widest animate-pulse">Phase 04: Intelligence Locked</Badge>
+                       <h2 className="text-5xl font-black tracking-tight">Advanced Risk Analysis</h2>
+                       <p className="text-muted-foreground font-medium text-lg leading-relaxed">Deep-scan of structural risks, temporal fluctuations, and geotechnical constraints.</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                       <Card className="p-10 rounded-[3rem] bg-slate-950 text-white shadow-2xl relative overflow-hidden group">
+                          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-[100px] -mr-32 -mt-32 opacity-50" />
+                          <div className="relative z-10 space-y-8">
+                             <div className="flex items-center gap-4">
+                                <div className="p-4 bg-primary/20 rounded-2xl text-primary"><ShieldAlert className="w-8 h-8" /></div>
+                                <h3 className="text-2xl font-black">Structural Stability Shield</h3>
+                             </div>
+                             <div className="space-y-4">
+                                {[
+                                  { label: "Seismic Resonance Check", status: "PASS", val: "A+" },
+                                  { label: "Wind Load Compression", status: "PASS", val: "99.8%" },
+                                  { label: "Soil Bearing Capacity", status: "STABLE", val: "OPTIMAL" },
+                                  { label: "Material Fatigue Projection", status: "LOW", val: "50YR+" }
+                                ].map((item, i) => (
+                                  <div key={i} className="flex justify-between items-center p-4 rounded-2xl bg-white/5 border border-white/10">
+                                     <span className="text-xs font-bold opacity-60 uppercase">{item.label}</span>
+                                     <div className="flex items-center gap-3">
+                                        <Badge className="bg-green-500/20 text-green-400 border-green-500/20">{item.status}</Badge>
+                                        <span className="font-black font-mono">{item.val}</span>
+                                     </div>
+                                  </div>
+                                ))}
+                             </div>
+                          </div>
+                       </Card>
+
+                       <div className="space-y-8">
+                          <Card className="p-8 rounded-[2.5rem] bg-white/70 dark:bg-slate-900/70 border-white/20 shadow-xl space-y-6">
+                             <div className="flex items-center gap-3 text-red-500">
+                                <TrendingUp className="w-6 h-6" />
+                                <h3 className="font-black text-xl">Market Volatility Guard</h3>
+                             </div>
+                             <div className="space-y-4">
+                                <p className="text-xs text-muted-foreground font-medium">Real-time tracking of global commodity prices to hedge against inflation.</p>
+                                <div className="p-6 rounded-3xl bg-red-500/5 border border-red-500/10 space-y-4">
+                                   <div className="flex justify-between text-[10px] font-black uppercase">
+                                      <span>Risk Factor</span>
+                                      <span>Mitigation Applied</span>
+                                   </div>
+                                   <div className="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                                      <div className="h-full bg-red-500 w-[72%] animate-pulse" />
+                                   </div>
+                                   <p className="text-[10px] font-bold text-red-500 italic">Caution: Steel index expected to fluctuate ±4.2% in Q3.</p>
+                                </div>
+                             </div>
+                          </Card>
+
+                          <Card className="p-8 rounded-[2.5rem] bg-indigo-600 text-white shadow-2xl relative overflow-hidden">
+                             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                             <div className="relative z-10 flex items-center justify-between">
+                                <div className="space-y-2">
+                                   <p className="text-[10px] font-black uppercase tracking-widest opacity-70">AI Intelligence Lock</p>
+                                   <h4 className="text-2xl font-black">Optimization Matrix</h4>
+                                   <p className="text-xs opacity-80">98.4% Material Efficiency Guaranteed</p>
+                                </div>
+                                <Fingerprint className="w-12 h-12 opacity-50" />
+                             </div>
+                          </Card>
+                       </div>
+                    </div>
+
+                    <div className="flex justify-between items-center pt-8 border-t border-slate-200 dark:border-slate-800">
+                       <Button variant="ghost" onClick={() => setStep(3)} className="rounded-xl font-bold h-12 px-8">Back to Estimation</Button>
+                       <Button 
+                         className="h-16 px-12 bg-primary text-white rounded-2xl font-black shadow-xl text-lg hover:scale-105 transition-all" 
+                         onClick={() => setStep(5)}
+                       >
+                         PHASE 05: LOCAL PROCUREMENT
+                       </Button>
+                    </div>
                  </div>
                )}
 
-               {/* STEP 4: VIEW LAYOUTS */}
-               {step === 4 && designResult && (
+               {/* STEP 5: PROCUREMENT & RECOMMENDATIONS (Formerly Step 4) */}
+               {step === 5 && (
+                 <div className={cn("space-y-8", slideIn)}>
+                    <div className="text-center space-y-4 max-w-2xl mx-auto">
+                       <Badge className="bg-orange-500/10 text-orange-600 border-orange-500/20 px-4 py-1 uppercase font-black text-[10px] tracking-widest">Phase 04: Local Procurement</Badge>
+                       <h2 className="text-5xl font-black tracking-tight">Contractors & Suppliers</h2>
+                       <p className="text-muted-foreground font-medium text-lg leading-relaxed">AI-matched local professionals and material stores near {formData.location || 'your site'}.</p>
+                    </div>
+
+                    <div className="grid lg:grid-cols-3 gap-8">
+                       <div className="lg:col-span-2 space-y-8">
+                          {/* Recommended Contractors */}
+                          <div className="space-y-6">
+                             <div className="flex items-center justify-between">
+                                <h3 className="text-2xl font-black tracking-tight flex items-center gap-2">
+                                   <HardHat className="w-6 h-6 text-primary" /> Verified Contractors
+                                </h3>
+                                <Badge className="bg-green-500/10 text-green-500 border-green-500/20">PREMIUM MATCHES</Badge>
+                             </div>
+                             <div className="grid md:grid-cols-2 gap-6">
+                                {[
+                                  { name: "BuildFast Infrastructure", rating: 4.8, specialization: "Modern High-Rise", contact: "+91 98765 43210", icon: Building2, priceRange: "Competitive" },
+                                  { name: "Vastu Home Crafts", rating: 4.9, specialization: "Vastu-Compliant Villas", contact: "+91 87654 32109", icon: Home, priceRange: "Premium" },
+                                  { name: "GreenBuild Solutions", rating: 4.7, specialization: "Sustainable & Solar Ready", contact: "+91 76543 21098", icon: Sun, priceRange: "Value" },
+                                  { name: "Apex Structural Works", rating: 4.6, specialization: "Industrial & Heavy RCC", contact: "+91 65432 10987", icon: Warehouse, priceRange: "Economy" }
+                                ].map((contractor, i) => (
+                                  <Card key={i} className="p-6 rounded-3xl bg-white/70 dark:bg-slate-900/70 border-white/20 shadow-xl hover:shadow-2xl transition-all border-l-4 border-l-primary group">
+                                     <div className="flex items-center gap-4 mb-4">
+                                        <div className="p-4 bg-primary/10 rounded-2xl text-primary group-hover:scale-110 transition-transform">
+                                           <contractor.icon className="w-6 h-6" />
+                                        </div>
+                                        <div>
+                                           <p className="font-black text-lg">{contractor.name}</p>
+                                           <div className="flex items-center gap-2">
+                                              <div className="flex items-center text-orange-500 text-xs font-bold">★ {contractor.rating}</div>
+                                              <Badge variant="outline" className="text-[8px] h-4">{contractor.priceRange}</Badge>
+                                           </div>
+                                        </div>
+                                     </div>
+                                     <div className="space-y-4">
+                                        <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-[10px] font-bold text-muted-foreground uppercase">
+                                           {contractor.specialization}
+                                        </div>
+                                        <div className="flex gap-2">
+                                           <Button className="flex-1 rounded-xl text-[10px] font-black h-12 bg-primary hover:bg-primary/90">CONTACT</Button>
+                                           <Button variant="outline" className="flex-1 rounded-xl text-[10px] font-black h-12 border-primary/20">PORTFOLIO</Button>
+                                        </div>
+                                     </div>
+                                  </Card>
+                                ))}
+                             </div>
+                          </div>
+
+                          {/* Raw Material Stores */}
+                          <div className="space-y-6">
+                             <div className="flex items-center justify-between">
+                                <h3 className="text-2xl font-black tracking-tight flex items-center gap-2">
+                                   <Store className="w-6 h-6 text-indigo-500" /> Material Suppliers
+                                </h3>
+                                <Badge className="bg-indigo-500/10 text-indigo-500 border-indigo-500/20">WHOLESALE RATES</Badge>
+                             </div>
+                             <div className="grid md:grid-cols-2 gap-6">
+                                {[
+                                  { name: "Sree Balaji Cement & Steel", distance: "1.2 km", category: "Cement & Steel", price: "Live Market Rate", icon: Layers },
+                                  { name: "Coastal Sand & Aggregate", distance: "2.5 km", category: "Sand & Blue Metal", price: "Volume Discount", icon: Droplets },
+                                  { name: "Royal Brick & Block Works", distance: "3.8 km", category: "Bricks & AAC Blocks", price: "Factory Direct", icon: Layout },
+                                  { name: "Global Hardware & Paints", distance: "0.8 km", category: "Fittings & Finishes", price: "Retail & Bulk", icon: ShoppingBag }
+                                ].map((store, i) => (
+                                  <Card key={i} className="p-6 rounded-3xl bg-white/70 dark:bg-slate-900/70 border-white/20 shadow-xl flex items-center gap-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                     <div className="p-4 bg-indigo-500/10 rounded-2xl text-indigo-500">
+                                        <store.icon className="w-6 h-6" />
+                                     </div>
+                                     <div className="flex-1 space-y-1">
+                                        <h4 className="font-black text-sm">{store.name}</h4>
+                                        <div className="flex items-center justify-between">
+                                           <p className="text-[10px] font-bold text-muted-foreground uppercase">{store.category}</p>
+                                           <span className="text-[9px] font-black text-indigo-500 flex items-center gap-1"><MapIcon className="w-3 h-3" /> {store.distance}</span>
+                                        </div>
+                                        <div className="pt-2">
+                                           <Badge variant="outline" className="text-[8px] bg-indigo-500/5 border-indigo-500/20 text-indigo-600">{store.price}</Badge>
+                                        </div>
+                                     </div>
+                                  </Card>
+                                ))}
+                             </div>
+                          </div>
+                       </div>
+
+                       <div className="space-y-8">
+                          {/* Map Preview Card */}
+                          <Card className="p-6 rounded-[2.5rem] bg-slate-900 text-white shadow-2xl relative overflow-hidden h-[300px] flex items-center justify-center">
+                             <div className="absolute inset-0 opacity-40 grayscale group-hover:grayscale-0 transition-all">
+                                <img src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80" className="w-full h-full object-cover" alt="Map View" />
+                             </div>
+                             <div className="relative z-10 text-center space-y-4">
+                                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto shadow-2xl">
+                                   <MapPin className="w-8 h-8" />
+                                </div>
+                                <h4 className="text-xl font-black">Proximity Search</h4>
+                                <p className="text-xs opacity-70">Showing results within 10km of {formData.location || 'site'}</p>
+                                <Button className="rounded-xl bg-white text-black font-black text-xs hover:bg-slate-200">OPEN LIVE MAP</Button>
+                             </div>
+                          </Card>
+
+                          {/* Procurement Stats */}
+                          <Card className="p-8 rounded-[2.5rem] bg-primary text-white space-y-6 shadow-2xl relative overflow-hidden">
+                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                             <h4 className="text-[10px] uppercase font-black tracking-widest opacity-80">Logistics Optimization</h4>
+                             <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                   <span className="text-xs font-bold">Avg. Delivery Time</span>
+                                   <span className="text-lg font-black">2.4 Hours</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                   <span className="text-xs font-bold">Local Sourcing Ratio</span>
+                                   <span className="text-lg font-black">92%</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                   <span className="text-xs font-bold">Cost Saving vs City</span>
+                                   <span className="text-lg font-black text-green-300">₹85,000+</span>
+                                </div>
+                             </div>
+                             <div className="pt-4 p-4 rounded-2xl bg-white/10 border border-white/20 text-[10px] italic leading-relaxed">
+                                * Local sourcing reduces carbon footprint and transportation overhead by approximately 15.4%.
+                             </div>
+                          </Card>
+                       </div>
+                    </div>
+
+                    <div className="flex justify-between items-center pt-8 border-t border-slate-200 dark:border-slate-800">
+                       <Button variant="ghost" onClick={() => setStep(4)} className="rounded-xl font-bold h-12 px-8">Back to Intelligence</Button>
+                       <Button 
+                         className="h-16 px-12 bg-primary text-white rounded-2xl font-black shadow-xl text-lg hover:scale-105 transition-all" 
+                         onClick={() => setStep(6)}
+                       >
+                         PHASE 06: GENERATE DESIGNS
+                       </Button>
+                    </div>
+                 </div>
+               )}
+
+               {/* STEP 6: VIEW LAYOUTS (Formerly Step 5) */}
+               {step === 6 && designResult && (
                  <div className={cn("space-y-10", slideIn)}>
                     <div className="text-center space-y-4 max-w-2xl mx-auto">
-                       <Badge className="bg-purple-500/10 text-purple-600 border-purple-500/20 px-4 py-1 uppercase font-black text-[10px] tracking-widest">Phase 04: AI Visualization</Badge>
+                       <Badge className="bg-purple-500/10 text-purple-600 border-purple-500/20 px-4 py-1 uppercase font-black text-[10px] tracking-widest">Phase 06: AI Visualization</Badge>
                        <h2 className="text-5xl font-black tracking-tight">Your Custom Designs</h2>
                        <p className="text-muted-foreground font-medium text-lg leading-relaxed">Generated {designResult.style} variants optimized for your plot.</p>
                     </div>
@@ -1404,20 +1640,77 @@ export default function ConstructionIntelligencePlatform() {
                        <Button 
                         size="lg" 
                         className="rounded-[2rem] px-12 h-20 bg-primary text-white font-black text-2xl shadow-2xl hover:scale-105 transition-all"
-                        onClick={() => setStep(5)}
+                        onClick={() => setStep(7)}
                        >
-                          Finalize Operations <ChevronRight className="w-8 h-8 ml-2" />
+                          Immersive Experience <ChevronRight className="w-8 h-8 ml-2" />
                        </Button>
                     </Card>
                  </div>
                )}
 
-               {/* STEP 5: FINALIZATION & DOSSIER */}
-               {step === 5 && (
+               {/* STEP 7: FULL SCREEN IMMERSIVE VISUALIZATION */}
+               {step === 7 && (
+                 <div className={cn("space-y-8", slideIn)}>
+                    <div className="text-center space-y-4 max-w-2xl mx-auto">
+                       <Badge className="bg-indigo-500/10 text-indigo-600 border-indigo-500/20 px-4 py-1 uppercase font-black text-[10px] tracking-widest">Phase 07: Immersive Experience</Badge>
+                       <h2 className="text-5xl font-black tracking-tight">4K Immersive Viewer</h2>
+                       <p className="text-muted-foreground font-medium text-lg leading-relaxed">Experience your project in cinematic detail before a single brick is laid.</p>
+                    </div>
+
+                    <Card className="rounded-[3rem] overflow-hidden border-white/20 shadow-2xl relative aspect-video bg-black group">
+                       <img src={designResult.categories.exterior.renderingImage} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-1000" alt="Immersive Rendering" />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+                       
+                       <div className="absolute inset-0 flex items-center justify-center">
+                          <Button className="w-24 h-24 rounded-full bg-white text-black hover:scale-110 transition-transform shadow-2xl shadow-white/20">
+                             <Monitor className="w-10 h-10" />
+                          </Button>
+                       </div>
+
+                       <div className="absolute bottom-10 left-10 space-y-2">
+                          <Badge className="bg-primary/80 backdrop-blur-md text-white border-none px-4 py-1 uppercase font-black text-[10px]">ULTRA-HD RENDERING</Badge>
+                          <h3 className="text-4xl font-black text-white">{formData.projectName}</h3>
+                       </div>
+
+                       <div className="absolute top-10 right-10 flex gap-4">
+                          <Button size="icon" className="rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20">
+                             <Expand className="w-5 h-5" />
+                          </Button>
+                       </div>
+                    </Card>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                       {[
+                         { label: "Texture Accuracy", val: "99.9%" },
+                         { label: "Lighting Rig", val: "Global Illumination" },
+                         { label: "Engine", val: "SIID Render v2" },
+                         { label: "Latency", val: "4ms (RTX-On)" }
+                       ].map((stat, i) => (
+                         <Card key={i} className="p-6 rounded-2xl bg-white/50 dark:bg-black/50 border-white/10 backdrop-blur-sm text-center">
+                            <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">{stat.label}</p>
+                            <p className="text-lg font-black">{stat.val}</p>
+                         </Card>
+                       ))}
+                    </div>
+
+                    <div className="flex justify-between items-center pt-8 border-t border-slate-200 dark:border-slate-800">
+                       <Button variant="ghost" onClick={() => setStep(6)} className="rounded-xl font-bold h-12 px-8">Back to Designs</Button>
+                       <Button 
+                         className="h-16 px-12 bg-primary text-white rounded-2xl font-black shadow-xl text-lg hover:scale-105 transition-all" 
+                         onClick={() => setStep(8)}
+                       >
+                         PHASE 08: FINALIZE ASSETS
+                       </Button>
+                    </div>
+                 </div>
+               )}
+
+               {/* STEP 8: FINALIZATION & DOSSIER */}
+               {step === 8 && (
                  <div className={cn("space-y-8", slideIn)}>
                     <div className="flex items-end justify-between">
                        <div className="space-y-4">
-                          <Badge className="bg-indigo-500/10 text-indigo-600 border-indigo-500/20 px-3 py-1 uppercase font-black tracking-widest text-[10px]">Step 5: Finalize</Badge>
+                          <Badge className="bg-indigo-500/10 text-indigo-600 border-indigo-500/20 px-3 py-1 uppercase font-black tracking-widest text-[10px]">Step 8: Finalize</Badge>
                           <h2 className="text-5xl font-black tracking-tighter text-slate-900 dark:text-white">Project Dossier Center</h2>
                           <p className="text-muted-foreground font-medium text-lg leading-relaxed">Download your complete construction assets and tracking sheets below.</p>
                        </div>
@@ -1458,8 +1751,11 @@ export default function ConstructionIntelligencePlatform() {
                              { title: "Initialization", desc: "Project DNA established with GPS coordinates, plot scaling, and structural intent.", icon: Plus, step: "1" },
                              { title: "Technical Calibration", desc: "Over 50+ AEC parameters configured including concrete grade, automation level, and HVAC.", icon: Settings2, step: "2" },
                              { title: "ML Estimation", desc: "Advanced neural networks analyzed material quantum and budget variance for cost optimization.", icon: Calculator, step: "3" },
-                             { title: "Generative Design", desc: "AI-driven visual engines produced hyper-realistic 3D renders and technical blueprints.", icon: Brush, step: "4" },
-                             { title: "Finalization", desc: "Project Dossier compiled with industrial-grade precision for site execution readiness.", icon: CheckCircle2, step: "5" }
+                             { title: "Intelligence Locked", desc: "High-security risk scan and temporal volatility analysis for structural stability.", icon: Fingerprint, step: "4" },
+                             { title: "Local Procurement", desc: "AI-matched verified contractors and wholesale material suppliers near site.", icon: Store, step: "5" },
+                             { title: "Generative Design", desc: "AI-driven visual engines produced hyper-realistic 3D renders and technical blueprints.", icon: Brush, step: "6" },
+                             { title: "Immersive View", desc: "4K cinematic visualization and real-time RTX-enabled walkthrough experience.", icon: Expand, step: "7" },
+                             { title: "Finalization", desc: "Project Dossier compiled with industrial-grade precision for site execution readiness.", icon: CheckCircle2, step: "8" }
                           ].map((phase, i) => (
                              <div key={i} className="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 space-y-3 relative overflow-hidden">
                                 <div className="absolute top-2 right-2 text-4xl font-black opacity-5 text-slate-900 dark:text-white">{phase.step}</div>

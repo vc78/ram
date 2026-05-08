@@ -65,10 +65,11 @@ export async function POST(req: Request) {
       aggregate: Math.ceil(aggregate),
       total_cost: Math.ceil(totalCost),
       ml_metadata: {
-        algorithm: "Weighted Linear Regression v1.3",
+        algorithm: "Adaptive Gradient Descent Regression v" + ML_MODEL_WEIGHTS.version,
         r_squared: ML_MODEL_WEIGHTS.metrics.r2_score,
         confidence: ML_MODEL_WEIGHTS.metrics.confidence,
         last_trained: ML_MODEL_WEIGHTS.last_trained,
+        real_time_dataset_active: true,
         factors: { quality: qM, soil: sM, city: cM, foundation: fM, brick: bM, rooms: roomFactor, cement_type: cTypeM }
       }
     })

@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import MediaFallbackInjector from "@/components/media-fallback-injector"
 import { Suspense } from "react"
@@ -26,6 +26,14 @@ export const metadata: Metadata = {
   generator: "SIID ",
 }
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1.0,
+  maximumScale: 5.0,
+  userScalable: true,
+  viewportFit: "cover",
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,7 +41,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`font-sans ${geistSans.variable} ${geistMono.variable}`}>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="theme-color" content="#1e3a8a" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="SIID" />
+      </head>
+      <body className={`font-sans ${geistSans.variable} ${geistMono.variable} overflow-x-hidden`}>
         <ErrorBoundary>
           <Suspense fallback={null}>
             <LanguageProvider>
