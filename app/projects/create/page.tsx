@@ -543,7 +543,7 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
                   </div>
                   <div className="space-y-3">
                      <Label className="font-semibold">Facing Direction</Label>
-                     <div className="grid grid-cols-4 gap-2">
+                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                         {["North", "East", "West", "South"].map(d => (
                           <Button key={d} variant={plot.facing.toLowerCase() === d.toLowerCase() ? "default" : "outline"} className={`h-12 w-full transition-colors`} onClick={() => setPlot({...plot, facing: d.toLowerCase()})}>{d}</Button>
                         ))}
@@ -606,7 +606,7 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
                          </div>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                          <div className="space-y-3">
                            <Label className="font-semibold">Min Target Budget (₹)</Label>
                            <Input type="number" className="h-12" value={budget.min} onChange={e => setBudget({...budget, min: e.target.value})} />
@@ -617,7 +617,7 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
                          </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                          <div className="space-y-3">
                            <Label className="font-semibold">Core Cement Profiling</Label>
                            <select className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" value={budget.cement} onChange={e => setBudget({...budget, cement: e.target.value})}>
@@ -658,7 +658,7 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
                                <div className="text-xs font-bold text-amber-500 flex items-center gap-2 animate-pulse uppercase tracking-wider">
                                  <Zap className="w-3 h-3" /> Live Market Volatility Alert
                                </div>
-                               <div className="grid grid-cols-2 gap-2">
+                               <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                  <div className="p-2 bg-background/50 border rounded text-[10px]">
                                    <div className="text-muted-foreground">Steel (Fe 500)</div>
                                    <div className="text-red-500 font-bold">+4.2% (Trending Up)</div>
@@ -810,7 +810,7 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
                                   <div className="mt-1 opacity-90 max-w-[200px] leading-relaxed">Verified geolocation bounds. Expected FSI max {(totalArea / sqft).toFixed(1)}. All local setup laws verified structurally.</div>
                                </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-2 mt-4 text-xs bg-muted/50 p-3 rounded-md">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4 text-xs bg-muted/50 p-3 rounded-md">
                                <div><div className="text-muted-foreground mb-1">Max Valid Build</div><div className="font-medium">{sqft * 0.7} sqft/fl</div></div>
                                <div><div className="text-muted-foreground mb-1">Requested Floors</div><div className="font-medium">{plot.floors} Floors</div></div>
                             </div>
@@ -1056,7 +1056,7 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                      <Card className="p-6 border-l-4 border-l-blue-500 shadow-sm space-y-4">
                         <h3 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground flex items-center gap-2"><MapPin className="w-4 h-4"/> Geotechnical Payload</h3>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                            <div>
                               <p className="text-xs text-muted-foreground">Coordinates</p>
                               <p className="font-medium text-sm">{plot.city || 'N/A'}, {plot.pincode || 'N/A'}</p>
@@ -1186,7 +1186,7 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
             </div>
 
             {/* Main Stats Cards */}
-            <div className="grid grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
                   <MapPin className="w-5 h-5 text-emerald-600 mb-2" />
                   <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Project Location</p>
@@ -1256,7 +1256,7 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
             <div className="mb-auto">
                <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3 border-b pb-2">02. Capital Economics</h3>
                <div className="bg-slate-900 text-white rounded-xl p-6 shadow-lg shadow-emerald-900/10 relative overflow-hidden">     
-                   <div className="relative z-10 grid grid-cols-2 gap-8">
+                   <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8">
                        <div className="space-y-4">
                            <div>
                               <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-widest mb-1">Architectural Standard</p>

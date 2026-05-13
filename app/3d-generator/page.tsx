@@ -35,7 +35,7 @@ export default function ThreeDGeneratorPage() {
             <Cube className="w-8 h-8 text-primary" />
           </div>
           <div>
-            <h1 className="text-4xl font-bold">Rule-Based 3D Model Generator</h1>
+            <h1 className="text-4xl font-bold"> 3D Model Generator</h1>
             <p className="text-lg text-muted-foreground">
               Generate professional 3D building models with automatic camera animations
             </p>

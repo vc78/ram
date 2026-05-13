@@ -225,7 +225,7 @@ export function ThreeDModelInputForm({ onGenerate }: ThreeDModelInputFormProps) 
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-8">
           <Tabs defaultValue="plot" className="w-full">
-            <TabsList className="grid grid-cols-6 w-full h-auto p-1 bg-muted/50 rounded-xl mb-6">
+            <TabsList className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 w-full h-auto p-1 bg-muted/50 rounded-xl mb-6">
               <TabsTrigger value="plot" className="py-2.5 rounded-lg data-[state=active]:shadow-md transition-all">
                 {t.plotTab}
               </TabsTrigger>
@@ -251,12 +251,12 @@ export function ThreeDModelInputForm({ onGenerate }: ThreeDModelInputFormProps) 
 
             {/* Plot Information */}
             <TabsContent value="plot" className="space-y-6 pt-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <NumberField label={t.length} id="plotLength" path="plotDimensions.length" min={5} max={100} />
                 <NumberField label={t.width} id="plotWidth" path="plotDimensions.width" min={5} max={100} />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <SelectField
                   label={t.plotOrientation}
                   id="plotOrientation"
@@ -285,12 +285,12 @@ export function ThreeDModelInputForm({ onGenerate }: ThreeDModelInputFormProps) 
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <NumberField label={t.numberOfFloors} id="floors" path="numberOfFloors" min={1} max={50} />
                 <NumberField label={t.floorHeight} id="floorHeight" path="floorHeight" min={2.4} max={4.5} step={0.1} />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <SwitchField label={t.hasBasement} id="basement" path="hasBasement" description="Include parking" />
                 <SelectField
                   label={t.parkingType}
@@ -308,12 +308,12 @@ export function ThreeDModelInputForm({ onGenerate }: ThreeDModelInputFormProps) 
 
             {/* Architecture Information */}
             <TabsContent value="architecture" className="space-y-6 pt-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <NumberField label={t.roomsPerFloor} id="rooms" path="roomsPerFloor" min={1} max={20} />
                 <NumberField label={t.balconyCount} id="balcony" path="balconyCount" min={0} max={10} />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <SelectField
                   label={t.staircaseType}
                   id="staircase"
@@ -328,7 +328,7 @@ export function ThreeDModelInputForm({ onGenerate }: ThreeDModelInputFormProps) 
                 <SwitchField label={t.hasLift} id="lift" path="hasLift" description="Passenger elevator" />
               </div>
 
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <SelectField
                   label={t.roofType}
                   id="roofType"
@@ -385,7 +385,7 @@ export function ThreeDModelInputForm({ onGenerate }: ThreeDModelInputFormProps) 
                 ]}
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <ColorField label={t.wallColor} id="wallColor" path="materials.wallColor" />
                 <ColorField label={t.roofColor} id="roofColor" path="materials.roofColor" />
                 <ColorField label={t.doorColor} id="doorColor" path="materials.doorColor" />
@@ -462,7 +462,7 @@ export function ThreeDModelInputForm({ onGenerate }: ThreeDModelInputFormProps) 
                 ]}
               />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <SwitchField label={t.enablePBR} id="pbr" path="enablePBR" description="Physically Based Rendering" />
                 <SwitchField label={t.enableShadows} id="shadows" path="enableShadows" description="Real-time shadows" />
               </div>
@@ -480,7 +480,7 @@ export function ThreeDModelInputForm({ onGenerate }: ThreeDModelInputFormProps) 
                 />
               )}
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <SwitchField label={t.ambientOcclusion} id="ao" path="enableAO" description="Contact shadows" />
                 <SwitchField label={t.reflections} id="reflections" path="enableReflections" description="Glass & metal" />
               </div>

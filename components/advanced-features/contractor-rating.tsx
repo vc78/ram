@@ -239,7 +239,7 @@ export function ContractorRating() {
                         </div>
                      </div>
 
-                     <div className="grid grid-cols-2 gap-4">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="p-3 bg-slate-800/30 rounded-2xl border border-white/5 space-y-1">
                            <div className="text-[8px] font-black text-slate-500 uppercase">Quality Consistency</div>
                            <div className="flex items-center gap-2">

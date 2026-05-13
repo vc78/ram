@@ -33,6 +33,7 @@ import {
   Grid3x3,
   LayoutGrid,
   Cable as Cube,
+  Menu,
 } from "lucide-react"
 
 import { ErrorBoundary } from "@/components/error-boundary"
@@ -61,6 +62,7 @@ export default function DashboardPage() {
   const [memberOpen, setMemberOpen] = useState(false)
   const [newTaskTitle, setNewTaskTitle] = useState("")
   const [newMember, setNewMember] = useState({ name: "", email: "" })
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const handleLogout = async () => {
     await logout()
@@ -127,8 +129,11 @@ export default function DashboardPage() {
             <div className="container mx-auto px-4 lg:px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
+                  <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                    <Menu className="w-5 h-5" />
+                  </Button>
                   <Link href="/" className="text-2xl font-bold text-primary flex items-center gap-2">
-                    <Home className="w-6 h-6" />
+                    <Home className="w-6 h-6 hidden sm:block" />
                     <span>SIID</span>
                   </Link>
                   <Badge variant="secondary" className="hidden sm:inline-flex">
@@ -159,7 +164,10 @@ export default function DashboardPage() {
             </div>
           </header>
 
-          <aside className="fixed left-0 top-0 h-full w-64 border-r border-border bg-muted/30 overflow-y-auto flex flex-col">
+          <aside className={cn(
+            "fixed left-0 top-0 h-full w-64 border-r border-border bg-background lg:bg-muted/30 overflow-y-auto flex flex-col z-50 transition-transform duration-300 lg:translate-x-0",
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          )}>
             <div className="p-6">
               <Link href="/" className="flex items-center gap-2 mb-8">
                 <BrandLogo className="h-12 w-auto" />
@@ -290,7 +298,15 @@ export default function DashboardPage() {
             </div>
           </aside>
 
-          <main className="ml-64 p-8">
+          {/* Mobile Overlay */}
+          {sidebarOpen && (
+            <div 
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+
+          <main className="lg:ml-64 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center justify-between mb-8">
                 <div>
@@ -616,7 +632,7 @@ export default function DashboardPage() {
               <DialogHeader>
                 <DialogTitle>Add Member</DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                   placeholder="Name"
                   value={newMember.name}

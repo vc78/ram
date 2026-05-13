@@ -18,8 +18,9 @@ import {
 import { Button } from "@/components/ui/button"
 import { logout } from "@/lib/auth"
 import { useRouter } from "next/navigation"
+import { cn } from "@/lib/utils"
 
-export function AdminSidebar() {
+export function AdminSidebar({ isOpen = false }: { isOpen?: boolean }) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -34,7 +35,10 @@ export function AdminSidebar() {
   ]
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-slate-950 text-slate-200 border-r border-slate-800 flex flex-col z-40">
+    <aside className={cn(
+      "fixed left-0 top-0 h-full w-64 bg-slate-950 text-slate-200 border-r border-slate-800 flex flex-col z-40 transition-transform duration-300 lg:translate-x-0",
+      isOpen ? "translate-x-0" : "-translate-x-full"
+    )}>
       <div className="p-6 border-b border-slate-800">
         <Link href="/admin" className="flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">

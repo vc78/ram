@@ -202,7 +202,7 @@ export default function ProjectMonitoring() {
                 <Progress value={proj.progress} className="h-2 bg-slate-950" />
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-800/50">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-800/50">
                 <div className="space-y-1">
                   <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">OPERATOR</p>
                   <p className="text-xs font-bold text-white uppercase">{proj.user}</p>

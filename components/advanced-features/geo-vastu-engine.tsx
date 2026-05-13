@@ -189,7 +189,7 @@ export function GeoVastuEngine() {
              <div className="absolute top-1/2 -right-8 translate-y-1/2 rotate-90 text-[10px] font-black tracking-widest text-slate-400">EAST</div>
              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-black tracking-widest text-slate-400">SOUTH</div>
              
-             <div className="grid grid-cols-3 grid-rows-3 gap-2 w-full h-full relative">
+             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 grid-rows-3 gap-2 w-full h-full relative">
                {grid.map((row, r) => (
                  row.map((cell, c) => (
                    <div key={`${r}-${c}`} className={`rounded-xl border-2 flex items-center justify-center relative group transition-all duration-300 ${cell === "Empty" ? "border-dashed border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800" : "border-indigo-500 bg-indigo-500/10 shadow-sm"}`}>

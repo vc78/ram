@@ -69,9 +69,9 @@ export default function RenderInterfacePage() {
         </header>
 
         {/* Workspace */}
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
            {/* Sidebar Tools */}
-           <aside className="w-20 border-r border-slate-800 bg-slate-900/30 flex flex-col items-center py-8 gap-8">
+           <aside className="w-full lg:w-20 border-b lg:border-b-0 lg:border-r border-slate-800 bg-slate-900/30 flex flex-row lg:flex-col items-center justify-center lg:justify-start p-4 lg:py-8 gap-4 lg:gap-8 overflow-x-auto">
               <ToolIcon icon={Layers} active />
               <ToolIcon icon={Sun} />
               <ToolIcon icon={Camera} />
@@ -82,7 +82,7 @@ export default function RenderInterfacePage() {
            </aside>
 
            {/* Viewport */}
-           <main className="flex-1 relative bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 to-slate-950 shadow-inner">
+           <main className="flex-1 relative min-h-[50vh] lg:min-h-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-slate-900 to-slate-950 shadow-inner">
               <div className="absolute inset-0 bg-[url('/images/grid.svg')] opacity-10 pointer-events-none" />
               
               {/* Overlay Indicators */}
@@ -109,7 +109,7 @@ export default function RenderInterfacePage() {
            </main>
 
            {/* Right Panel */}
-           <aside className="w-80 border-l border-slate-800 bg-slate-900/30 p-8 space-y-8">
+           <aside className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-slate-800 bg-slate-900/30 p-4 md:p-8 space-y-8 overflow-y-auto">
               <section className="space-y-4">
                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-slate-800 pb-2">Properties</h3>
                  <div className="space-y-3">
@@ -121,7 +121,7 @@ export default function RenderInterfacePage() {
 
               <section className="space-y-4">
                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest border-b border-slate-800 pb-2">Materials</h3>
-                 <div className="grid grid-cols-4 gap-2">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2">
                     {[1,2,3,4,5,6].map(i => (
                        <div key={i} className="aspect-square bg-slate-800 rounded-lg hover:border-blue-500 border border-transparent transition-all cursor-pointer shadow-inner" />
                     ))}

@@ -16,8 +16,9 @@ import {
   Globe, Zap, Save, ChevronRight, 
   Construction, Cpu, CreditCard, Code,
   Smartphone, Activity, Box, LayoutGrid,
-  Scale, FileText, Cloud, HardDrive
+  Scale, FileText, Cloud, HardDrive, Menu
 } from "lucide-react"
+import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -26,6 +27,7 @@ export default function ProfessionalSettingsPage() {
   const [activeTab, setActiveTab] = useState("profile")
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState("")
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // State for all 30+ Industrial Features
   const [settings, setSettings] = useState({
@@ -146,7 +148,10 @@ export default function ProfessionalSettingsPage() {
     <AuthGuard>
       <div className="min-h-screen bg-[#0b1224] text-slate-200 selection:bg-primary/30">
         {/* Navigation Sidebar (Industrial UI) */}
-        <aside className="fixed left-0 top-0 h-full w-72 border-r border-slate-800 bg-[#0f172a] overflow-y-auto">
+        <aside className={cn(
+          "fixed left-0 top-0 h-full w-72 border-r border-slate-800 bg-[#0f172a] overflow-y-auto z-50 transition-transform duration-300 lg:translate-x-0",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        )}>
           <div className="p-8 pb-4">
              <Link href="/dashboard" className="flex items-center gap-3 group">
                 <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 transition-transform group-hover:scale-105">
@@ -213,13 +218,24 @@ export default function ProfessionalSettingsPage() {
           </nav>
         </aside>
 
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Main Interface Area */}
-        <main className="ml-72 min-h-screen">
+        <main className="lg:ml-72 min-h-screen">
           {/* Top Bar */}
-          <header className="h-20 border-b border-slate-800 bg-[#0b1224]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-10">
+          <header className="h-20 border-b border-slate-800 bg-[#0b1224]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-4 lg:px-10 gap-4">
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-slate-500 uppercase font-bold tracking-widest text-[10px]">Operations</span>
-                <ChevronRight className="w-3 h-3 text-slate-700" />
+                <Button variant="ghost" size="icon" className="lg:hidden text-slate-400" onClick={() => setSidebarOpen(true)}>
+                  <Menu className="w-5 h-5" />
+                </Button>
+                <span className="text-slate-500 uppercase font-bold tracking-widest text-[10px] hidden sm:inline">Operations</span>
+                <ChevronRight className="w-3 h-3 text-slate-700 hidden sm:inline" />
                 <span className="text-white font-medium capitalize">{activeTab.replace("-", " ")} Controls</span>
               </div>
               
@@ -243,13 +259,13 @@ export default function ProfessionalSettingsPage() {
               </div>
           </header>
 
-          <div className="p-10 max-w-5xl">
+          <div className="p-4 md:p-10 max-w-5xl">
              <form onSubmit={handleUpdate}>
                 <AnimatePresence mode="wait">
                   {activeTab === "profile" && (
                     <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} key="profile">
                        <SectionTitle title="Identity & Organizational Role" subtitle="Manage your professional signature and corporate access levels." />
-                       <div className="grid grid-cols-2 gap-6 mb-10">
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
                           <SettingField label="Full Legal Name" description="Your name as it appears on official BIM reports.">
                              <Input value={settings.name} className="bg-[#1e293b] border-slate-700" onChange={e => setSettings({...settings, name: e.target.value})} />
                           </SettingField>
@@ -282,7 +298,7 @@ export default function ProfessionalSettingsPage() {
                                 </div>
                              </div>
                              
-                             <div className="grid grid-cols-2 gap-8">
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <ToggleSetting 
                                   icon={<Cpu className="w-5 h-5" />} 
                                   title="Automatic Structural Integrity Check" 
@@ -325,7 +341,7 @@ export default function ProfessionalSettingsPage() {
                   {activeTab === "notifs" && (
                     <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} key="notifs">
                        <SectionTitle title="Command Center Notifications" subtitle="Customizes how your site engineers and project managers receive alerts." />
-                       <div className="grid grid-cols-2 gap-4">
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <Card className="p-5 bg-emerald-500/5 border-emerald-500/10 border">
                              <div className="flex items-center gap-3 mb-4">
                                 <div className="w-8 h-8 rounded-lg bg-emerald-500 flex items-center justify-center">
@@ -360,7 +376,7 @@ export default function ProfessionalSettingsPage() {
                        <SectionTitle title="Intelligence & Data Integrity" subtitle="Manage the performance and synchronization of your design data." />
                        <div className="space-y-6">
                           <Card className="p-6 bg-[#0f172a] border-slate-800">
-                             <div className="grid grid-cols-2 gap-10">
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                 <div>
                                    <Label className="text-white font-bold mb-4 block">Engine Synchronization Interval</Label>
                                    <select className="w-full bg-[#1e293b] border border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40">
@@ -379,7 +395,7 @@ export default function ProfessionalSettingsPage() {
                                 </div>
                              </div>
                              
-                             <div className="mt-10 pt-10 border-t border-slate-800 grid grid-cols-2 gap-6">
+                             <div className="mt-10 pt-10 border-t border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <ToggleSetting icon={<Cloud className="w-5 h-5" />} title="Persistent Multi-Cloud Backup" desc="Mirror every design across AWS and Azure for 100% uptime." checked={settings.cloudSync} onToggle={() => handleToggle('cloudSync')} />
                                 <ToggleSetting icon={<HardDrive className="w-5 h-5" />} title="Low-Latency Offline Mode" desc="Keep designing when site connectivity is lost. Syncs later." checked={settings.offlineMode} onToggle={() => handleToggle('offlineMode')} />
                              </div>
@@ -399,7 +415,7 @@ export default function ProfessionalSettingsPage() {
                                 </SettingField>
                              </div>
                              
-                             <div className="grid grid-cols-2 gap-8">
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <ToggleSetting icon={<Zap className="w-5 h-5" />} title="Production Sandbox Environment" desc="Isolate experimental BIM scripts from live site data." checked={settings.sandboxEnv} onToggle={() => handleToggle('sandboxEnv')} />
                                 <ToggleSetting icon={<Code className="w-5 h-5" />} title="Debug Intelligence Trace" desc="Detailed console output for all AI layout logic cycles." checked={settings.debugMode} onToggle={() => handleToggle('debugMode')} />
                              </div>

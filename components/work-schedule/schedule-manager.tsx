@@ -551,7 +551,7 @@ export function ScheduleManager() {
 
       {/* View Mode Tabs */}
       <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           <TabsTrigger value="daily">Daily</TabsTrigger>
           <TabsTrigger value="weekly">Weekly</TabsTrigger>
           <TabsTrigger value="monthly">Monthly</TabsTrigger>
@@ -692,7 +692,7 @@ export function ScheduleManager() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="startDate">Start Date</Label>
                 <Input
@@ -713,7 +713,7 @@ export function ScheduleManager() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="priority">Priority</Label>
                 <Select
@@ -878,7 +878,7 @@ function TaskCard({
 
       {!compact && (
         <>
-          <div className="grid grid-cols-2 gap-4 mb-3 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3 text-sm">
             <div>
               <span className="text-muted-foreground">Start:</span>
               <span className="ml-2 font-medium">{task.startDate}</span>

@@ -60,8 +60,8 @@ export default function LandingPage() {
 
   const heroVideos = [
     "/images/ext1.mp4",
-    "/uploads/p1.mp4",
-    "/uploads/p2.mp4",
+    //"/uploads/p1.mp4",
+    //"/uploads/p2.mp4",
   ]
 
   useEffect(() => {
@@ -240,7 +240,7 @@ export default function LandingPage() {
             </div>
 
             <Card className="glass-effect elevation-lg p-6 md:p-8 border border-border/70 bg-background/70 animate-scale-in">
-              <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
                 <div className="rounded-lg p-3 sm:p-4 outline-primary bg-background/60">
                   <div className="text-xl sm:text-2xl font-bold text-primary mb-1">3x</div>
                   <div className="text-xs text-muted-foreground">Faster Design Cycles</div>

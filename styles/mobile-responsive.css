@@ -23,7 +23,8 @@
     /* Reduce hover effects on touch devices */
     button:not(:active),
     [role="button"]:not(:active) {
-        @apply hover:none;
+        touch-action: manipulation;
+        transition: none;
     }
 }
 
@@ -122,7 +123,7 @@
 
     /* Stack table rows as cards on mobile */
     .table-card-mobile {
-        @apply display: block;
+        @apply block;
         border-bottom: 1px solid var(--border);
         padding: 1rem;
         margin-bottom: 0.5rem;

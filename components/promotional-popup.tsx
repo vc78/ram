@@ -238,7 +238,7 @@ export default function PromotionalPopup() {
 
                     {/* Three Videos Grid */}
                     <div className="p-4">
-                        <div className="grid grid-cols-3 gap-3 mb-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                             {PROMO_VIDEOS.map((videoPath, index) => (
                                 <VideoCard key={index} videoPath={videoPath} index={index} />
                             ))}
@@ -257,7 +257,7 @@ export default function PromotionalPopup() {
                             </div>
 
                             {/* Quick Features */}
-                            <div className="grid grid-cols-3 gap-1.5 py-2.5 border-y border-white/10">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1.5 py-2.5 border-y border-white/10">
                                 <div className="text-center">
                                     <p className="text-emerald-400 font-bold text-base">3x</p>
                                     <p className="text-white/70 text-xs">Faster</p>

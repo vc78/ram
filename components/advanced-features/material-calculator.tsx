@@ -362,7 +362,7 @@ export function MaterialCalculator() {
 
         {estimate && (
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <Card className="p-3 bg-muted">
                 <div className="text-xs text-muted-foreground">Cement</div>
                 <div className="font-semibold">{estimate.cement.bags} bags</div>

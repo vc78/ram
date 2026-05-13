@@ -217,7 +217,7 @@ export default function BudgetEstimator() {
             </div>
 
             {/* Cost items */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {breakdown.map((item) => (
                 <div key={item.label} className="p-3 rounded-xl bg-muted/50 space-y-1">
                   <div className="flex items-center gap-2">

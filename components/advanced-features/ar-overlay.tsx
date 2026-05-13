@@ -177,7 +177,7 @@ export function AROverlay() {
                            <span className="text-xs font-black text-primary">{xrayDepth}%</span>
                         </div>
                         <Progress value={xrayDepth} className="h-1.5 bg-white/10" onClick={(e) => setXrayDepth(Math.floor((e.nativeEvent as any).offsetX / 2))} />
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                            <Button 
                              onClick={() => setIsXrayActive(!isXrayActive)}
                              className={`h-14 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${isXrayActive ? 'bg-primary text-white' : 'bg-white/5 border-white/10 text-white hover:bg-white/10'}`}

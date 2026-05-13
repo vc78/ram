@@ -357,11 +357,11 @@ ${messages.length ? messages.map((m) => `- ${new Date(m.at).toLocaleString()}: $
           </div>
         </header>
 
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row">
           {/* Left Sidebar - Tools */}
-          <aside className="w-80 border-r border-border bg-muted/30 p-6 overflow-y-auto h-[calc(100vh-73px)]">
+          <aside className="w-full lg:w-80 border-b lg:border-r lg:border-b-0 border-border bg-muted/30 p-4 md:p-6 overflow-y-auto h-auto lg:h-[calc(100vh-73px)]">
             <Tabs defaultValue="dimensions" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                 <TabsTrigger value="dimensions">
                   <Ruler className="w-4 h-4" />
                 </TabsTrigger>
@@ -488,7 +488,7 @@ ${messages.length ? messages.map((m) => `- ${new Date(m.at).toLocaleString()}: $
 
                 <div>
                   <h3 className="text-lg font-semibold mb-4">Color Palette</h3>
-                  <div className="grid grid-cols-5 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 gap-2">
                     {["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#06b6d4", "#ec4899", "#84cc16"].map(
                       (color) => (
                         <button
@@ -515,7 +515,7 @@ ${messages.length ? messages.map((m) => `- ${new Date(m.at).toLocaleString()}: $
           </aside>
 
           {/* Main Canvas */}
-          <main className="flex-1 p-8 overflow-y-auto h-[calc(100vh-73px)]">
+          <main className="flex-1 p-4 md:p-8 overflow-y-auto h-auto lg:h-[calc(100vh-73px)]">
             <div className="max-w-6xl mx-auto">
               <div className="mb-6 flex items-center justify-between">
                 <div>
@@ -667,7 +667,7 @@ ${messages.length ? messages.map((m) => `- ${new Date(m.at).toLocaleString()}: $
                 {selectedRoom != null && (
                   <Card className="p-4 border-border">
                     <h3 className="text-lg font-semibold mb-4">Edit Selected Room</h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Label>Name</Label>
                         <Input
@@ -723,7 +723,7 @@ ${messages.length ? messages.map((m) => `- ${new Date(m.at).toLocaleString()}: $
                     <Badge variant="outline" className="text-xs border-primary/20 text-primary">v4.2 Analysis</Badge>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
                       { label: "Cement", val: project?.materialQuantity?.cement || "485", unit: "Bags" },
                       { label: "Steel", val: project?.materialQuantity?.steel || "5420", unit: "Kg" },

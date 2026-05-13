@@ -98,7 +98,7 @@ export default function AboutPage() {
                           The construction industry has been broken for decades. Opacity, middlemen, and inefficiency have made building dreams a nightmare. 
                        </p>
                     </div>
-                    <div className="grid grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                        <div className="space-y-2">
                           <h4 className="text-3xl font-black text-primary tracking-tighter">98%</h4>
                           <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">Customer Trust Rate</p>

@@ -67,7 +67,7 @@ export function QuickActions() {
   return (
     <Card className="p-6 border-border">
       <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
         {QUICK_ACTIONS.map((action) => (
           <Link key={action.id} href={action.href || "#"}>
             <Button variant="outline" className="w-full h-auto flex-col gap-2 py-4 hover:bg-muted bg-transparent">

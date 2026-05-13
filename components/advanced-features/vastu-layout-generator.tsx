@@ -824,7 +824,7 @@ return (
       <div className="space-y-4">
         <h4 className="font-semibold text-base mb-3">B. Land Details</h4>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label>Plot Length (ft) *</Label>
             <Input
@@ -1036,7 +1036,7 @@ return (
             Advanced Features Analysis
             <Badge variant="outline">{layout.features.length}+ Features</Badge>
           </h4>
-          <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
             {layout.features.map((feature, index) => (
               <div key={index} className="text-xs flex items-start gap-1">
                 {feature.status === "pass" ? (

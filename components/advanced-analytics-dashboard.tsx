@@ -383,7 +383,7 @@ export function AdvancedAnalyticsDashboard() {
 
       {/* Category Tabs */}
       <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 md:grid-cols-5">
           {categories.map((cat) => (
             <TabsTrigger key={cat.name} value={cat.name}>
               {cat.name.split(" & ")[0]}
@@ -471,7 +471,7 @@ export function AdvancedAnalyticsDashboard() {
                           {/* Earned Value Management */}
                           {feature.id === "earned-value-management" && (
                             <div className="space-y-2">
-                              <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                                 <div>
                                   <div className="text-muted-foreground">CPI</div>
                                   <div className="text-lg font-bold">{metricValue.cpi.toFixed(2)}</div>
@@ -545,7 +545,7 @@ export function AdvancedAnalyticsDashboard() {
                                 <span className="text-sm text-muted-foreground">Overall Score</span>
                                 <span className="text-3xl font-bold text-green-500">{metricValue.overallScore}</span>
                               </div>
-                              <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                                 <div>
                                   <CheckCircle2 className="w-4 h-4 inline mr-1 text-green-500" />
                                   {metricValue.passed} passed
@@ -567,7 +567,7 @@ export function AdvancedAnalyticsDashboard() {
                                   {metricValue.daysWithoutIncident}
                                 </span>
                               </div>
-                              <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
                                 <div>Incidents: {metricValue.incidents}</div>
                                 <div>Near Misses: {metricValue.nearMisses}</div>
                               </div>

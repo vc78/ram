@@ -642,7 +642,7 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
                   <div className="mt-4 pt-4 border-t space-y-4">
                     {/* Budget Info */}
                     {phase.budget && (
-                      <div className="grid grid-cols-2 gap-4 p-3 bg-muted/50 rounded">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3 bg-muted/50 rounded">
                         <div>
                           <p className="text-xs text-muted-foreground">Budget</p>
                           <p className="font-semibold">₹{phase.budget.toLocaleString()}</p>

@@ -98,7 +98,7 @@ export function EnergyAnalyzer() {
             <Slider value={[ledPercentage]} onValueChange={(v) => setLedPercentage(v[0])} min={0} max={100} step={5} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm mb-2 block">Climate Zone</label>
               <Select value={climateZone} onValueChange={setClimateZone}>
@@ -135,7 +135,7 @@ export function EnergyAnalyzer() {
         <div className="space-y-4">
           {metrics && (
             <>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <Card className="p-4 bg-muted">
                   <div className="flex items-center gap-2 mb-1">
                     <Zap className="w-4 h-4 text-amber-500" />

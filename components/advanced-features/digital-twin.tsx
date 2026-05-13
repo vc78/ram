@@ -151,7 +151,7 @@ export function DigitalTwin() {
               <div className="flex flex-col gap-4 pointer-events-auto w-48">
                  <div className="space-y-1">
                     <div className="text-[10px] font-black text-white/30 tracking-widest uppercase">Floor Navigation</div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                        <Button variant="outline" onClick={() => setActiveFloor(prev => (prev < 4 ? prev + 1 : 4))} className="rounded-xl h-12 bg-white/5 border-white/10 text-white hover:bg-white/10 text-xs font-black">LVL UP</Button>
                        <Button variant="outline" onClick={() => setActiveFloor(prev => (prev > 0 ? prev - 1 : 0))} className="rounded-xl h-12 bg-white/5 border-white/10 text-white hover:bg-white/10 text-xs font-black">LVL DWN</Button>
                     </div>
@@ -192,7 +192,7 @@ export function DigitalTwin() {
                                 </div>
                              </div>
 
-                             <div className="pt-4 border-t border-white/10 grid grid-cols-2 gap-4">
+                             <div className="pt-4 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                    <div className="text-[8px] font-black text-white/30 uppercase tracking-widest">Status</div>
                                    <div className={`text-[10px] font-black uppercase ${s.status === 'critical' ? 'text-red-500' : 'text-green-500'}`}>{s.status}</div>

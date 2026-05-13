@@ -448,7 +448,7 @@ body {
 
     /* Touch-friendly buttons */
     .btn-mobile {
-      @apply min-h-12 wi h-12;
+      @apply min-h-12 w-full h-12;
     }
 
     /* Hide on mobile */

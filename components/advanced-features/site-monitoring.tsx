@@ -169,7 +169,7 @@ export function SiteMonitoring() {
                 {/* Progress HUD - 5+ Progress metrics */}
                 <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between gap-6">
                    <div className="flex-1 max-w-sm p-5 bg-black/50 backdrop-blur-xl rounded-[2rem] border border-white/10 space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                          <div className="space-y-1">
                             <div className="text-[9px] uppercase font-black text-white/50 tracking-widest">Structural</div>
                             <Progress value={92} className="h-1 bg-white/10" />

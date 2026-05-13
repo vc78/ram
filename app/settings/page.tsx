@@ -156,7 +156,7 @@ export default function ProfessionalSettings() {
                         <p className="text-sm text-slate-500 font-medium">Verified Professional</p>
                       </div>
                       <div className="w-full h-px bg-slate-100 dark:bg-slate-800 my-2" />
-                      <div className="grid grid-cols-2 w-full gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-4">
                         <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-2xl">
                           <p className="text-[10px] font-bold text-slate-400 uppercase">Projects</p>
                           <p className="text-lg font-bold">42</p>
@@ -237,7 +237,7 @@ export default function ProfessionalSettings() {
             <TabsContent value="notifications">
               <div className="grid md:grid-cols-2 gap-8">
                 <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm md:col-span-2">
-                   <CardHeader className="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between">
+                   <CardHeader className="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between">
                       <CardTitle className="text-xl font-bold flex items-center gap-3">
                          <Bell className="w-5 h-5 text-primary" /> Channel Thresholds
                       </CardTitle>
@@ -303,7 +303,7 @@ export default function ProfessionalSettings() {
             <TabsContent value="security" className="space-y-8">
                <div className="grid md:grid-cols-2 gap-8">
                  <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm">
-                   <CardHeader className="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between">
+                   <CardHeader className="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between">
                       <CardTitle className="text-xl font-bold flex items-center gap-3">
                          <Key className="w-5 h-5 text-indigo-500" /> API Access Management
                       </CardTitle>
