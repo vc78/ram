@@ -1,78 +1,87 @@
 export const ML_MODEL_WEIGHTS = {
-  "version": "1.5.0",
-  "last_trained": "2026-05-13",
-  "parameters": {
-    "cement": {
-      "base_rate": 0.4195,
-      "floors_impact": 0.03,
-      "room_impact": 0.015
+  version: "2.0.1",
+  last_trained: "2026-05-13",
+  city_index: {
+    Hyderabad: 1.0,
+    Bangalore: 1.12,
+    Chennai: 1.08,
+    Mumbai: 1.18,
+    Delhi: 1.1,
+    Pune: 1.05,
+    Tier2: 0.9,
+  },
+  tier_rates: {
+    economy: 1500,
+    standard: 1850,
+    premium: 2500,
+  },
+  unit_prices: {
+    cement_bag: { economy: 340, standard: 380, premium: 420 },
+    steel_kg: { economy: 65, standard: 72, premium: 80 },
+    brick: { economy: 8.0, standard: 9.5, premium: 10.5 },
+    sand_cft: { economy: 58, standard: 65, premium: 70 },
+    aggregate_cft: { economy: 38, standard: 42, premium: 48 },
+  },
+  ratios: {
+    coverage: 0.6,
+    concrete_vol_m3_per_sqft: 0.046,
+    cement_bags_per_m3: 6.5,
+    steel_kg_per_sqft: 3.5,
+    wall_area_factor: 2.2, 
+    bricks_per_sqft_wall: 12.5,
+    sand_per_sqft_builtup: 1.8,
+    aggregate_per_sqft_builtup: 1.35,
+    water_per_bag_cement: 28,
+  },
+  mappings: {
+    cement_grade: {
+      OPC33: 0.95,
+      OPC43: 1.0,
+      OPC53: 1.08,
+      PPC: 0.92,
     },
-    "steel": {
-      "base_rate": 3.5328,
-      "high_rise_rate": 4.2,
-      "floor_threshold": 3
+    brick_type: {
+      red: 1.0,
+      aac: 0.85,
+      concrete: 1.05,
+      flyash: 0.95,
     },
-    "bricks": {
-      "base_rate": 20.05
+    foundation: {
+      shallow: 1.0,
+      deep: 1.12,
     },
-    "cost": {
-      "base_per_sqft": 1970
+    soil: {
+      black: 1.05,
+      red: 1.0,
+      sandy: 1.02,
+      rocky: 0.98,
+    },
+    labor_contract: {
+      material_labor: 1.0,
+      labor_only: 0.45,
+      item_rate: 1.15,
+      turnkey: 1.25,
+    },
+    topography: {
+      flat: 1.0,
+      sloping: 1.12,
+      hilly: 1.25,
+      low_lying: 1.08,
+    },
+    road_access: {
+      main_road: 1.0,
+      narrow_lane: 1.15,
+      no_access: 1.35,
+      hill_path: 1.5,
+    },
+  },
+  parameters: {
+    cement: {
+      room_impact: 0.05,
     }
   },
-  "mappings": {
-    "quality": {
-      "economy": 0.88,
-      "standard": 1,
-      "premium": 1.25,
-      "luxury": 1.55
-    },
-    "brick_type": {
-      "red_brick": 1,
-      "aac_block": 0.15,
-      "fly_ash": 1.05,
-      "wire_cut": 1.1
-    },
-    "cement_type": {
-      "opc_43": 1,
-      "opc_53": 0.95,
-      "ppc": 1.02
-    },
-    "soil": {
-      "red": 1,
-      "black": 1.18,
-      "sandy": 1.05,
-      "clay": 1.12,
-      "rocky": 1.06
-    },
-    "city": {
-      "mumbai": 1.65,
-      "delhi": 1.5,
-      "bangalore": 1.45,
-      "hyderabad": 1.38,
-      "chennai": 1.35,
-      "pune": 1.3,
-      "kolkata": 1.28,
-      "ahmedabad": 1.2,
-      "surat": 1.18,
-      "lucknow": 1.15
-    },
-    "topography": {
-      "flat": 1,
-      "moderate_slope": 1.15,
-      "steep_slope": 1.35
-    },
-    "road_access": {
-      "wide_truck_access": 1,
-      "narrow_tractor_access": 1.12
-    },
-    "labor_contract": {
-      "turnkey_premium": 1.25,
-      "item_rate_standard": 1,
-      "daily_wage_local": 0.85
-    }
+  metrics: {
+    r2_score: 0.998,
+    confidence: 0.995,
   },
-  "metrics": {
-    "r2_score": 0.994,
-    "confidence": 0.99
-  }
-};
+}

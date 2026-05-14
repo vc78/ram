@@ -324,8 +324,8 @@ ${messages.length ? messages.map((m) => `- ${new Date(m.at).toLocaleString()}: $
       <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
-          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
               <Link
                 href="/dashboard"
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -340,7 +340,7 @@ ${messages.length ? messages.map((m) => `- ${new Date(m.at).toLocaleString()}: $
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button variant="outline" size="sm" onClick={handleShare}>
                 <Share2 className="w-4 h-4 mr-2" />
                 Share
@@ -517,7 +517,7 @@ ${messages.length ? messages.map((m) => `- ${new Date(m.at).toLocaleString()}: $
           {/* Main Canvas */}
           <main className="flex-1 p-4 md:p-8 overflow-y-auto h-auto lg:h-[calc(100vh-73px)]">
             <div className="max-w-6xl mx-auto">
-              <div className="mb-6 flex items-center justify-between">
+              <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-2xl font-bold mb-2">{view3D ? "3D View" : "2D Floor Plan"}</h2>
                   <p className="text-muted-foreground">
@@ -526,7 +526,7 @@ ${messages.length ? messages.map((m) => `- ${new Date(m.at).toLocaleString()}: $
                       : "Drag and arrange rooms to customize your layout"}
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mt-2 sm:mt-0">
                   <Button
                     variant={view3D ? "default" : "outline"}
                     size="sm"

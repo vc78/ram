@@ -59,3 +59,15 @@ export function validateSession(): boolean {
   // Check if user object has all required fields
   return !!(user.email && user.name)
 }
+
+/**
+ * Generates a user-specific key for localStorage to prevent data sharing between users.
+ */
+export function getUserDataKey(baseKey: string): string {
+  if (typeof window === "undefined") return baseKey
+  const user = getCurrentUser()
+  if (!user) return baseKey
+  // Sanitize email to use as a safe key suffix
+  const safeEmail = user.email.toLowerCase().replace(/[^a-z0-9]/g, '_')
+  return `${baseKey}_${safeEmail}`
+}

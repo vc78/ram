@@ -117,8 +117,8 @@ export function ProjectMilestones() {
           </p>
         </div>
         
-        <div className="flex items-center gap-6 p-4 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
-           <div className="text-right">
+        <div className="flex items-center justify-between gap-4 p-4 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 w-full md:w-auto">
+           <div className="text-left md:text-right">
              <div className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Total Committed</div>
              <div className="text-xl font-black text-primary">{formatCurrency(totalBudget)}</div>
            </div>
@@ -155,7 +155,7 @@ export function ProjectMilestones() {
               }`}
               onClick={() => setExpandedId(expandedId === milestone.id ? null : milestone.id)}
             >
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                 <div className="relative">
                   <div
                     className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black transition-all ${
@@ -171,8 +171,8 @@ export function ProjectMilestones() {
                 </div>
 
                 <div className="flex-1 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-black text-lg tracking-tight flex items-center gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-0">
+                    <h4 className="font-black text-base sm:text-lg tracking-tight flex items-center gap-2 flex-wrap">
                        {milestone.name}
                        {milestone.aiVerified && (
                          <div className="w-5 h-5 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-500" title="AI Vision Verified">
@@ -183,7 +183,7 @@ export function ProjectMilestones() {
                     {getStatusBadge(milestone.status)}
                   </div>
                   
-                  <div className="flex items-center gap-6">
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-6 mt-2 sm:mt-0">
                     <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
                       <Calendar className="w-3.5 h-3.5" />
                       {milestone.dueDate}
@@ -203,7 +203,7 @@ export function ProjectMilestones() {
               </div>
 
               {milestone.status === "in-progress" && (
-                <div className="mt-6 pl-16">
+                <div className="mt-6 sm:pl-16">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest italic">Live Progress (AI-Vision Output)</span>
                     <span className="text-xs font-black text-amber-600">{milestone.progress}%</span>
@@ -213,7 +213,7 @@ export function ProjectMilestones() {
               )}
 
               {expandedId === milestone.id && (
-                <div className="mt-8 pl-16 pt-6 border-t border-slate-200/60 dark:border-slate-800/60 space-y-6 animate-in fade-in slide-in-from-top-2">
+                <div className="mt-8 sm:pl-16 pt-6 border-t border-slate-200/60 dark:border-slate-800/60 space-y-6 animate-in fade-in slide-in-from-top-2">
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="space-y-3">
                       <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Proof of Accomplishment</div>

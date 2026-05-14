@@ -143,14 +143,14 @@ export function AITrainingInterface() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Brain className="w-5 h-5" />
-            AI Training Knowledge Base
+            Smart Knowledge Base
           </CardTitle>
           <CardDescription>Search and explore 1000+ technical Q&A pairs about the SIID project</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex gap-2">
             <Input
-              placeholder="Search questions (e.g., 'How does AI design generation work?')"
+              placeholder="Search questions (e.g., 'How does smart design generation work?')"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}

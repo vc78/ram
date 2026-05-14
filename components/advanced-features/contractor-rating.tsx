@@ -138,7 +138,7 @@ export function ContractorRating() {
     <Card className="p-8 bg-slate-900 border-slate-800 rounded-[3rem] relative overflow-hidden group shadow-2xl">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] -z-10 group-hover:bg-primary/10 transition-all duration-1000" />
       
-      {/* Neural Network HUD Header */}
+      {/* Smart Network HUD Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div className="space-y-2">
            <div className="flex items-center gap-3">
@@ -147,7 +147,7 @@ export function ContractorRating() {
               </div>
               <div>
                  <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase">INDUSTRI-NET™</h3>
-                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none">Contractor Neural Network v9.4</p>
+                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none">Contractor Smart Network v9.4</p>
               </div>
            </div>
         </div>
@@ -218,7 +218,7 @@ export function ContractorRating() {
                     </div>
                   </div>
 
-                  {/* Neural Engine Center (Proper Dataset Viz) */}
+                  {/* Smart Analysis Center (Proper Dataset Viz) */}
                   <div className="lg:col-span-2 grid md:grid-cols-2 gap-8">
                      <div className="space-y-4">
                         <div className="flex items-center justify-between">
@@ -304,7 +304,7 @@ export function ContractorRating() {
               <Bot className="w-7 h-7" />
            </div>
            <p className="text-[11px] font-bold text-slate-300 leading-relaxed max-w-2xl text-center md:text-left">
-              <span className="text-primary font-black uppercase tracking-widest">AI MATCH REPORT:</span> Based on your <span className="text-primary italic">"{activeStrategy.toUpperCase()}"</span> project selection, we have identified <span className="text-white italic">{rankedContractors[0].name}</span> as the optimal neural match with a 99.8% structural alignment probability.
+              <span className="text-primary font-black uppercase tracking-widest">SMART MATCH REPORT:</span> Based on your <span className="text-primary italic">"{activeStrategy.toUpperCase()}"</span> project selection, we have identified <span className="text-white italic">{rankedContractors[0].name}</span> as the optimal smart match with a 99.8% structural alignment probability.
            </p>
            <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline ml-auto">View Calibration Data</button>
         </div>

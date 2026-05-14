@@ -59,7 +59,7 @@ export function ComparisonView() {
 
   return (
     <Card className="p-6 border-border">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
         <div className="flex items-center gap-2">
           <Layers className="w-5 h-5 text-primary" />
           <h3 className="text-lg font-semibold">Design Comparison</h3>
@@ -136,13 +136,13 @@ export function ComparisonView() {
 
       {selected.length > 0 && (
         <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
-          <div className="flex items-center justify-between">
-            <span className="text-sm">{selected.length} design(s) selected</span>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={() => setSelected([])}>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <span className="text-sm text-center sm:text-left">{selected.length} design(s) selected</span>
+            <div className="flex gap-2 justify-center sm:justify-start">
+              <Button variant="outline" size="sm" onClick={() => setSelected([])} className="flex-1 sm:flex-none">
                 Clear
               </Button>
-              <Button size="sm">Create Hybrid Design</Button>
+              <Button size="sm" className="flex-1 sm:flex-none">Create Hybrid Design</Button>
             </div>
           </div>
         </div>

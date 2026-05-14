@@ -30,13 +30,13 @@ export default function ThreeDGeneratorPage() {
     <div className="container mx-auto py-8 px-4 space-y-8">
       {/* Header */}
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-primary/10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="p-3 rounded-lg bg-primary/10 flex-shrink-0">
             <Cube className="w-8 h-8 text-primary" />
           </div>
           <div>
-            <h1 className="text-4xl font-bold"> 3D Model Generator</h1>
-            <p className="text-lg text-muted-foreground">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight"> 3D Model Generator</h1>
+            <p className="text-base md:text-lg text-muted-foreground">
               Generate professional 3D building models with automatic camera animations
             </p>
           </div>
@@ -141,9 +141,9 @@ export default function ThreeDGeneratorPage() {
         <div className="space-y-4">
           {showViewer && buildingInputs ? (
             <>
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-semibold">3D Preview</h2>
-                <Badge variant="secondary" className="gap-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                <h2 className="text-xl md:text-2xl font-semibold">3D Preview</h2>
+                <Badge variant="secondary" className="gap-1 w-fit">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                   Live Preview
                 </Badge>

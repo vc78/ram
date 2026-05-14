@@ -185,7 +185,7 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
         const urlEntry = data.saved.find((s: any) => s.filename === file.name)
         const url = urlEntry ? urlEntry.url : URL.createObjectURL(file)
 
-        // ML Auto Analysis for Site Photo
+        // Smart Photo Scan for Site Photo
         let mlAnalysis = undefined
         let additionalTags: string[] = []
         try {
@@ -242,7 +242,7 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
 
       toast({
         title: "Photos Uploaded & Analyzed",
-        description: `${newPhotos.length} photo(s) uploaded and processed via ML engine`,
+        description: `${newPhotos.length} photo(s) uploaded and processed by smart system`,
       })
 
       setUploadDialogOpen(false)
@@ -310,19 +310,19 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
   return (
     <>
       <Card className="p-6 border-border">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
           <div className="flex items-center gap-2">
             <Camera className="w-5 h-5 text-primary" />
             <h3 className="text-lg font-semibold">Site Photos</h3>
             <Badge variant="secondary">{photos.length}</Badge>
           </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")} className="flex-1 sm:flex-none">
               {viewMode === "grid" ? <List className="w-4 h-4" /> : <Grid3x3 className="w-4 h-4" />}
             </Button>
-            <Button size="sm" onClick={() => setUploadDialogOpen(true)}>
+            <Button size="sm" onClick={() => setUploadDialogOpen(true)} className="flex-1 sm:flex-none">
               <Upload className="w-4 h-4 mr-2" />
-              Upload Photos
+              Upload
             </Button>
           </div>
         </div>
@@ -427,16 +427,13 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
         ) : (
           <div className="space-y-3">
             {filteredPhotos.map((photo) => (
-              <div
-                key={photo.id}
-                className="flex items-center gap-4 p-3 rounded-lg border bg-background hover:bg-muted transition-colors"
-              >
+                <div key={photo.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 rounded-lg border bg-background hover:bg-muted transition-colors">
                 <img
                   src={photo.url || "/placeholder.svg"}
                   alt={photo.filename}
-                  className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+                  className="w-full sm:w-20 h-40 sm:h-20 object-cover rounded-lg flex-shrink-0"
                 />
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 w-full">
                   <div className="font-medium text-sm truncate">{photo.filename}</div>
                   <div className="text-xs text-muted-foreground mt-1 space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
@@ -470,20 +467,23 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-1 flex-shrink-0">
-                  <Button variant="ghost" size="sm" onClick={() => setSelectedPhoto(photo)}>
-                    <Eye className="w-4 h-4" />
+                <div className="flex gap-2 w-full sm:w-auto border-t sm:border-t-0 pt-2 sm:pt-0 justify-end">
+                  <Button variant="ghost" size="sm" onClick={() => setSelectedPhoto(photo)} className="flex-1 sm:flex-none">
+                    <Eye className="w-4 h-4 sm:mr-2" />
+                    <span className="sm:hidden">View</span>
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => handleDownload(photo)}>
-                    <Download className="w-4 h-4" />
+                  <Button variant="ghost" size="sm" onClick={() => handleDownload(photo)} className="flex-1 sm:flex-none">
+                    <Download className="w-4 h-4 sm:mr-2" />
+                    <span className="sm:hidden">Save</span>
                   </Button>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDelete(photo.id)}
-                    className="text-destructive hover:text-destructive"
+                    className="text-destructive hover:text-destructive flex-1 sm:flex-none"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-4 h-4 sm:mr-2" />
+                    <span className="sm:hidden">Delete</span>
                   </Button>
                 </div>
               </div>
@@ -601,9 +601,12 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
             >
               Cancel
             </Button>
-            <Button onClick={handleFileSubmit} disabled={!selectedFiles || selectedFiles.length === 0 || isAnalyzing}>
+            <Button
+              onClick={handleFileSubmit}
+              disabled={isAnalyzing || !selectedFiles || selectedFiles.length === 0}
+            >
               {isAnalyzing ? (
-                <>AI Engine Scanning...</>
+                <>Smart System Scanning...</>
               ) : (
                 <><Upload className="w-4 h-4 mr-2" /> Upload Photos</>
               )}
@@ -651,10 +654,10 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
                           <div className="absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 border-white rounded-br-[1px]" />
                        </div>
                      ))}
-                     {selectedPhoto.mlAnalysis.safetyViolations.length === 0 && (
+                         {selectedPhoto.mlAnalysis.safetyViolations.length === 0 && (
                         <div className="absolute top-4 right-4 bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-emerald-400/30 flex items-center gap-1.5 shadow-xl">
                           <CheckCircle className="w-3.5 h-3.5 fill-emerald-100/20" />
-                          YOLO v8 AI VISION: NOMINAL
+                          SMART VISION: ACTIVE
                         </div>
                      )}
                   </div>
@@ -723,7 +726,7 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
                 <div className="mt-8 border-t pt-6 bg-gradient-to-br from-primary/5 to-transparent -mx-6 px-6 pb-6 -mb-6">
                   <div className="flex items-center gap-2 mb-4">
                     <BrainCircuit className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-lg text-primary tracking-tight">Computer Vision Engine</h4>
+                    <h4 className="font-semibold text-lg text-primary tracking-tight">Smart Vision System</h4>
                   </div>
                   
                   <div className="grid md:grid-cols-2 gap-6">
@@ -742,13 +745,13 @@ export function SitePhotoUpload({ taskId, taskName, milestone, onPhotoUploaded }
                              <div className="font-bold text-xl">{selectedPhoto.mlAnalysis.progress}%</div>
                           </div>
                           <Progress value={selectedPhoto.mlAnalysis.progress} className="h-2" />
-                          <div className="mt-2 text-xs text-muted-foreground">AI Confidence: {selectedPhoto.mlAnalysis.confidenceScore.toFixed(1)}%</div>
+                          <div className="mt-2 text-xs text-muted-foreground">Analysis Confidence: {selectedPhoto.mlAnalysis.confidenceScore.toFixed(1)}%</div>
                        </div>
                     </div>
                     
                     <div className="space-y-3">
                       <h5 className="font-medium flex items-center gap-2 text-sm">
-                         Safety & Compliance (YOLO v8 High-Precision)
+                         Safety & Compliance (Smart System)
                          <Badge variant="outline" className="text-[10px] bg-primary/5 text-primary border-primary/20 shrink-0 ml-auto font-bold">EFFICIENCY OPTIMIZED</Badge>
                       </h5>
                       {selectedPhoto.mlAnalysis.safetyViolations.length > 0 ? (

@@ -25,7 +25,7 @@ import {
   Wind
 } from "lucide-react"
 
-// Types for our Industry-Disrupting Vision AI
+// Types for our Industry-Disrupting Vision System
 interface VisionFeed {
   id: string
   source: "Drone-α" | "Spot-Robot-1" | "Fixed-Cam-04" | "Fixed-Cam-07"
@@ -105,7 +105,7 @@ export function SiteMonitoring() {
             className={`w-full h-full object-cover transition-all duration-1000 ${isAiProcessing ? 'blur-sm grayscale' : 'blur-0 grayscale-0'} ${visionMode === 'thermal' ? 'hue-rotate-180 invert' : ''}`}
           />
           
-          {/* AI Overlay Interface */}
+          {/* Smart Overlay Interface */}
           {!isAiProcessing && (
             <div className="absolute inset-0 pointer-events-none p-8 flex flex-col justify-between">
               <div className="w-full h-full border-[1.5px] border-primary/40 rounded-[2.5rem] relative">
@@ -124,7 +124,7 @@ export function SiteMonitoring() {
 
                 <div className="absolute top-6 right-6 flex flex-col items-end gap-3">
                    <div className="px-4 py-2 bg-primary text-white rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-xl shadow-primary/30">
-                      <BrainCircuit className="w-4 h-4" /> AI-VISION ACTIVE // MODE: {visionMode.toUpperCase()}
+                      <BrainCircuit className="w-4 h-4" /> SMART VISION ACTIVE // MODE: {visionMode.toUpperCase()}
                    </div>
                    {activeFeed.battery !== undefined && (
                       <div className="px-3 py-1 bg-black/40 backdrop-blur-md text-white rounded-lg text-[9px] font-mono flex items-center gap-2">
@@ -188,7 +188,7 @@ export function SiteMonitoring() {
                          </div>
                       </div>
                       <div className="pt-2 border-t border-white/10 flex justify-between items-center">
-                         <span className="text-[10px] font-black text-primary italic uppercase tracking-widest leading-none">AI Health Index</span>
+                         <span className="text-[10px] font-black text-primary italic uppercase tracking-widest leading-none">Smart Health Index</span>
                          <span className="text-xl font-black text-white tracking-tighter italic">98.4%</span>
                       </div>
                    </div>
@@ -237,7 +237,7 @@ export function SiteMonitoring() {
            <Card className="p-6 rounded-[2rem] bg-primary/5 border border-primary/10 space-y-3">
               <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center text-primary shadow-lg"><Activity className="w-6 h-6" /></div>
               <div className="space-y-1">
-                 <h4 className="font-black text-sm uppercase tracking-tighter italic">Behavioral AI</h4>
+                 <h4 className="font-black text-sm uppercase tracking-tighter italic">Behavioral Insights</h4>
                  <p className="text-[9px] font-bold text-muted-foreground uppercase opacity-80">Fatigue tracking active. 0 anomalies detected.</p>
               </div>
            </Card>
@@ -322,7 +322,7 @@ export function SiteMonitoring() {
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl opacity-50" />
             <div className="flex items-center gap-3">
                <div className="p-2 bg-white/10 rounded-lg"><Activity className="w-4 h-4" /></div>
-               <h4 className="text-sm font-black italic tracking-widest uppercase">Predictive Safety AI</h4>
+               <h4 className="text-sm font-black italic tracking-widest uppercase">Smart Safety Prediction</h4>
             </div>
             <p className="text-[10px] text-white/70 leading-relaxed font-medium">Analyzing behavioral patterns for "Zone 4 Scaffolding". Probability of minor structural anomaly detected at 14.5% due to improper loading.</p>
             <Button variant="outline" className="w-full border-white/20 bg-white/5 hover:bg-white/10 text-white font-bold h-10 text-xs">RESOLVE ALERT</Button>

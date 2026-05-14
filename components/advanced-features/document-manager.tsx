@@ -41,6 +41,7 @@ import {
 import { useToast } from "@/hooks/use-toast"
 import { ShareButton } from "@/components/share-button"
 import { shareDocument } from "@/lib/share-utils"
+import { getUserDataKey } from "@/lib/auth"
 import { SitePhotoUpload } from "@/components/work-schedule/site-photo-upload"
 import {
   createDocumentHeader,
@@ -191,7 +192,8 @@ export function DocumentManager() {
       } catch (err) {
         console.error("Failed to load documents from DB", err)
       }
-      const stored = localStorage.getItem("projectDocuments")
+      const key = getUserDataKey("projectDocuments")
+      const stored = localStorage.getItem(key)
       const storedDocs = stored ? JSON.parse(stored) : []
       setDocuments([...MOCK_DOCUMENTS, ...storedDocs])
     }
@@ -200,7 +202,8 @@ export function DocumentManager() {
 
   const saveDocuments = async (docs: Document[]) => {
     const userDocs = docs.filter((d) => !MOCK_DOCUMENTS.find((m) => m.id === d.id))
-    localStorage.setItem("projectDocuments", JSON.stringify(userDocs))
+    const key = getUserDataKey("projectDocuments")
+    localStorage.setItem(key, JSON.stringify(userDocs))
     setDocuments(docs)
     try {
       await fetch("/api/db/documents", {
@@ -839,7 +842,7 @@ export function DocumentManager() {
                         }}
                       >
                         <div className="absolute -top-6 left-0 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 whitespace-nowrap shadow-xl">
-                          {zone.label} [AI]
+                          {zone.label} [Smart]
                         </div>
                         <div className="absolute inset-0 opacity-0 group-hover/zone:opacity-100 bg-red-600/20 transition-opacity flex items-center justify-center">
                           <span className="text-white text-[8px] font-bold">{(zone.confidence * 100).toFixed(0)}% CONFIDENCE</span>
@@ -867,7 +870,7 @@ export function DocumentManager() {
             ) : (
               <div className="w-full max-w-lg bg-background rounded-2xl p-10 text-center shadow-md border animate-in fade-in zoom-in-95 duration-300">
                 <FileText className="w-20 h-20 mx-auto mb-6 text-muted-foreground/40" />
-                <h3 className="text-xl font-semibold mb-2">Digital Twin Placeholder</h3>
+                <h3 className="text-xl font-semibold mb-2">Project Design Sample</h3>
                 <p className="text-muted-foreground text-sm mb-6">
                   This mock document demonstrates our document flow. It has not been physically attached to a real file.
                 </p>
@@ -887,15 +890,15 @@ export function DocumentManager() {
                     <Bot className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-black text-base leading-none tracking-tight">INDUSTRI-AI™ VISION CORE</h4>
-                    <p className="text-[10px] text-muted-foreground mt-1 uppercase font-bold tracking-widest">{previewDoc.mlAnalysis.docClass} • CONFIDENCE: {previewDoc.mlAnalysis.confidenceScore}%</p>
+                    <h4 className="font-black text-base leading-none tracking-tight">SMART DOCUMENT INSIGHTS</h4>
+                    <p className="text-[10px] text-muted-foreground mt-1 uppercase font-bold tracking-widest">{previewDoc.mlAnalysis.docClass} • SCORE: {previewDoc.mlAnalysis.confidenceScore}%</p>
                   </div>
                 </div>
 
                 <div className="bg-muted/30 border-y -mx-5 px-5 py-2 mb-4 flex items-center justify-between text-[9px] font-mono text-muted-foreground">
-                  <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> ENGINE: STABLE</div>
-                  <div>CRC: {Math.random().toString(16).slice(2, 10).toUpperCase()}</div>
-                  <div className="font-bold text-primary">SCANNED via Layout-LM v3</div>
+                  <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> ENGINE: READY</div>
+                  <div>ID: {Math.random().toString(16).slice(2, 10).toUpperCase()}</div>
+                  <div className="font-bold text-primary">SCANNED WITH SMART AI</div>
                 </div>
 
                 <div className="space-y-4 text-sm">
@@ -955,7 +958,7 @@ export function DocumentManager() {
 
                   <div className="mt-4 pt-4 border-t border-dashed">
                     <p className="text-[9px] text-muted-foreground font-medium leading-relaxed italic">
-                      Disclaimer: This analysis uses high-fidelity neural networks tailored for construction physics. Hallucination suppression logic active.
+                      Disclaimer: This analysis uses smart AI tailored for construction. Safety checks active.
                     </p>
                   </div>
                 </div>

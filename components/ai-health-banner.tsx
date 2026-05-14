@@ -23,8 +23,7 @@ export function AiHealthBanner({ className }: { className?: string }) {
     <Alert className={cn("mb-4", className)}>
       <AlertTitle>Mock mode is active</AlertTitle>
       <AlertDescription>
-        Real AI is disabled. Generations will use mock data and still produce 4 diversified layouts. To enable real
-        providers, set ENABLE_REAL_AI to true in your project environment.
+        Smart generation is currently using simulated data. Generations will use optimized patterns and still produce 4 diversified layouts. To enable live intelligence, update your system configuration.
       </AlertDescription>
     </Alert>
   )

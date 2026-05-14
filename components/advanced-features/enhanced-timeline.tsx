@@ -205,7 +205,7 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isPredicting, setIsPredicting] = useState(false)
 
-  // ML Feature: Predict Schedule Risks 
+  // Smart Feature: Predict Schedule Risks 
   const predictScheduleRisks = async () => {
     setIsPredicting(true)
     try {
@@ -219,7 +219,7 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
       const result = await res.json()
       setPhases(result.enhanced_phases)
       toast({
-        title: "ML Risk Analysis Complete",
+        title: "Smart Risk Scan Complete",
         description: `Schedule Health: ${result.system_health}`,
       })
     } catch (err: any) {
@@ -470,7 +470,7 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={predictScheduleRisks} disabled={isPredicting} className="bg-primary/5 hover:bg-primary/10 border-primary/20 text-primary">
             {isPredicting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <BrainCircuit className="w-4 h-4 mr-2" />}
-            Analyze Risks (ML)
+            Analyze Risks (AI)
           </Button>
           <Button variant="outline" size="sm" className="bg-blue-500/5 hover:bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400">
             <Zap className="w-4 h-4 mr-2" />
@@ -580,7 +580,7 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
                 onClick={() => setExpandedPhase(expandedPhase === phase.id ? null : phase.id)}
               >
                 {/* Phase Header */}
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
                       {index + 1}
@@ -593,7 +593,7 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-3 md:justify-end">
                     {phase.isCriticalPath && (
                       <Badge variant="destructive" className="bg-red-500 hover:bg-red-600 shadow-sm shadow-red-500/20 text-white gap-1 animate-pulse border-none">
                         <Activity className="w-3 h-3" /> Critical Path
@@ -622,7 +622,7 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
                 {/* Progress Bar */}
                 {phase.status !== "upcoming" && <Progress value={phase.progress} className="mt-3 h-2" />}
 
-                {/* ML Risk Insights Summary */}
+                {/* AI Risk Insights Summary */}
                 {(phase as any).ml_risk_score !== undefined && (
                   <div className="mt-3 flex items-center gap-4 text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">
                     <span className="flex items-center gap-1">
@@ -739,7 +739,7 @@ export function EnhancedTimeline({ initialPhases = DEFAULT_PHASES }: { initialPh
                         </h4>
                         <div className="space-y-2">
                           <div className="flex justify-between items-center text-sm">
-                            <span className="text-muted-foreground">ML Weather Risk</span>
+                            <span className="text-muted-foreground">AI Weather Risk</span>
                             <Badge variant="outline" className={phase.weatherRisk === 'Moderate' || phase.weatherRisk === 'High' ? "border-amber-500/50 text-amber-600 bg-amber-50 dark:bg-amber-950/50" : "border-emerald-500/50 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/50"}>
                               {phase.weatherRisk || "Low"}
                             </Badge>

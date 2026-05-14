@@ -1,6 +1,7 @@
 import { streamText, tool, generateText } from "ai"
 import { z } from "zod"
 import { findBestAnswer, addTrainingPair } from "@/lib/siid-knowledge-base"
+import { createGoogleGenerativeAI } from "@ai-sdk/google"
 import { createOpenAI } from "@ai-sdk/openai"
 
 const RESPONSE_CACHE = new Map<string, { text: string; timestamp: number }>()
@@ -33,15 +34,25 @@ export async function POST(req: Request) {
       )
     }
 
-    // Create OpenAI provider instance
+    // Create providers
     const openai = createOpenAI({
       apiKey: process.env.OPENAI_API_KEY || "",
-      compatibility: "strict", // fallback for standard OpenAI
+      compatibility: "strict",
+    })
+
+    const google = createGoogleGenerativeAI({
+      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY || "",
     })
 
     const rawModel = typeof body?.model === "string" && body.model.length > 0 ? body.model : "openai/gpt-4o-mini"
-    const modelName = rawModel.replace("openai/", "")
-    const requestedModel = openai(modelName)
+    
+    let requestedModel;
+    if (rawModel.startsWith("google/")) {
+      requestedModel = google(rawModel.replace("google/", ""))
+    } else {
+      const modelName = rawModel.replace("openai/", "")
+      requestedModel = openai(modelName)
+    }
 
     const enableWeb = Boolean(body?.enableWeb)
     const sync = Boolean(body?.sync)

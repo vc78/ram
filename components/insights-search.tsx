@@ -52,7 +52,7 @@ import { cn } from "@/lib/utils"
 
 const categories = [
   { id: "all", label: "All", icon: Grid3X3 },
-  { id: "ai", label: "AI & Tech", icon: Sparkles },
+  { id: "ai", label: "Smart Tech", icon: Sparkles },
   { id: "construction", label: "Construction", icon: Building2 },
   { id: "contractors", label: "Contractors", icon: Users },
   { id: "budget", label: "Budget", icon: Calculator },
@@ -61,13 +61,13 @@ const categories = [
 ]
 
 const quickSearches = [
-  { label: "AI Design", query: "AI Design", icon: Sparkles },
+  { label: "Smart Design", query: "Smart Design", icon: Sparkles },
   { label: "Find Contractors", query: "Contractor", icon: Users },
   { label: "Budget Planning", query: "Budget", icon: Calculator },
   { label: "Green Building", query: "Green", icon: Leaf },
 ]
 
-const trendingTopics = ["Smart Materials 2024", "AI Floor Plans", "Green Certification", "Labor Cost Index"]
+const trendingTopics = ["Smart Materials 2024", "Smart Floor Plans", "Green Certification", "Labor Cost Index"]
 
 type ViewMode = "grid" | "list"
 type SortOption = "relevance" | "recent" | "popular"
@@ -284,7 +284,7 @@ export function InsightsSearch() {
               </div>
               <div>
                 <CardTitle className="text-xl">Live Insights</CardTitle>
-                <CardDescription>Discover construction trends, AI tools & more</CardDescription>
+                <CardDescription>Discover construction trends, smart tools & more</CardDescription>
               </div>
             </div>
 

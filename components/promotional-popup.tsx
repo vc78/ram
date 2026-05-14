@@ -249,10 +249,10 @@ export default function PromotionalPopup() {
                             {/* Title & Description */}
                             <div className="space-y-1.5">
                                 <h3 className="text-lg font-bold text-white">
-                                    AI Construction Platform
+                                    Smart Construction Platform
                                 </h3>
                                 <p className="text-emerald-200 text-xs leading-relaxed">
-                                    Watch how SIID FLASH transforms construction design, cost analysis, and project management. Three powerful demonstrations of our AI capabilities.
+                                    Watch how SIID FLASH transforms construction design, cost analysis, and project management. Three powerful demonstrations of our smart capabilities.
                                 </p>
                             </div>
 

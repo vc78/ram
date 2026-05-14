@@ -30,7 +30,7 @@ type Message = {
     }
 }
 
-const SYSTEM_PROMPT = `You are BuildAssist AI, an intelligent construction planning assistant for the SIID FLASH platform.
+const SYSTEM_PROMPT = `You are BuildAssist Smart, an intelligent construction planning system for the SIID FLASH platform.
 
 YOUR ROLE:
 You help users plan, design, and estimate construction projects such as houses, apartments, commercial buildings, and interiors with expertise and professionalism.
@@ -369,7 +369,7 @@ export default function ConstructionAssistant() {
                 <button
                     onClick={() => setIsOpen(true)}
                     className="fixed bottom-6 right-6 z-40 group"
-                    aria-label="Open BuildAssist AI"
+                    aria-label="Open BuildAssist Smart"
                 >
                     {/* Pulse effect ring */}
                     <div className="absolute inset-0 rounded-full bg-primary/30 animate-pulse group-hover:bg-primary/50 transition-colors" />
@@ -401,7 +401,7 @@ export default function ConstructionAssistant() {
                                     <SIIDLogo className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-white">BuildAssist AI</h3>
+                                    <h3 className="text-sm font-bold text-white">BuildAssist Smart</h3>
                                     <p className="text-xs text-white/70">Construction Expert</p>
                                 </div>
                             </div>

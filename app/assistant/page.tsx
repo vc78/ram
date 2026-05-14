@@ -98,25 +98,25 @@ export default function AssistantPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/">
+        <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-4 w-full sm:w-auto">
+            <Link href="/" className="flex-shrink-0">
               <Button variant="ghost" size="sm">
                 <ChevronLeft className="w-4 h-4 mr-1" />
-                Home
+                <span className="hidden sm:inline">Home</span>
               </Button>
             </Link>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <div className="flex items-center gap-2 overflow-hidden">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
                 <Bot className="w-5 h-5 text-white" />
               </div>
-              <span className="text-lg font-bold">SIID AI Assistant</span>
-              <Badge variant="secondary" className="ml-2">
+              <span className="text-lg font-bold truncate">SIID Assistant</span>
+              <Badge variant="secondary" className="hidden xs:flex">
                 Trained
               </Badge>
             </div>
           </div>
-          <div className="text-sm text-muted-foreground">{SIID_KNOWLEDGE_BASE.length}+ trained responses</div>
+          <div className="text-xs text-muted-foreground w-full sm:w-auto text-right">{SIID_KNOWLEDGE_BASE.length}+ trained responses</div>
         </div>
       </header>
 
@@ -268,16 +268,16 @@ export default function AssistantPage() {
                     e.preventDefault()
                     submit()
                   }}
-                  className="flex items-center gap-2"
+                  className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-auto"
                 >
                   <Input
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Ask to draft a letter, calculate EVM, or list HSE hazards..."
+                    placeholder="Ask assistant..."
                     className="flex-1"
                     disabled={isLoading}
                   />
-                  <Button type="submit" disabled={isLoading || !input.trim()}>
+                  <Button type="submit" disabled={isLoading || !input.trim()} className="w-full sm:w-auto">
                     <Send className="w-4 h-4 mr-2" />
                     Send
                   </Button>

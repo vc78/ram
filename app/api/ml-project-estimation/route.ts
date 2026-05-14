@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { ML_MODEL_WEIGHTS } from "@/lib/ml-weights"
 
-const CITY_COST_INDEX: Record<string, number> = ML_MODEL_WEIGHTS.mappings.city
+const CITY_COST_INDEX: Record<string, number> = ML_MODEL_WEIGHTS.city_index
 
 const PROJECT_TYPE_RATES = {
   residential: { rate: 1950, risk: 0.05, complexity: 1.0 },
@@ -44,7 +44,8 @@ const MATERIAL_CONSUMPTION = {
 
 export async function POST(req: Request) {
   try {
-    const { formData, requirements, projectType } = await req.json()
+    const body = await req.json()
+    const { formData = {}, requirements = {}, projectType = "residential" } = body || {}
     
     // 1. Feature Extraction & Normalization
     const type = (projectType || "residential") as keyof typeof PROJECT_TYPE_RATES
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
 
     // 2. Advanced Geographic Cost Analytics
     let geoMultiplier = 1.0
-    const cityEntry = Object.entries(CITY_COST_INDEX).find(([city]) => location.includes(city))
+    const cityEntry = Object.entries(CITY_COST_INDEX).find(([city]) => location.includes(city.toLowerCase()))
     if (cityEntry) {
       geoMultiplier = cityEntry[1]
     } else {

@@ -179,19 +179,20 @@ export function HomeAssistant({
   }
 
   return (
-    <div className={cn("fixed bottom-4 right-4 z-50", className)}>
+    <div className={cn("fixed bottom-4 right-4 z-50 flex flex-col items-end", className)}>
       {!open ? (
         <button
           onClick={() => setOpen(true)}
-          className="rounded-2xl bg-gradient-to-r from-primary to-accent text-white px-5 py-3 shadow-[0_10px_30px_rgba(59,130,246,0.45)] hover:shadow-[0_12px_28px_rgba(59,130,246,0.55)] transition-all duration-200 flex items-center gap-2"
+          className="rounded-2xl bg-gradient-to-r from-primary to-accent text-white px-4 py-3 sm:px-5 sm:py-3 shadow-[0_10px_30px_rgba(59,130,246,0.45)] hover:shadow-[0_12px_28px_rgba(59,130,246,0.55)] transition-all duration-200 flex items-center gap-2"
           aria-label="Open SIID Assistant"
         >
           <Bot className="w-5 h-5 animate-pulse" />
-          <span className="text-sm font-bold">SIID Smart Help</span>
+          <span className="text-sm font-bold hidden sm:inline">SIID Smart Help</span>
+          <span className="text-sm font-bold sm:hidden">Help</span>
           <span className="text-[10px] bg-white/30 px-2 py-0.5 rounded-full">Live</span>
         </button>
       ) : (
-        <div className="w-[360px] sm:w-[420px] bg-card text-card-foreground rounded-xl shadow-2xl border p-0 overflow-hidden">
+        <div className="w-[calc(100vw-2rem)] sm:w-[420px] max-h-[80vh] bg-card text-card-foreground rounded-xl shadow-2xl border p-0 overflow-hidden flex flex-col">
           <div className="px-3 py-3 border-b bg-gradient-to-r from-primary/10 to-accent/10 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5 text-primary" />

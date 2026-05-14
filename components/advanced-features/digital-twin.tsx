@@ -228,7 +228,7 @@ export function DigitalTwin() {
              { icon: <Thermometer />, label: "Exothermic Pour Control", desc: "Concrete core @ 42.5°C. Hydration peak detected." },
              { icon: <Ruler />, label: "Deflection Mesh", desc: "Live beam sag: 1.2mm. within L/360 tolerance." },
              { icon: <ArrowDownToLine />, label: "Settlement Array", desc: "Sub-grade shift: 0.002mm/24h. Foundation locked." },
-             { icon: <Waves />, label: "Spectral Vibration", desc: "HVAC Resonance @ 42Hz. AI-dampening active." }
+             { icon: <Waves />, label: "Spectral Vibration", desc: "HVAC Resonance @ 42Hz. Smart-dampening active." }
            ].map((feat, i) => (
              <Card key={i} className="p-7 rounded-[2.5rem] bg-white dark:bg-black/40 border border-slate-200 dark:border-white/10 shadow-xl group hover:border-primary/40 transition-all">
                 <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-primary mb-4 group-hover:bg-primary group-hover:text-white transition-all">{feat.icon}</div>
@@ -239,7 +239,7 @@ export function DigitalTwin() {
         </div>
       </div>
 
-      {/* Right Column: Alerts & AI Recommendations */}
+      {/* Right Column: Alerts & Smart Recommendations */}
       <div className="space-y-6">
          <Card className="p-8 rounded-[2.5rem] bg-white/50 dark:bg-black/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-8">
             <h3 className="text-xl font-black flex items-center gap-3">
@@ -254,7 +254,7 @@ export function DigitalTwin() {
                        <span className="text-[10px] font-mono text-muted-foreground">{s.lastPing}</span>
                     </div>
                     <div className="font-black text-xs">{s.label} Deviation</div>
-                    <p className="text-[10px] text-muted-foreground leading-relaxed">Threshold exceeded on LVL 0{s.floor}. AI recommends inspecting load-points immediately.</p>
+                    <p className="text-[10px] text-muted-foreground leading-relaxed">Threshold exceeded on LVL 0{s.floor}. System suggests inspecting load-points immediately.</p>
                  </div>
                ))}
                {sensors.filter(s => s.status !== 'normal' && s.status !== 'optimal').length === 0 && (
@@ -274,7 +274,7 @@ export function DigitalTwin() {
                   <Progress value={82} className="h-2" />
                   <div className="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 flex items-start gap-4">
                      <Hammer className="w-5 h-5 text-indigo-500 mt-1 shrink-0" />
-                     <p className="text-[10px] text-indigo-600/80 leading-relaxed font-bold italic">“AI projection: Final strength reaching 25MPa in 14h. Safe to remove formwork for Pillar-G4 at 08:00 tomorrow.”</p>
+                     <p className="text-[10px] text-indigo-600/80 leading-relaxed font-bold italic">“Smart projection: Final strength reaching 25MPa in 14h. Safe to remove formwork for Pillar-G4 at 08:00 tomorrow.”</p>
                   </div>
                </div>
 

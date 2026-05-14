@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -754,13 +756,26 @@ const nextStep = () => setStep(Math.min(step + 1, 3))
 const prevStep = () => setStep(Math.max(step - 1, 1))
 
 return (
-  <Card className="p-6 border-border">
-    <div className="flex items-center justify-between mb-6">
-      <div className="flex items-center gap-2">
-        <Compass className="w-6 h-6 text-primary" />
-        <h3 className="text-xl font-semibold">Comprehensive Vastu Layout Generator</h3>
+  <Card className="p-4 sm:p-6 md:p-8 bg-background border-border shadow-2xl rounded-2xl sm:rounded-3xl overflow-hidden relative">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4">
+      <div className="flex items-center gap-4">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+          <Compass className="w-5 h-5 sm:w-6 sm:h-6" />
+        </div>
+        <div>
+          <h3 className="text-xl font-bold tracking-tight">Vastu Layout Generator</h3>
+          <div className="flex items-center gap-2 mt-1">
+            <Badge variant="secondary" className="text-[9px] font-black tracking-widest uppercase">
+              Step {step <= 3 ? step : "Results"} of 3
+            </Badge>
+            <div className="flex gap-1">
+              {[1, 2, 3].map((s) => (
+                <div key={s} className={cn("h-1 rounded-full transition-all", s === step ? "w-4 bg-primary" : "w-1 bg-muted")} />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
-      <Badge variant="outline">Step {step} of 3</Badge>
     </div>
 
     {/* Step 1: Construction Details */}
@@ -988,118 +1003,128 @@ return (
           </div>
         </div>
 
-        {/* Room Analysis */}
-        <div>
-          <h4 className="font-semibold mb-3 flex items-center gap-2">
-            Room Placement Analysis
-            <Badge variant="outline">{layout.rooms.length}</Badge>
-          </h4>
-          <div className="space-y-2 max-h-64 overflow-y-auto">
-            {layout.rooms.map((room, index) => (
-              <div
-                key={index}
-                className={`p-3 rounded-lg border ${room.status === "compliant"
-                  ? "bg-green-50 dark:bg-green-900/20 border-green-200"
-                  : room.status === "warning"
-                    ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200"
-                    : "bg-red-50 dark:bg-red-900/20 border-red-200"
-                  }`}
+        {/* Analysis Tabs */}
+        <div className="w-full">
+           <div className="flex border-b border-border mb-4 overflow-x-auto no-scrollbar">
+              <button 
+                onClick={() => setStep(4)} 
+                className={cn("px-4 py-2 text-sm font-bold uppercase tracking-widest whitespace-nowrap transition-all border-b-2", step === 4 ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}
               >
-                <div className="flex items-center gap-2 mb-1">
-                  {room.status === "compliant" ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                  ) : room.status === "warning" ? (
-                    <AlertTriangle className="w-4 h-4 text-yellow-500" />
-                  ) : (
-                    <XCircle className="w-4 h-4 text-red-500" />
-                  )}
-                  <span className="font-medium text-sm">{room.name}</span>
-                  <Badge variant="secondary" className="text-xs">
-                    {room.direction}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs ml-auto">
-                    {room.priority}
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground ml-6">{room.suggestion}</p>
-                {room.remedy && (
-                  <p className="text-xs text-red-600 dark:text-red-400 ml-6 mt-1">Remedy: {room.remedy}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Advanced Features */}
-        <div>
-          <h4 className="font-semibold mb-3 flex items-center gap-2">
-            Advanced Features Analysis
-            <Badge variant="outline">{layout.features.length}+ Features</Badge>
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-48 overflow-y-auto">
-            {layout.features.map((feature, index) => (
-              <div key={index} className="text-xs flex items-start gap-1">
-                {feature.status === "pass" ? (
-                  <CheckCircle2 className="w-3 h-3 text-green-500 flex-shrink-0 mt-0.5" />
-                ) : (
-                  <AlertTriangle className="w-3 h-3 text-yellow-500 flex-shrink-0 mt-0.5" />
-                )}
-                <span className="text-muted-foreground">{feature.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Doshas */}
-        <div>
-          <h4 className="font-semibold mb-3 text-red-600 dark:text-red-400">Vastu Dosha Detection</h4>
-          <div className="space-y-2">
-            {layout.doshas.map((dosha, index) => (
-              <div
-                key={index}
-                className={`p-3 rounded-lg border ${dosha.severity === "high"
-                  ? "bg-red-50 dark:bg-red-900/20 border-red-300"
-                  : dosha.severity === "medium"
-                    ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300"
-                    : "bg-green-50 dark:bg-green-900/20 border-green-300"
-                  }`}
+                Room Analysis
+              </button>
+              <button 
+                onClick={() => setStep(5)} 
+                className={cn("px-4 py-2 text-sm font-bold uppercase tracking-widest whitespace-nowrap transition-all border-b-2", step === 5 ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}
               >
-                <div className="flex items-center gap-2 mb-1">
-                  <Badge
-                    variant={
-                      dosha.severity === "high"
-                        ? "destructive"
-                        : dosha.severity === "medium"
-                          ? "secondary"
-                          : "default"
-                    }
-                    className="text-xs"
-                  >
-                    {dosha.severity.toUpperCase()}
-                  </Badge>
-                  <span className="font-medium text-sm">{dosha.name}</span>
+                Advanced Features
+              </button>
+              <button 
+                onClick={() => setStep(6)} 
+                className={cn("px-4 py-2 text-sm font-bold uppercase tracking-widest whitespace-nowrap transition-all border-b-2", step === 6 ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground")}
+              >
+                Vastu Doshas
+              </button>
+           </div>
+
+           <div className="mt-4">
+              {/* Room Analysis Tab */}
+              {(step === 4 || !step) && (
+                <div className="space-y-3">
+                  <h4 className="font-bold text-xs uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
+                    <Compass className="w-4 h-4" /> Room Placement Analysis
+                  </h4>
+                  <div className="grid gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    {layout.rooms.map((room, index) => (
+                      <div
+                        key={index}
+                        className={cn(
+                          "p-4 rounded-2xl border transition-all hover:shadow-md",
+                          room.status === "compliant" ? "bg-green-50/50 border-green-100" : 
+                          room.status === "warning" ? "bg-amber-50/50 border-amber-100" : 
+                          "bg-red-50/50 border-red-100"
+                        )}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            {room.status === "compliant" ? <CheckCircle2 className="w-4 h-4 text-green-500" /> : <AlertTriangle className="w-4 h-4 text-amber-500" />}
+                            <span className="font-bold text-sm uppercase">{room.name}</span>
+                          </div>
+                          <Badge variant="outline" className="text-[10px] font-black">{room.direction}</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{room.suggestion}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  <span className="font-medium">Remedy:</span> {dosha.remedy}
-                </p>
-              </div>
-            ))}
-          </div>
+              )}
+
+              {/* Advanced Features Tab */}
+              {step === 5 && (
+                <div className="space-y-4">
+                   <h4 className="font-bold text-xs uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4" /> Advanced Engineering Features
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    {layout.features.map((feature, index) => (
+                      <div key={index} className="p-3 rounded-xl border bg-muted/20 flex items-start gap-3">
+                        <div className={cn("mt-1 p-1 rounded-full", feature.status === "pass" ? "bg-green-500/20" : "bg-amber-500/20")}>
+                          <CheckCircle2 className={cn("w-3 h-3", feature.status === "pass" ? "text-green-600" : "text-amber-600")} />
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-bold text-foreground">{feature.name}</p>
+                          <p className="text-[10px] text-muted-foreground mt-0.5">{feature.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Doshas Tab */}
+              {step === 6 && (
+                <div className="space-y-4">
+                   <h4 className="font-bold text-xs uppercase tracking-widest text-red-500 mb-3 flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" /> Vastu Doshas & Remedies
+                  </h4>
+                  <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    {layout.doshas.map((dosha, index) => (
+                      <div
+                        key={index}
+                        className={cn(
+                          "p-4 rounded-2xl border bg-background shadow-sm",
+                          dosha.severity === "high" ? "border-red-200" : "border-amber-200"
+                        )}
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-bold text-sm uppercase text-foreground">{dosha.name}</span>
+                          <Badge variant={dosha.severity === "high" ? "destructive" : "secondary"} className="text-[9px] font-black">
+                            {dosha.severity.toUpperCase()}
+                          </Badge>
+                        </div>
+                        <div className="p-3 rounded-xl bg-muted/30 border border-dashed border-border">
+                          <p className="text-xs font-medium text-foreground"><span className="text-primary font-bold uppercase text-[9px] mr-2">Remedy:</span> {dosha.remedy}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+           </div>
         </div>
 
         {/* Download Buttons */}
-        <div className="flex gap-2 pt-4 border-t">
-          <Button variant="outline" className="flex-1 bg-transparent" onClick={downloadPDF}>
+        <div className="flex flex-wrap gap-2 pt-6 border-t border-border">
+          <Button variant="outline" className="flex-1 h-12 rounded-xl font-bold text-xs uppercase tracking-widest bg-transparent hover:bg-muted transition-all" onClick={downloadPDF}>
             <Download className="w-4 h-4 mr-2" />
             Download PDF
           </Button>
-          <Button variant="outline" className="flex-1 bg-transparent" onClick={downloadImage}>
+          <Button variant="outline" className="flex-1 h-12 rounded-xl font-bold text-xs uppercase tracking-widest bg-transparent hover:bg-muted transition-all" onClick={downloadImage}>
             <FileImage className="w-4 h-4 mr-2" />
             Download Image
           </Button>
-          <Button variant="outline" className="flex-1 bg-transparent" onClick={generateLayout}>
+          <Button variant="outline" className="flex-1 h-12 rounded-xl font-bold text-xs uppercase tracking-widest bg-transparent hover:bg-muted transition-all" onClick={() => { setLayout(null); setStep(1); }}>
             <RefreshCw className="w-4 h-4 mr-2" />
-            Regenerate
+            Reset
           </Button>
         </div>
       </div>

@@ -1,14 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { AuthGuard } from "@/components/auth-guard"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { getCurrentUser, logout } from "@/lib/auth"
+import { getCurrentUser, logout, getUserDataKey } from "@/lib/auth"
 import { BrandLogo } from "@/components/brand-logo"
-import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
@@ -62,7 +63,7 @@ export default function DashboardPage() {
   const [memberOpen, setMemberOpen] = useState(false)
   const [newTaskTitle, setNewTaskTitle] = useState("")
   const [newMember, setNewMember] = useState({ name: "", email: "" })
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
 
   const handleLogout = async () => {
     await logout()
@@ -71,13 +72,15 @@ export default function DashboardPage() {
 
   const defaultProjects = [
     {
-      id: 1,
-      name: "Modern Villa",
-      status: "In Progress",
-      progress: 35,
-      budget: "₹150,000",
-      deadline: "May 2024",
-      image: "/images/modern-villa-project.jpg",
+      id: "PROJ-2026-0514",
+      name: "Residential Building — 3 BHK",
+      status: "Planning",
+      progress: 0,
+      budget: "₹68,40,000",
+      deadline: "18 Months",
+      location: "Hyderabad, Telangana",
+      vastuScore: "87%",
+      image: "https://images.unsplash.com/photo-1541888086225-ee5dc24bd4ab?auto=format&fit=crop&q=80",
     },
     {
       id: 2,
@@ -104,11 +107,12 @@ export default function DashboardPage() {
 
   useEffect(() => {
      try {
-        const stored = localStorage.getItem("siid_projects");
+        const key = getUserDataKey("siid_projects");
+        const stored = localStorage.getItem(key);
         if (stored) {
            const parsed = JSON.parse(stored);
            setActiveProjectsList([...parsed, ...defaultProjects]);
-           setActiveCount((3 + parsed.length).toString());
+           setActiveCount((defaultProjects.length + parsed.length).toString());
         }
      } catch(e) {}
   }, [])
@@ -124,118 +128,116 @@ export default function DashboardPage() {
     <AuthGuard>
       <ErrorBoundary>
         <div className="min-h-screen bg-background">
-          {/* Header */}
-          <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50">
-            <div className="container mx-auto px-4 lg:px-6 py-4">
+          <header className="border-b border-border bg-background/95 backdrop-blur sticky top-0 z-50 lg:hidden">
+            <div className="container mx-auto px-4 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(!sidebarOpen)}>
+                  <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)}>
                     <Menu className="w-5 h-5" />
                   </Button>
-                  <Link href="/" className="text-2xl font-bold text-primary flex items-center gap-2">
-                    <Home className="w-6 h-6 hidden sm:block" />
-                    <span>SIID</span>
-                  </Link>
-                  <Badge variant="secondary" className="hidden sm:inline-flex">
-                    Dashboard
-                  </Badge>
+                  <span className="text-xl font-bold text-primary">SIID</span>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  {/* Language Selector */}
-                  <LanguageSelector />
-                  <Button variant="outline" size="sm" onClick={() => router.push("/settings")}>
-                    <Settings className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Settings</span>
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={async () => {
-                      await logout()
-                      router.push("/")
-                    }}
-                  >
-                    <LogOut className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">Logout</span>
-                  </Button>
-                </div>
+                <LanguageSelector />
               </div>
             </div>
           </header>
 
           <aside className={cn(
-            "fixed left-0 top-0 h-full w-64 border-r border-border bg-background lg:bg-muted/30 overflow-y-auto flex flex-col z-50 transition-transform duration-300 lg:translate-x-0",
+            "fixed left-0 top-0 h-full w-64 border-r border-border bg-background lg:bg-muted/30 overflow-y-auto flex flex-col z-50 transition-all duration-300",
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}>
-            <div className="p-6">
-              <Link href="/" className="flex items-center gap-2 mb-8">
-                <BrandLogo className="h-12 w-auto" />
-              </Link>
+            <div className="p-6 flex flex-col h-full">
+              <div className="flex items-center justify-between mb-8">
+                <Link href="/" className="flex items-center gap-2">
+                  <span className="text-2xl font-bold text-primary">SIID</span>
+                </Link>
+                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)} className="lg:hidden">
+                   <Menu className="w-5 h-5" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)} className="hidden lg:flex">
+                   <Menu className="w-5 h-5" />
+                </Button>
+              </div>
 
-              <nav className="space-y-1">
+              <nav className="space-y-1 flex-1">
                 <button
-                  onClick={() => setActiveTab("overview")}
+                  onClick={() => { setActiveTab("overview"); if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === "overview"
                     ? "bg-primary text-white shadow-md"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                 >
                   <LayoutDashboard className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">{t.overview}</span>
+                  <span className="text-sm font-medium">Overview</span>
                 </button>
 
                 <button
-                  onClick={() => setActiveTab("projects")}
+                  onClick={() => { setActiveTab("projects"); if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === "projects"
                     ? "bg-primary text-white shadow-md"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                 >
                   <FolderOpen className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">{t.myProjects}</span>
+                  <span className="text-sm font-medium">Our projects</span>
                 </button>
 
                 <button
-                  onClick={() => setActiveTab("tools")}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === "tools"
+                  onClick={() => { setActiveTab("material"); if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === "material"
                     ? "bg-primary text-white shadow-md"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                 >
                   <Calculator className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">{t.tools}</span>
+                  <span className="text-sm font-medium">Material calculator</span>
+                </button>
+
+                <button
+                  onClick={() => { setActiveTab("vastu"); if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === "vastu"
+                    ? "bg-primary text-white shadow-md"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                >
+                  <Grid3x3 className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-sm font-medium">Vastu Analysis</span>
                 </button>
 
                 <Link href="/3d-generator">
-                  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-accent/10 hover:text-accent transition-all border border-accent/30">
+                  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
                     <Cube className="w-5 h-5 flex-shrink-0" />
                     <span className="text-sm font-medium">3D Generator</span>
                   </button>
                 </Link>
 
-
+                <Link href="/dashboard/schedule">
+                  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
+                    <Calendar className="w-5 h-5 flex-shrink-0" />
+                    <span className="text-sm font-medium">Work schedule</span>
+                  </button>
+                </Link>
 
                 <button
-                  onClick={() => setActiveTab("timeline")}
+                  onClick={() => { setActiveTab("timeline"); if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === "timeline"
                     ? "bg-primary text-white shadow-md"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                 >
-                  <Calendar className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">{t.timeline}</span>
+                  <Clock className="w-5 h-5 flex-shrink-0" />
+                  <span className="text-sm font-medium">Time line</span>
                 </button>
 
                 <button
-                  onClick={() => setActiveTab("documents")}
+                  onClick={() => { setActiveTab("documents"); if (typeof window !== "undefined" && window.innerWidth < 1024) setSidebarOpen(false); }}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${activeTab === "documents"
                     ? "bg-primary text-white shadow-md"
                     : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                 >
                   <FileText className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-sm font-medium">{t.documents}</span>
+                  <span className="text-sm font-medium">Documents</span>
                 </button>
 
                 <Link href="/dashboard/contractors">
@@ -245,7 +247,6 @@ export default function DashboardPage() {
                   </button>
                 </Link>
 
-
                 <Link href="/dashboard/careers">
                   <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
                     <Briefcase className="w-5 h-5 flex-shrink-0" />
@@ -253,17 +254,10 @@ export default function DashboardPage() {
                   </button>
                 </Link>
 
-                <Link href="/dashboard/schedule">
-                  <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
-                    <Calendar className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm font-medium">Work Schedule</span>
-                  </button>
-                </Link>
-
                 <Link href="/settings">
                   <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all">
                     <Settings className="w-5 h-5 flex-shrink-0" />
-                    <span className="text-sm font-medium">{t.settings}</span>
+                    <span className="text-sm font-medium">Settings</span>
                   </button>
                 </Link>
               </nav>
@@ -306,34 +300,51 @@ export default function DashboardPage() {
             />
           )}
 
-          <main className="lg:ml-64 p-4 md:p-8">
+          <main className={cn(
+            "transition-all duration-300 p-4 md:p-8 relative",
+            sidebarOpen ? "lg:ml-64" : "lg:ml-0"
+          )}>
+            {!sidebarOpen && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setSidebarOpen(true)}
+                className="hidden lg:flex absolute top-4 left-4 z-50 bg-background/80 backdrop-blur shadow-sm border border-border"
+              >
+                <Menu className="w-5 h-5" />
+              </Button>
+            )}
             <div className="max-w-7xl mx-auto">
-              <div className="flex items-center justify-between mb-8">
+              <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                 <div>
-                  <h1 className="text-3xl font-bold mb-2">{t.welcomeBack}, {user?.name}!</h1>
-                  <p className="text-muted-foreground">{"Here's what's happening with your projects"}</p>
+                  <h1 className="text-2xl md:text-3xl font-bold mb-2">{t.welcomeBack}, {user?.name}!</h1>
+                  <p className="text-muted-foreground text-sm md:text-base">{"Here's what's happening with your projects"}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <Button
                     variant="outline"
                     size="icon"
                     onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
                     title={`Switch to ${viewMode === "grid" ? "list" : "grid"} view`}
+                    className="flex-shrink-0"
                   >
                     {viewMode === "grid" ? <LayoutGrid className="w-4 h-4" /> : <Grid3x3 className="w-4 h-4" />}
                   </Button>
-                  <Button variant="outline" onClick={() => setTaskOpen(true)}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Task
+                  <Button variant="outline" size="sm" onClick={() => setTaskOpen(true)}>
+                    <Plus className="w-4 h-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">Add Task</span>
+                    <span className="sm:hidden">Task</span>
                   </Button>
-                  <Button variant="outline" onClick={() => setMemberOpen(true)}>
-                    <Users className="w-4 h-4 mr-2" />
-                    Add Member
+                  <Button variant="outline" size="sm" onClick={() => setMemberOpen(true)}>
+                    <Users className="w-4 h-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">Add Member</span>
+                    <span className="sm:hidden">Member</span>
                   </Button>
                   <Link href="/projects/create">
-                    <Button className="bg-emerald-600 hover:bg-emerald-500 text-white">
-                      <Sparkles className="w-5 h-5 mr-2" />
-                      New AI Project
+                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-500 text-white">
+                      <Sparkles className="w-4 h-4 mr-1 md:mr-2" />
+                      <span className="hidden sm:inline">New AI Project</span>
+                      <span className="sm:hidden">New</span>
                     </Button>
                   </Link>
                 </div>
@@ -577,20 +588,58 @@ export default function DashboardPage() {
                 </ErrorBoundary>
               )}
 
-              {activeTab === "tools" && (
+              {activeTab === "material" && (
                 <ErrorBoundary>
-                  <div className="grid lg:grid-cols-2 gap-6 mb-6">
-                    <MaterialCalculator />
-                    <VastuChecker />
+                  <MaterialCalculator />
+                </ErrorBoundary>
+              )}
+
+              {activeTab === "vastu" && (
+                <ErrorBoundary>
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between mb-2">
+                       <div>
+                          <h2 className="text-2xl font-bold tracking-tight">Vastu Analysis Intelligence</h2>
+                          <p className="text-sm text-muted-foreground">Traditional principles meets modern geo-spatial engineering</p>
+                       </div>
+                       <div className="flex bg-muted p-1 rounded-xl">
+                          <Button 
+                            variant={!viewMode || viewMode === "grid" ? "default" : "ghost"} 
+                            size="sm" 
+                            onClick={() => setViewMode("grid")}
+                            className="rounded-lg text-xs font-bold"
+                          >
+                            Traditional
+                          </Button>
+                          <Button 
+                            variant={viewMode === "list" ? "default" : "ghost"} 
+                            size="sm" 
+                            onClick={() => setViewMode("list")}
+                            className="rounded-lg text-xs font-bold"
+                          >
+                            Geo-Spatial
+                          </Button>
+                       </div>
+                    </div>
+
+                    <div className="mt-4 transition-all duration-500">
+                      {(!viewMode || viewMode === "grid") && (
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                           <VastuChecker />
+                        </motion.div>
+                      )}
+                      {viewMode === "list" && (
+                        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+                           <GeoVastuEngine />
+                        </motion.div>
+                      )}
+                    </div>
                   </div>
-                  {/* NEW REAL-TIME GEO-VASTU ENGINE (Separate Service) */}
-                  <GeoVastuEngine />
                 </ErrorBoundary>
               )}
 
               {activeTab === "timeline" && (
                 <ErrorBoundary>
-                  {/* Enhanced Timeline */}
                   <EnhancedTimeline />
                 </ErrorBoundary>
               )}
@@ -614,9 +663,10 @@ export default function DashboardPage() {
               <DialogFooter>
                 <Button
                   onClick={() => {
-                    const tasks = JSON.parse(localStorage.getItem("globalTasks") || "[]")
+                    const key = getUserDataKey("globalTasks")
+                    const tasks = JSON.parse(localStorage.getItem(key) || "[]")
                     tasks.unshift({ id: crypto.randomUUID(), title: newTaskTitle, at: Date.now() })
-                    localStorage.setItem("globalTasks", JSON.stringify(tasks))
+                    localStorage.setItem(key, JSON.stringify(tasks))
                     setTaskOpen(false)
                     setNewTaskTitle("")
                   }}
@@ -647,9 +697,10 @@ export default function DashboardPage() {
               <DialogFooter>
                 <Button
                   onClick={() => {
-                    const members = JSON.parse(localStorage.getItem("projectMembers") || "[]")
+                    const key = getUserDataKey("projectMembers")
+                    const members = JSON.parse(localStorage.getItem(key) || "[]")
                     members.push({ id: crypto.randomUUID(), ...newMember })
-                    localStorage.setItem("projectMembers", JSON.stringify(members))
+                    localStorage.setItem(key, JSON.stringify(members))
                     setMemberOpen(false)
                     setNewMember({ name: "", email: "" })
                   }}

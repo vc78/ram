@@ -221,10 +221,24 @@ export default function ProfessionalSettings() {
                         <p className="text-sm text-slate-600 dark:text-slate-400">Connected to AutoCAD Web API & Revit Cloud Nodes. Last sync: 4 minutes ago.</p>
                         <Button variant="secondary" className="w-full bg-blue-600 text-white hover:bg-blue-500">Force Re-index BIM</Button>
                       </div>
-                      <div className="flex justify-between items-center group/item p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl">
+                      <div className="flex justify-between items-center group/item p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-all">
                         <div className="space-y-1">
                           <Label className="font-bold">IoT Sensor Overlay</Label>
                           <p className="text-xs text-slate-500">Render live structural sensors in 3D views</p>
+                        </div>
+                        <Switch defaultChecked />
+                      </div>
+                      <div className="flex justify-between items-center group/item p-4 bg-primary/5 dark:bg-primary/10 rounded-2xl border border-primary/20 transition-all">
+                        <div className="space-y-1">
+                          <Label className="font-bold text-primary">Vastu Auto-Calibration</Label>
+                          <p className="text-xs text-slate-500">Automatically re-calculate Vastu score on design changes</p>
+                        </div>
+                        <Switch defaultChecked />
+                      </div>
+                      <div className="flex justify-between items-center group/item p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-transparent hover:border-slate-200 dark:hover:border-slate-800 transition-all">
+                        <div className="space-y-1">
+                          <Label className="font-bold">Budget Threshold Alerts</Label>
+                          <p className="text-xs text-slate-500">Notify when material costs exceed 10% of estimation</p>
                         </div>
                         <Switch defaultChecked />
                       </div>

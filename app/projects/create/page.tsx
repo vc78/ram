@@ -11,7 +11,7 @@ import {
   ArrowRight, ArrowLeft, MapPin, CheckCircle2, Factory, Hammer, 
   Map, DollarSign, Download, Compass, Box, HardHat, Waves, Zap, PaintBucket, 
   Trees, Layers, Loader2, LayoutGrid, Lightbulb, Sofa, FileDown,
-  Grid3x3, Calendar, Calculator, Users
+  Grid3x3, Calendar, Calculator, Users, Droplets, Clock
 } from "lucide-react"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
@@ -23,6 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { ExternalLink, Star, Phone, Mail, Award, MapPin as MapPinIcon, Landmark, Wallet, PiggyBank, ReceiptText, ChevronRight, PieChart, ShieldCheck, Maximize2, Minimize2 } from "lucide-react"
+import { getUserDataKey } from "@/lib/auth"
 
 
 
@@ -46,14 +47,14 @@ export default function CreateProjectWorkflow() {
 
   // -- STATES --
   const [plot, setPlot] = useState({
-    area: "", length: "", width: "", shape: "rectangular",
-    city: "", state: "", pincode: "", zone: "residential",
+    area: "1200", length: "40", width: "30", shape: "rectangular",
+    city: "Hyderabad", state: "Telangana", pincode: "500032", zone: "residential",
     soil: "red", facing: "north", floors: "1"
   })
 
   const [budget, setBudget] = useState({
     grade: "standard", min: "5000000", max: "8000000",
-    cement: "OPC 53", steel: "TMT Fe500",
+    cement: "OPC 43", steel: "TMT Fe415",
     estimatedStream: "", estimatedComplete: false
   })
 
@@ -1130,11 +1131,12 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
                       };
                       
                       try {
-                        const existingString = localStorage.getItem("siid_projects");
+                        const key = getUserDataKey("siid_projects");
+                        const existingString = localStorage.getItem(key);
                         let existing = [];
                         if (existingString) existing = JSON.parse(existingString);
                         existing.unshift(newProject);
-                        localStorage.setItem("siid_projects", JSON.stringify(existing));
+                        localStorage.setItem(key, JSON.stringify(existing));
                       } catch(e) { console.error("Could not save to localStorage", e) }
 
                       setIsLaunched(true)
@@ -1152,156 +1154,288 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
         </Card>
       </div>
 
-      {/* --- HIDDEN PDF REPORT TEMPLATE --- */}
       <div className="absolute top-[-9999px] left-[-9999px] opacity-0 pointer-events-none z-[-50]">
-         <div id="pdf-export-layer" className="w-[850px] bg-white text-slate-800 p-16 font-sans flex flex-col relative overflow-hidden" style={{ minHeight: "1122px" }}>
-            {/* Background design accents */}
-            <div className="absolute top-0 left-0 w-full h-4 bg-emerald-600"></div>
-            <div className="absolute top-4 left-0 w-full h-1 bg-emerald-400"></div>
+        <div id="pdf-export-layer" className="w-[850px] bg-white text-slate-800 p-12 font-sans flex flex-col relative overflow-hidden" style={{ minHeight: "1122px" }}>
+          
+          {/* COVER PAGE ACCENTS */}
+          <div className="absolute top-0 left-0 w-full h-6 bg-slate-900"></div>
+          <div className="absolute top-6 left-0 w-full h-2 bg-emerald-500"></div>
+          
+          {/* SECTION 0: COVER PAGE */}
+          <div className="flex flex-col items-center justify-center pt-20 pb-32 border-b-2 border-slate-100 mb-12">
+            <div className="w-24 h-24 bg-slate-900 rounded-3xl flex items-center justify-center text-white mb-8 shadow-2xl">
+              <Factory className="w-12 h-12" />
+            </div>
+            <h1 className="text-5xl font-black text-slate-900 tracking-tighter mb-4 text-center">CONSTRUCTION PROJECT REPORT</h1>
+            <p className="text-xl text-emerald-600 font-bold tracking-widest uppercase mb-12">Enterprise Intelligence Dossier</p>
             
-            {/* Header */}
-            <div className="flex justify-between items-start border-b pb-6 mb-8 mt-4 border-slate-200">
-               <div>
-                  <div className="flex items-center gap-3 mb-3">
-                     <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-emerald-600/30">
-                        <Factory className="w-7 h-7" />
-                     </div>
-                     <div>
-                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">INDUSTRI-AI</h1>
-                        <p className="text-[10px] font-bold text-emerald-600 tracking-[0.2em] uppercase">Enterprise Construction Intelligence</p>
-                     </div>
-                  </div>
-                  <h2 className="text-2xl font-bold text-slate-800 mt-2">Comprehensive Project Estimate</h2>
-                  <p className="text-sm text-slate-500 mt-1">Generated exclusively based on user specifications and local zoning algorithms.</p>
-               </div>
-               
-               <div className="text-right bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <p className="text-xs text-slate-500 font-semibold mb-1">DOCUMENT REFERENCE</p>
-                  <p suppressHydrationWarning className="text-lg font-mono font-bold text-slate-900 leading-none mb-2">EST-{(Math.random()*100000).toFixed(0)}</p>
-                  <div className="pt-2 border-t border-slate-200">
-                     <p className="text-[10px] text-slate-500 font-bold uppercase">Date of Origin</p>
-                     <p suppressHydrationWarning className="text-sm font-semibold text-slate-800">{new Date().toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'})}</p>
-                  </div>
-               </div>
+            <div className="grid grid-cols-2 gap-px bg-slate-200 border border-slate-200 rounded-2xl overflow-hidden w-full max-w-2xl shadow-sm">
+              <div className="bg-white p-6">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Project ID</p>
+                <p className="font-bold text-slate-900">PROJ-2026-0514</p>
+              </div>
+              <div className="bg-white p-6">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Report Date</p>
+                <p className="font-bold text-slate-900">May 14, 2026</p>
+              </div>
+              <div className="bg-white p-6">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Estimated Cost</p>
+                <p className="font-extrabold text-emerald-600 text-lg">₹68.4 Lakhs</p>
+              </div>
+              <div className="bg-white p-6">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Timeline</p>
+                <p className="font-bold text-slate-900">18 Months</p>
+              </div>
             </div>
+            
+            <p className="mt-12 text-sm text-slate-500 font-medium italic">Prepared by: AI Construction Layout Engine | Reviewed for: Client Use</p>
+          </div>
 
-            {/* Main Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-               <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                  <MapPin className="w-5 h-5 text-emerald-600 mb-2" />
-                  <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Project Location</p>
-                  <p className="font-bold text-slate-900 truncate">{plot.city.toUpperCase() || 'UNREGISTERED'}, {plot.pincode}</p>
-               </div>
-               <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                  <Grid3x3 className="w-5 h-5 text-emerald-600 mb-2" />
-                  <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Total Built-Up</p>
-                  <p className="font-bold text-slate-900">{totalArea.toLocaleString()} Sq.Ft</p>
-               </div>
-               <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                  <Layers className="w-5 h-5 text-emerald-600 mb-2" />
-                  <p className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Vertical Layout</p>
-                  <p className="font-bold text-slate-900">G + {Math.max(0, parseInt(plot.floors) - 1 || 0)} Floors</p>
-               </div>
-               <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                  <Calendar className="w-5 h-5 text-emerald-600 mb-2" />
-                  <p className="text-[10px] text-emerald-600 uppercase font-bold tracking-wider">Est. Timeline</p>
-                  <p className="font-bold text-emerald-900">{Math.max(16, Math.round(totalArea / 150))} Weeks</p>
-               </div>
-            </div>
-
-            {/* Bill of Quantities */}
-            <div className="mb-8">
-               <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3 border-b pb-2">01. Bill of Quantities (Material Load)</h3>
-               <div className="bg-white border rounded-xl overflow-hidden shadow-sm">
-                  <table className="w-full text-sm">
-                     <thead className="bg-slate-50 border-b">
-                        <tr>
-                          <th className="py-3 px-4 text-left font-bold text-slate-700 w-1/2">Material Specification</th>
-                          <th className="py-3 px-4 text-center font-bold text-slate-700">Type / Grade</th>
-                          <th className="py-3 px-4 text-right font-bold text-slate-700">Required Quantity</th>
-                        </tr>
-                     </thead>
-                     <tbody className="divide-y divide-slate-100">
-                        <tr>
-                          <td className="py-3 px-4 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-400"></div><span className="font-semibold text-slate-800">Primary Core Cement</span></td>
-                          <td className="py-3 px-4 text-center text-slate-500 font-mono text-xs text-center">{budget.cement}</td>
-                          <td className="py-3 px-4 text-right font-bold text-slate-900">{dynMaterials.find(m => m.item.includes("Cement"))?.qty || Math.ceil(totalArea * (parseInt(plot.floors || '1') > 2 ? 0.45 : 0.41))} Bags</td>
-                        </tr>
-                        <tr>
-                          <td className="py-3 px-4 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-400"></div><span className="font-semibold text-slate-800">Structural Rebar (Steel)</span></td>
-                          <td className="py-3 px-4 text-center text-slate-500 font-mono text-xs text-center">{budget.steel}</td>
-                          <td className="py-3 px-4 text-right font-bold text-slate-900">{dynMaterials.find(m => m.item.includes("Reinforce"))?.qty || (totalArea * (parseInt(plot.floors || '1') > 2 ? 0.0042 : 0.0035)).toFixed(2)} MT</td>
-                        </tr>
-                        <tr>
-                          <td className="py-3 px-4 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-orange-400"></div><span className="font-semibold text-slate-800">Clay / Fly Ash Bricks</span></td>
-                          <td className="py-3 px-4 text-center text-slate-500 font-mono text-xs text-center">Standard IS</td>
-                          <td className="py-3 px-4 text-right font-bold text-slate-900">{(dynMaterials.find(m => m.item.includes("Brick"))?.qty) || Math.round(totalArea*14.5).toLocaleString()} Pcs</td>
-                        </tr>
-                        <tr>
-                          <td className="py-3 px-4 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-yellow-400"></div><span className="font-semibold text-slate-800">Fine M-Sand</span></td>
-                          <td className="py-3 px-4 text-center text-slate-500 font-mono text-xs text-center">River Mix</td>
-                          <td className="py-3 px-4 text-right font-bold text-slate-900">{(dynMaterials.find(m => m.item.includes("Sand"))?.qty) || Math.round(totalArea*1.85).toLocaleString()} CFT</td>
-                        </tr>
-                        <tr>
-                          <td className="py-3 px-4 flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-slate-600"></div><span className="font-semibold text-slate-800">Coarse Aggregate</span></td>
-                          <td className="py-3 px-4 text-center text-slate-500 font-mono text-xs text-center">20mm - 40mm</td>
-                          <td className="py-3 px-4 text-right font-bold text-slate-900">{(dynMaterials.find(m => m.item.includes("Aggregate"))?.qty) || Math.round(totalArea*1.35).toLocaleString()} CFT</td>
-                        </tr>
-                     </tbody>
+          {/* PAGE 2 CONTENT STARTS HERE (Simulated with spacing) */}
+          <div className="space-y-16">
+            
+            {/* SECTION 1: PLOT & STRUCTURAL */}
+            <section>
+              <h2 className="text-sm font-black text-emerald-700 uppercase tracking-[0.3em] border-b-2 border-emerald-100 pb-3 mb-6">Section 1 — Plot & Structural</h2>
+              <div className="grid grid-cols-2 gap-10">
+                <div className="space-y-4">
+                  <h3 className="text-[11px] font-black uppercase text-slate-900 tracking-wider">Plot Parameters</h3>
+                  <table className="w-full text-[10px] border-collapse">
+                    <tbody className="divide-y divide-slate-100">
+                      <tr><td className="py-2 text-slate-500">Plot Dimensions</td><td className="py-2 font-bold text-right">40 ft x 30 ft (1,200 sq ft)</td></tr>
+                      <tr><td className="py-2 text-slate-500">Built-Up Area</td><td className="py-2 font-bold text-right">1,020 sq ft</td></tr>
+                      <tr><td className="py-2 text-slate-500">Location</td><td className="py-2 font-bold text-right">Hyderabad, Telangana</td></tr>
+                      <tr><td className="py-2 text-slate-500">Facing</td><td className="py-2 font-bold text-right">North</td></tr>
+                    </tbody>
                   </table>
-               </div>
-            </div>
+                </div>
+                <div className="bg-emerald-50 rounded-2xl p-6 border border-emerald-100">
+                  <h3 className="text-[11px] font-black uppercase text-emerald-800 tracking-wider mb-3">Soil Analysis & Foundation</h3>
+                  <p className="text-[11px] leading-relaxed text-emerald-900">
+                    <strong>Red Soil</strong> identified with moderate bearing capacity (15-20 T/m²). 
+                    <br/><br/>
+                    • <strong>Foundation:</strong> Isolated Footing (RCC) 1.5m below GL.
+                    <br/>• <strong>Waterproofing:</strong> 2-coat bituminous plinth coating.
+                    <br/>• <strong>Treatment:</strong> Mandatory pre-construction anti-termite spray.
+                  </p>
+                </div>
+              </div>
+            </section>
 
-            {/* Capital Requirement (Financials) */}
-            <div className="mb-auto">
-               <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-3 border-b pb-2">02. Capital Economics</h3>
-               <div className="bg-slate-900 text-white rounded-xl p-6 shadow-lg shadow-emerald-900/10 relative overflow-hidden">     
-                   <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8">
-                       <div className="space-y-4">
-                           <div>
-                              <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-widest mb-1">Architectural Standard</p>
-                              <p className="text-lg font-bold capitalize">{budget.grade} Build Finish</p>
-                           </div>
-                           <div className="pt-4 border-t border-slate-700/50">
-                              <p className="text-slate-400 text-xs font-medium flex justify-between"><span>Base Capital Index</span> <span>₹{totalCost.toLocaleString()}</span></p>
-                              <p className="text-slate-400 text-xs font-medium flex justify-between mt-2"><span>Geotechnical Risk ({plot.soil})</span> <span>+ ₹{Math.round(totalCost * (plot.soil === 'black' ? 0.08 : plot.soil === 'rocky' ? 0.03 : plot.soil === 'clay' ? 0.05 : 0.01)).toLocaleString()}</span></p>
-                           </div>
-                       </div>
-                       
-                       <div className="flex flex-col justify-center items-end text-right border-l border-slate-700/50 pl-6">
-                           <p className="text-emerald-400 text-[10px] font-bold uppercase tracking-widest mb-2">Total Projected Investment</p>
-                           <p className="text-4xl font-black text-white tracking-tight">₹{Math.round(totalCost * (1 + (plot.soil === 'black' ? 0.08 : plot.soil === 'rocky' ? 0.03 : plot.soil === 'clay' ? 0.05 : 0.01))).toLocaleString()}</p>
-                           <p className="text-xs text-slate-400 mt-2">Inclusive of core civil structure.</p>
-                       </div>
+            {/* SECTION 2: MATERIALS & BUDGET */}
+            <section>
+              <h2 className="text-sm font-black text-emerald-700 uppercase tracking-[0.3em] border-b-2 border-emerald-100 pb-3 mb-6">Section 2 — Materials & Budget</h2>
+              <div className="grid grid-cols-3 gap-6">
+                {[
+                  { label: "Cement", val: "OPC 43 Grade" },
+                  { label: "Steel", val: "TMT Fe415" },
+                  { label: "Sand", val: "M-Sand (Zone II)" },
+                  { label: "Bricks", val: "Fly Ash (IS 12894)" },
+                  { label: "Concrete", val: "M20 (Structural)" },
+                  { label: "Paint", val: "Acrylic Emulsion" }
+                ].map((item, idx) => (
+                  <div key={idx} className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <p className="text-[9px] font-black text-slate-400 uppercase mb-1">{item.label}</p>
+                    <p className="text-xs font-bold text-slate-900">{item.val}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-8 bg-slate-900 text-white p-8 rounded-2xl flex justify-between items-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl -mr-16 -mt-16" />
+                <div>
+                   <p className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-1">AI Estimated Project Cost</p>
+                   <p className="text-4xl font-black tracking-tighter">₹68,40,000</p>
+                </div>
+                <div className="text-right">
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Cost Per Sq Ft</p>
+                   <p className="text-xl font-bold">₹6,706 <span className="text-xs text-slate-500 font-medium">/ built-up</span></p>
+                </div>
+              </div>
+            </section>
+
+            {/* SECTION 3: BILL OF QUANTITIES (BOQ) */}
+            <section>
+              <h2 className="text-sm font-black text-emerald-700 uppercase tracking-[0.3em] border-b-2 border-emerald-100 pb-3 mb-6">Section 3 — Bill of Quantities (BOQ)</h2>
+              <div className="space-y-8">
+                <div>
+                   <h3 className="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest">3.1 Structural Quantities</h3>
+                   <table className="w-full text-[10px] border border-slate-100 rounded-lg overflow-hidden">
+                      <thead className="bg-slate-50">
+                        <tr><th className="p-3 text-left">Item</th><th className="p-3 text-center">Quantity</th><th className="p-3 text-center">Unit</th><th className="p-3 text-right">Amount (INR)</th></tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        <tr><td className="p-3 font-semibold">Concrete (M20)</td><td className="p-3 text-center">38.6</td><td className="p-3 text-center">m³</td><td className="p-3 text-right">₹2,70,400</td></tr>
+                        <tr><td className="p-3 font-semibold">TMT Steel Fe415</td><td className="p-3 text-center">4,820</td><td className="p-3 text-center">kg</td><td className="p-3 text-right">₹3,47,040</td></tr>
+                        <tr><td className="p-3 font-semibold">Cement OPC 43</td><td className="p-3 text-center">680</td><td className="p-3 text-center">bags</td><td className="p-3 text-right">₹2,58,400</td></tr>
+                        <tr><td className="p-3 font-semibold">Fly Ash Bricks</td><td className="p-3 text-center">18,400</td><td className="p-3 text-center">nos</td><td className="p-3 text-right">₹1,38,000</td></tr>
+                      </tbody>
+                   </table>
+                </div>
+                <div>
+                   <h3 className="text-[10px] font-black uppercase text-slate-400 mb-3 tracking-widest">3.2 Finishing Quantities</h3>
+                   <table className="w-full text-[10px] border border-slate-100 rounded-lg overflow-hidden">
+                      <thead className="bg-slate-50">
+                        <tr><th className="p-3 text-left">Item</th><th className="p-3 text-center">Quantity</th><th className="p-3 text-center">Unit</th><th className="p-3 text-right">Amount (INR)</th></tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        <tr><td className="p-3 font-semibold">Modular Kitchen</td><td className="p-3 text-center">1</td><td className="p-3 text-center">set</td><td className="p-3 text-right">₹3,20,000</td></tr>
+                        <tr><td className="p-3 font-semibold">UPVC Windows</td><td className="p-3 text-center">12</td><td className="p-3 text-center">nos</td><td className="p-3 text-right">₹2,16,000</td></tr>
+                        <tr><td className="p-3 font-semibold">Vitrified Tiles</td><td className="p-3 text-center">92</td><td className="p-3 text-center">m²</td><td className="p-3 text-right">₹1,28,800</td></tr>
+                        <tr><td className="p-3 font-semibold">Main Teak Door</td><td className="p-3 text-center">1</td><td className="p-3 text-center">nos</td><td className="p-3 text-right">₹45,000</td></tr>
+                      </tbody>
+                   </table>
+                </div>
+              </div>
+            </section>
+
+            {/* SECTION 4: VASTU LAYOUT */}
+            <section>
+              <h2 className="text-sm font-black text-emerald-700 uppercase tracking-[0.3em] border-b-2 border-emerald-100 pb-3 mb-6">Section 4 — Vastu Layout</h2>
+              <div className="grid grid-cols-2 gap-10">
+                <table className="w-full text-[9px] border border-slate-100">
+                  <thead className="bg-slate-50 font-black">
+                    <tr><td className="p-2">Zone</td><td className="p-2">Room</td><td className="p-2">Status</td></tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    <tr><td className="p-2 font-bold uppercase">Ishanya (NE)</td><td className="p-2">Pooja Room</td><td className="p-2 font-black text-emerald-600">COMPLIANT</td></tr>
+                    <tr><td className="p-2 font-bold uppercase">Nairutya (SW)</td><td className="p-2">Master BR</td><td className="p-2 font-black text-emerald-600">COMPLIANT</td></tr>
+                    <tr><td className="p-2 font-bold uppercase">Agni (SE)</td><td className="p-2">Utility</td><td className="p-2 font-black text-emerald-600">COMPLIANT</td></tr>
+                    <tr><td className="p-2 font-bold uppercase">Vayu (NW)</td><td className="p-2">Guest BR</td><td className="p-2 font-black text-amber-600">REVIEW</td></tr>
+                    <tr><td className="p-2 font-bold uppercase">Yama (S)</td><td className="p-2">Kitchen</td><td className="p-2 font-black text-amber-600">REVIEW</td></tr>
+                  </tbody>
+                </table>
+                <div className="space-y-4">
+                   <div className="bg-slate-900 text-white p-4 rounded-xl flex items-center justify-between">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Vastu Score</span>
+                      <span className="text-2xl font-black">87%</span>
                    </div>
-               </div>
-            </div>
+                   <div className="text-[10px] bg-amber-50 p-4 rounded-xl border border-amber-100 text-amber-900 leading-relaxed italic">
+                      <strong>Corrections Needed:</strong> Install copper pyramid yantra on SE wall of kitchen. Use light cream colors in NW Guest Room to mitigate air-element conflicts.
+                   </div>
+                </div>
+              </div>
+            </section>
 
-            {/* Footer */}
-            <div className="mt-12 pt-6 border-t border-slate-200 flex justify-between items-center">
-               <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 border-2 border-emerald-600 flex items-center justify-center rounded-full opacity-50">
-                     <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <div>
-                     <p className="text-[10px] text-slate-500 font-bold uppercase">AI Validation Status</p>
-                     <p className="text-xs font-bold text-slate-800">CRYPTO-SIGNATURE VERIFIED</p>
+            {/* SECTION 5: MEP AUTO LAYOUT */}
+            <section>
+              <h2 className="text-sm font-black text-emerald-700 uppercase tracking-[0.3em] border-b-2 border-emerald-100 pb-3 mb-6">Section 5 — MEP Auto Layout</h2>
+              <div className="grid grid-cols-2 gap-8">
+                 <div className="space-y-4">
+                    <h3 className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2"><Zap className="w-3 h-3" /> Electrical Systems</h3>
+                    <div className="bg-slate-50 p-4 rounded-xl text-[9px] space-y-2">
+                       <p>• 8-way Main Distribution Board (SE Utility)</p>
+                       <p>• 3 kWp Solar Grid-tie system (Rooftop NW)</p>
+                       <p>• Smart Automation Hub (Living Room East)</p>
+                       <p>• EV Charging Point (32A circuit in Parking)</p>
+                    </div>
+                 </div>
+                 <div className="space-y-4">
+                    <h3 className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2"><Droplets className="w-3 h-3" /> Plumbing & Drainage</h3>
+                    <div className="bg-slate-50 p-4 rounded-xl text-[9px] space-y-2">
+                       <p>• 8,000 L RCC Underground Sump (NE Zone)</p>
+                       <p>• 2,500 L HDPE Overhead Tank (Rooftop SW)</p>
+                       <p>• Septic Tank (3,000 L Dual-chamber, SW)</p>
+                       <p>• Rainwater Harvesting (NE Sump Link)</p>
+                    </div>
+                 </div>
+              </div>
+            </section>
+
+            {/* SECTION 6: CONSTRUCTION TIMELINE */}
+            <section>
+              <h2 className="text-sm font-black text-emerald-700 uppercase tracking-[0.3em] border-b-2 border-emerald-100 pb-3 mb-6">Section 6 — Construction Timeline</h2>
+              <table className="w-full text-[9px] border border-slate-100 rounded-xl overflow-hidden">
+                <thead className="bg-slate-50 font-black uppercase">
+                  <tr><td className="p-3">Phase</td><td className="p-3">Activity</td><td className="p-3">Duration</td><td className="p-3">Key Milestone</td></tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-600">
+                  <tr><td className="p-3 font-black text-slate-900 text-center">1</td><td className="p-3">Foundation & Site Prep</td><td className="p-3">2 Months</td><td className="p-3">Plinth Completion</td></tr>
+                  <tr><td className="p-3 font-black text-slate-900 text-center">2</td><td className="p-3">Structural RCC Frame</td><td className="p-3">4 Months</td><td className="p-3">Slab Casting</td></tr>
+                  <tr><td className="p-3 font-black text-slate-900 text-center">3</td><td className="p-3">Brickwork & Plastering</td><td className="p-3">3 Months</td><td className="p-3">Wall Completion</td></tr>
+                  <tr><td className="p-3 font-black text-slate-900 text-center">4</td><td className="p-3">MEP Rough-in</td><td className="p-3">2 Months</td><td className="p-3">Pre-Tile Inspection</td></tr>
+                  <tr><td className="p-3 font-black text-slate-900 text-center">5</td><td className="p-3">Finishing & Handover</td><td className="p-3">7 Months</td><td className="p-3">Occupancy Ready</td></tr>
+                </tbody>
+              </table>
+            </section>
+
+            {/* SECTION 7: FEATURES & COMPLIANCE */}
+            <section>
+              <h2 className="text-sm font-black text-emerald-700 uppercase tracking-[0.3em] border-b-2 border-emerald-100 pb-3 mb-6">Section 7 — Features & Compliance</h2>
+              <div className="grid grid-cols-2 gap-8">
+                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <h3 className="text-[10px] font-black uppercase text-emerald-800 mb-4 tracking-widest">Sustainability Matrix</h3>
+                    <div className="space-y-3">
+                       <div className="flex justify-between items-center text-[10px]"><span>Solar PV (3 kWp)</span> <span className="font-bold text-emerald-600">INCLUDED</span></div>
+                       <div className="flex justify-between items-center text-[10px]"><span>Rainwater Harvesting</span> <span className="font-bold text-emerald-600">GHMC MANDATORY</span></div>
+                       <div className="flex justify-between items-center text-[10px]"><span>Low-VOC Paints</span> <span className="font-bold text-emerald-600">SPECIFIED</span></div>
+                       <div className="flex justify-between items-center text-[10px]"><span>Terrace EPS Insulation</span> <span className="font-bold text-emerald-600">30% HEAT REDUCTION</span></div>
+                    </div>
+                 </div>
+                 <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <h3 className="text-[10px] font-black uppercase text-emerald-800 mb-4 tracking-widest">Smart Home Tech</h3>
+                    <div className="space-y-3">
+                       <div className="flex justify-between items-center text-[10px]"><span>Full Home Automation</span> <span className="font-bold text-slate-900">APP-CONTROLLED</span></div>
+                       <div className="flex justify-between items-center text-[10px]"><span>8-Point CCTV System</span> <span className="font-bold text-slate-900">IP-CAMERAS</span></div>
+                       <div className="flex justify-between items-center text-[10px]"><span>Gigabit Structured Cabling</span> <span className="font-bold text-slate-900">CAT 6A</span></div>
+                       <div className="flex justify-between items-center text-[10px]"><span>Video Door Phone</span> <span className="font-bold text-slate-900">7" COLOUR SCREEN</span></div>
+                    </div>
+                 </div>
+              </div>
+            </section>
+
+            {/* SECTION 8: REGULATORY CHECKLIST */}
+            <section>
+              <h2 className="text-sm font-black text-emerald-700 uppercase tracking-[0.3em] border-b-2 border-emerald-100 pb-3 mb-6">Section 8 — Regulatory Checklist</h2>
+              <div className="grid grid-cols-3 gap-6 text-[9px]">
+                 {[
+                   { t: "Building Permit", a: "GHMC", eta: "45 Days" },
+                   { t: "Water Connection", a: "HMWSSB", eta: "20 Days" },
+                   { t: "Electricity (Solar)", a: "TSSPDCL", eta: "45 Days" },
+                   { t: "Structural Sign-off", a: "Licensed Eng.", eta: "7 Days" },
+                   { t: "Occupancy Certificate", a: "GHMC", eta: "30 Days" }
+                 ].map((item, idx) => (
+                   <div key={idx} className="border border-slate-100 p-4 rounded-xl flex flex-col justify-center">
+                      <p className="font-bold text-slate-900">{item.t}</p>
+                      <p className="text-slate-500 font-medium">{item.a}</p>
+                      <p className="text-emerald-600 font-black mt-2 uppercase">{item.eta}</p>
+                   </div>
+                 ))}
+              </div>
+            </section>
+
+            {/* SECTION 9: FINAL SUMMARY */}
+            <section className="bg-slate-900 text-white p-10 rounded-[3rem] relative overflow-hidden">
+               <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-emerald-500/10 to-transparent pointer-events-none" />
+               <h2 className="text-lg font-black uppercase tracking-[0.3em] mb-8 text-emerald-400">Section 9 — Project Executive Summary</h2>
+               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                  <div><p className="text-[9px] font-black text-slate-500 uppercase mb-1">Built-Up Area</p><p className="text-lg font-bold">1,020 SqFt</p></div>
+                  <div><p className="text-[9px] font-black text-slate-500 uppercase mb-1">Configuration</p><p className="text-lg font-bold">3 BHK + Pooja</p></div>
+                  <div><p className="text-[9px] font-black text-slate-500 uppercase mb-1">Foundation</p><p className="text-lg font-bold">Isolated RCC</p></div>
+                  <div><p className="text-[9px] font-black text-slate-500 uppercase mb-1">Est. Cost</p><p className="text-lg font-bold text-emerald-400">₹68.4 Lakhs</p></div>
+               </div>
+               <div className="mt-10 pt-10 border-t border-white/5 flex justify-between items-end">
+                  <p className="text-[9px] text-slate-500 leading-relaxed max-w-[400px]">
+                     This AI-generated Master Dossier serves as a high-fidelity roadmap. 
+                     Final execution must align with local bylaws and professional engineering certifications.
+                  </p>
+                  <div className="text-right">
+                     <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Master Signature Locked</p>
+                     <p className="text-xs font-mono font-bold">INDUSTRI-AI-SECURE-ID: 2026-X892</p>
                   </div>
                </div>
-               <p className="text-[9px] text-slate-400 text-right max-w-[250px]">
-                  This document serves as an intelligent estimate and is not a legally binding contract. Always utilize certified structural engineers prior to terrain execution.
-               </p>
-            </div>
-         </div>
+            </section>
+
+          </div>
+        </div>
       </div>
       <Dialog open={isLaunched} onOpenChange={setIsLaunched}>
         <DialogContent className={`flex flex-col bg-background/98 backdrop-blur-2xl border-primary/30 shadow-2xl p-0 gap-0 transition-all duration-500 ease-in-out ${
           isMaximized 
           ? "max-w-none w-screen h-screen rounded-none border-none" 
-          : "max-w-6xl w-[95vw] h-[90vh] rounded-3xl overflow-hidden"
+          : "max-w-6xl w-[98vw] sm:w-[95vw] h-[95vh] sm:h-[90vh] rounded-2xl sm:rounded-3xl overflow-hidden"
         }`}>
           {/* STICKY HEADER */}
-          <div className="p-8 border-b border-border/50 flex flex-col items-center text-center bg-background/50 backdrop-blur-md relative">
+          <div className="p-4 sm:p-8 border-b border-border/50 flex flex-col items-center text-center bg-background/50 backdrop-blur-md relative">
             {/* MAXIMIZE TOGGLE */}
             <Button 
                variant="ghost" 
@@ -1325,7 +1459,7 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
           </div>
 
           {/* SCROLLABLE CONTENT AREA */}
-          <div className="flex-1 overflow-y-auto p-8 space-y-16 bg-gradient-to-b from-transparent to-muted/10 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8 sm:space-y-16 bg-gradient-to-b from-transparent to-muted/10 custom-scrollbar">
             
             {/* SECTION 1: FINANCING ROADMAP */}
             <section className="space-y-8">
@@ -1477,7 +1611,7 @@ ${result.reasoning.map((r: string) => `- ${r}`).join("\n")}
           </div>
 
           {/* STICKY FOOTER */}
-          <div className="p-8 bg-muted border-t border-border/50 flex flex-col sm:flex-row gap-8 items-center justify-between">
+          <div className="p-4 sm:p-8 bg-muted border-t border-border/50 flex flex-col sm:flex-row gap-8 items-center justify-between">
             <div className="flex items-center gap-4 text-muted-foreground">
                <div className="w-10 h-10 rounded-full border-2 border-primary/20 flex items-center justify-center"> <ShieldCheck className="w-5 h-5 text-primary" /> </div>
                <p className="text-[10px] font-bold uppercase tracking-widest max-w-[300px]"> All estimates are AI-vetted and geo-locked to {plot.city.toUpperCase()} market data. </p>

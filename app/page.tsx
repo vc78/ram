@@ -40,11 +40,11 @@ import TestimonialsCarousel from "@/components/testimonials-carousel"
 import LiveTicker from "@/components/live-ticker"
 import Navbar from "@/components/navbar"
 import { Badge } from "@/components/ui/badge"
-import { useWelcomeVoice } from "@/hooks/use-welcome-voice"
+//import { useWelcomeVoice } from "@/hooks/use-welcome-voice"
 
 
 export default function LandingPage() {
-  useWelcomeVoice()
+  //useWelcomeVoice()
 
   const [selectedVideo, setSelectedVideo] = useState<{
     title: string
@@ -60,8 +60,8 @@ export default function LandingPage() {
 
   const heroVideos = [
     "/images/ext1.mp4",
-    //"/uploads/p1.mp4",
-    //"/uploads/p2.mp4",
+    "/uploads/p1.mp4",
+    "/uploads/p2.mp4",
   ]
 
   useEffect(() => {
@@ -75,12 +75,10 @@ export default function LandingPage() {
   }, [])
 
   useEffect(() => {
-    if (isMobile) return // Only run carousel on desktop
-
-    // Rotate videos every 6 seconds
+    // Rotate videos every 8 seconds (slightly slower for mobile stability)
     const intervalId = setInterval(() => {
       setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % heroVideos.length)
-    }, 6000)
+    }, 8000)
 
     return () => clearInterval(intervalId)
   }, [isMobile])
@@ -167,24 +165,17 @@ export default function LandingPage() {
       <section className="relative w-full min-h-[90vh] md:min-h-screen flex items-center overflow-hidden py-32">
         {/* Background Video Layer */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          {!isMobile ? (
-            <video
-              key={heroVideos[currentVideoIndex]}
-              src={heroVideos[currentVideoIndex]}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="none"
-              className="w-full h-full object-cover transition-opacity duration-1000"
-            />
-          ) : (
-            <img
-              src="/images/interior-design-3d-walkthrough.jpg"
-              alt="Hero Background"
-              className="w-full h-full object-cover"
-            />
-          )}
+          <video
+            key={heroVideos[currentVideoIndex]}
+            src={heroVideos[currentVideoIndex]}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster="/images/interior-design-3d-walkthrough.jpg"
+            className="w-full h-full object-cover transition-opacity duration-1000"
+          />
           {/* Dark Overlay (IMPORTANT) */}
           <div className="absolute inset-0 bg-black/50"></div>
         </div>
@@ -219,7 +210,7 @@ export default function LandingPage() {
                     className="bg-emerald-600 hover:bg-emerald-500 text-white hover:scale-105 transition-transform shadow-lg"
                   >
                     <Sparkles className="mr-2 w-5 h-5" />
-                    New AI Project
+                    New Smart Project
                   </Button>
                 </Link>
                 <Link href="/3d-generator">
@@ -233,7 +224,7 @@ export default function LandingPage() {
                 </Link>
                 <Link href="#how-it-works">
                   <Button size="lg" variant="outline" className="bg-white/5 border-white/30 text-white hover:bg-white/20 hover:scale-105 transition-all backdrop-blur-sm drop-shadow-sm">
-                    See AI In Action
+                    See Smart Design In Action
                   </Button>
                 </Link>
               </div>
@@ -261,7 +252,7 @@ export default function LandingPage() {
               <div className="mt-6">
                 <Button asChild className="w-full">
                   <Link href="/training">
-                    Learn Construction AI
+                    Learn Smart Construction
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -329,9 +320,9 @@ export default function LandingPage() {
               <Sparkles className="w-4 h-4 text-primary" />
               <span className="text-sm font-semibold text-primary">Platform Capabilities</span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">AI-Powered Design Intelligence</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Smart Design Intelligence</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Experience next-generation design capabilities powered by artificial intelligence and automation
+              Experience next-generation design capabilities powered by smart intelligence and automation
             </p>
           </div>
 
@@ -389,7 +380,7 @@ export default function LandingPage() {
                 </div>
                 <div className="min-w-0">
                   <h4 className="font-semibold text-sm mb-1">Vastu Analysis</h4>
-                  <p className="text-xs text-muted-foreground">AI-powered principles compliance</p>
+                  <p className="text-xs text-muted-foreground">Smart principles compliance</p>
                 </div>
               </div>
             </Card>
@@ -598,7 +589,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Parametric Input</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Define site parameters, building codes, and design intent. AI automatically generates compliant designs
+                Define site parameters, building codes, and design intent. Our systems automatically generate compliant designs
               </p>
             </div>
 
@@ -650,7 +641,7 @@ export default function LandingPage() {
               {
                 question: "How does SIID's AI design generation work?",
                 answer:
-                  "Our AI analyzes your project requirements including size, budget, style preferences, and location to generate comprehensive architectural, structural, electrical, plumbing, interior, and exterior designs. The AI uses market data and best practices to create optimized designs tailored to your needs.",
+                  "Our smart system analyzes your project requirements including size, budget, style preferences, and location to generate comprehensive architectural, structural, electrical, plumbing, interior, and exterior designs. The system uses market data and best practices to create optimized designs tailored to your needs.",
               },
               {
                 question: "What is included in the budget estimation?",

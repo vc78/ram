@@ -43,7 +43,7 @@ export async function POST(req: Request) {
       }
     ] : []
 
-    const tags = ["AI-Verified", phase, hasSafetyRisk ? "Safety Incident" : "Compliance Clear"]
+    const tags = ["Smart-Verified", phase, hasSafetyRisk ? "Safety Incident" : "Compliance Clear"]
 
     return NextResponse.json({
       success: true,
@@ -54,11 +54,11 @@ export async function POST(req: Request) {
         confidenceScore: 94.5 + (hash % 4),
         safetyViolations: safetyDetections,
         autoTags: tags,
-        description: `AI Analysis (YOLO v8): ${phase} detected with ${progressLevel}% completion. ${hasSafetyRisk ? 'Immediate safety attention required for PPE/Edge compliance.' : 'No significant hazards identified in current view.'}`
+        description: `Smart Analysis: ${phase} detected with ${progressLevel}% completion. ${hasSafetyRisk ? 'Immediate safety attention required for PPE/Edge compliance.' : 'No significant hazards identified in current view.'}`
       }
     })
 
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || "ML Engine Fault" }, { status: 500 })
+    return NextResponse.json({ error: error.message || "System Analysis Error" }, { status: 500 })
   }
 }

@@ -62,7 +62,7 @@ export function AiAssistant({
             const items = Array.isArray(sj?.results) ? sj.results.slice(0, 3) : []
             if (items.length) {
               fallback =
-                "I couldn’t reach AI just now. Here are related results:\n\n" +
+                "I couldn’t reach the smart system just now. Here are related results:\n\n" +
                 items
                   .map((it: any, i: number) => `${i + 1}. ${it?.title || "Result"} — ${it?.snippet || ""}`)
                   .join("\n")
@@ -73,7 +73,7 @@ export function AiAssistant({
         }
         answer =
           fallback ||
-          "I’m here and ready to help. I couldn’t reach the AI momentarily—please try again, or ask a shorter question."
+          "I’m here and ready to help. I couldn’t reach the smart system momentarily—please try again, or ask a shorter question."
       }
 
       setMessages((m) => [...m, { id: crypto.randomUUID(), role: "assistant", content: answer }])

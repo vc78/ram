@@ -287,7 +287,7 @@ export default function LoginPage() {
           </Card>
         </motion.div>
         
-        <p className="text-center mt-8 text-xs text-muted-foreground/50 font-medium">
+        <p className="text-center mt-8 text-xs text-muted-foreground/50 font-medium uppercase tracking-widest">
           Secure Construction Intelligence Portal • v2.4.0
         </p>
       </div>

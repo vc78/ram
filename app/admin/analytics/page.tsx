@@ -75,15 +75,15 @@ export default function AdminAnalytics() {
   return (
     <div className="space-y-10">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-extrabold text-white tracking-tight">Core <span className="text-blue-500">Analytics</span></h1>
-          <p className="text-slate-400 text-lg">Detailed telemetry of neural synthesis and project throughput.</p>
+        <div className="space-y-1">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Core <span className="text-blue-500">Analytics</span></h1>
+          <p className="text-slate-400 text-base md:text-lg">Detailed telemetry of neural synthesis and project throughput.</p>
         </div>
-        <div className="flex gap-3">
-          <Button variant="outline" className="border-slate-800 bg-slate-900 shadow-xl text-slate-300">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <Button variant="outline" className="border-slate-800 bg-slate-900 shadow-xl text-slate-300 flex-1 sm:flex-none">
             <History className="w-4 h-4 mr-2" /> 24h Log
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-500 text-white px-8 shadow-lg shadow-blue-500/20">
+          <Button className="bg-blue-600 hover:bg-blue-500 text-white px-8 shadow-lg shadow-blue-500/20 flex-1 sm:flex-none">
             <Download className="w-4 h-4 mr-2" /> Export JSON
           </Button>
         </div>

@@ -41,7 +41,7 @@ export function ProjectInsights({ location, area = 0, floors = 0, type, strategy
   return (
     <div className="space-y-6 pt-6 border-t border-slate-800 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center justify-between">
-         <h4 className="text-xs font-black uppercase tracking-widest text-emerald-500 italic">AI Strategy Insights v4.0</h4>
+         <h4 className="text-xs font-black uppercase tracking-widest text-emerald-500 italic">Smart Strategy Insights v4.0</h4>
          <Badge variant="outline" className="text-[9px] border-emerald-500/20 bg-emerald-500/5 text-emerald-500">
             STRATEGY: {strategy.toUpperCase()}
          </Badge>
@@ -91,7 +91,7 @@ export function ProjectInsights({ location, area = 0, floors = 0, type, strategy
            </div>
            <div className="space-y-1">
               <div className="text-[10px] uppercase font-black text-slate-400">Foundation Recomm: <span className="text-white">Raft Foundation</span></div>
-              <p className="text-[9px] text-slate-500 leading-relaxed italic">Soil type detected as 'Silty-Clay'. AI recommends Grade M30 concrete for sub-structure.</p>
+              <p className="text-[9px] text-slate-500 leading-relaxed italic">Soil type detected as 'Silty-Clay'. System recommends Grade M30 concrete for sub-structure.</p>
            </div>
         </Card>
 
@@ -113,7 +113,7 @@ export function ProjectInsights({ location, area = 0, floors = 0, type, strategy
            </div>
         </Card>
 
-        {/* Vastu Alignment AI */}
+        {/* Smart Vastu Alignment */}
         <Card className="p-4 bg-slate-950 border-slate-800 space-y-3 col-span-2">
            <div className="flex items-center justify-between">
               <Compass className="w-4 h-4 text-rose-500 animate-spin-slow" />
@@ -135,7 +135,7 @@ export function ProjectInsights({ location, area = 0, floors = 0, type, strategy
               </div>
               <div className="w-px bg-slate-800" />
               <div className="flex-1">
-                 <p className="text-[9px] text-slate-400 leading-relaxed font-medium italic">“AI recommends shifting the Master Bedroom towards the SW quadrant for maximum stability index.”</p>
+                 <p className="text-[9px] text-slate-400 leading-relaxed font-medium italic">“System suggests shifting the Master Bedroom towards the SW quadrant for maximum stability index.”</p>
               </div>
            </div>
         </Card>

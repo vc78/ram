@@ -1,491 +1,429 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Calculator, Download, Loader2, BarChart3 } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { Calculator, Zap, CheckCircle2, ChevronRight, BarChart3, Clock, MapPin, Box, Compass, Droplets, ShieldCheck, Factory } from "lucide-react"
 
-interface MaterialEstimate {
-  cement: { bags: number; cost: number }
-  steel: { kg: number; cost: number }
-  bricks: { count: number; cost: number }
-  sand: { cft: number; cost: number }
-  aggregate: { cft: number; cost: number }
-  total: number
+const GRADES = ["Economy", "Standard", "Premium", "Luxury"];
+const DIRECTIONS = ["North", "East", "West", "South"];
+const SOILS = ["Red Soil", "Black Cotton Soil", "Sandy Soil", "Laterite Soil", "Alluvial Soil"];
+const CEMENTS = ["OPC 43 (Standard)", "OPC 53 (High Strength)", "PPC (Blended)", "PSC (Slag)"];
+const STEELS = ["TMT Fe415", "TMT Fe500", "TMT Fe550"];
+const KITCHEN_TYPES = ["Modular Island", "L-Shaped", "Parallel", "U-Shaped", "Straight"];
+const ARCH_STYLES = ["Modern / Contemporary", "Traditional", "Colonial", "Mediterranean", "Vernacular"];
+
+const AMENITIES = [
+  { id: "home_office", label: "Home Office", icon: "💼", cost: 80000 },
+  { id: "pooja_room", label: "Pooja Room", icon: "🪔", cost: 120000 },
+  { id: "home_theater", label: "Home Theater", icon: "🎬", cost: 450000 },
+  { id: "gym", label: "Gym", icon: "🏋️", cost: 250000 },
+  { id: "servant_quarters", label: "Servant Quarters", icon: "🏠", cost: 180000 },
+  { id: "terrace_garden", label: "Terrace Garden", icon: "🌿", cost: 150000 },
+  { id: "swimming_pool", label: "Swimming Pool", icon: "🏊", cost: 900000 },
+  { id: "solar_panels", label: "Solar Panels", icon: "☀️", cost: 220000 },
+  { id: "smart_automation", label: "Smart Automation", icon: "🤖", cost: 350000 },
+  { id: "study_room", label: "Study Room", icon: "📚", cost: 90000 },
+  { id: "guest_room", label: "Guest Room", icon: "🛏️", cost: 130000 },
+  { id: "ev_charging", label: "EV Charging", icon: "⚡", cost: 45000 },
+];
+
+const COMPLIANCES = [
+  { id: "vastu", label: "Vastu Compliance Overlay", icon: "🧿" },
+  { id: "senior", label: "Senior Citizen Accessibility", icon: "♿" },
+  { id: "fire", label: "Fire Safety NOC", icon: "🔥" },
+  { id: "green", label: "Green Building Certification", icon: "🌱" },
+];
+
+function Chip({ label, icon, active, onClick }: { label: string, icon?: string, active: boolean, onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: 6,
+        padding: "7px 14px", borderRadius: 8, fontSize: 13, cursor: "pointer",
+        border: active ? "1.5px solid #1a6fd4" : "1px solid #d0d7e3",
+        background: active ? "#e8f1fd" : "#fff",
+        color: active ? "#1a6fd4" : "#555",
+        fontFamily: "'DM Sans', sans-serif",
+        fontWeight: active ? 600 : 400,
+        transition: "all 0.15s",
+      }}
+    >
+      {icon && <span>{icon}</span>}
+      {label}
+    </button>
+  );
 }
 
+function SelectBtn({ options, value, onChange }: { options: string[], value: string, onChange: (v: string) => void }) {
+  return (
+    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+      {options.map(o => (
+        <button key={o} onClick={() => onChange(o)} style={{
+          padding: "7px 14px", borderRadius: 8, fontSize: 13, cursor: "pointer",
+          border: value === o ? "1.5px solid #1a6fd4" : "1px solid #d0d7e3",
+          background: value === o ? "#1a6fd4" : "#fff",
+          color: value === o ? "#fff" : "#555",
+          fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
+          transition: "all 0.15s",
+        }}>{o}</button>
+      ))}
+    </div>
+  );
+}
+
+function Field({ label, children }: { label: string, children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: "#888", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "'DM Sans', sans-serif" }}>{label}</div>
+      {children}
+    </div>
+  );
+}
+
+function Input({ value, onChange, placeholder, type = "number", style = {} }: any) {
+  return (
+    <input
+      type={type}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+      style={{
+        width: "100%", height: 42, borderRadius: 10, border: "1px solid #d0d7e3",
+        padding: "0 14px", fontSize: 14, fontFamily: "'DM Sans', sans-serif",
+        background: "#fafafa", color: "#222", outline: "none", boxSizing: "border-box", ...style
+      }}
+    />
+  );
+}
+
+function Select({ value, onChange, options }: { value: string, onChange: (v: string) => void, options: string[] }) {
+  return (
+    <select value={value} onChange={e => onChange(e.target.value)} style={{
+      width: "100%", height: 42, borderRadius: 10, border: "1px solid #d0d7e3",
+      padding: "0 12px", fontSize: 14, fontFamily: "'DM Sans', sans-serif",
+      background: "#fafafa", color: "#222", outline: "none",
+    }}>
+      {options.map(o => <option key={o}>{o}</option>)}
+    </select>
+  );
+}
+
+function CostRow({ label, value, sub, highlight, indent }: any) {
+  return (
+    <div style={{
+      display: "flex", justifyContent: "space-between", alignItems: "baseline",
+      padding: "10px 0", borderBottom: "1px solid #f3f4f6",
+      paddingLeft: indent ? 16 : 0,
+    }}>
+      <span style={{ fontSize: 13, color: highlight ? "#111" : "#555", fontWeight: highlight ? 700 : 400, fontFamily: "'DM Sans', sans-serif" }}>
+        {label}{sub && <span style={{ fontSize: 11, color: "#aaa", marginLeft: 6 }}>{sub}</span>}
+      </span>
+      <span style={{ fontSize: highlight ? 16 : 14, color: highlight ? "#1a6fd4" : "#333", fontWeight: highlight ? 700 : 600, fontFamily: "'DM Mono', monospace" }}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function StreamingDots() {
+  return (
+    <span style={{ display: "inline-flex", gap: 4, alignItems: "center", marginLeft: 8 }}>
+      {[0, 1, 2].map(i => (
+        <span key={i} style={{
+          width: 5, height: 5, borderRadius: "50%", background: "#1a6fd4",
+          display: "inline-block",
+          animation: "dot-pulse 1.2s ease-in-out infinite",
+          animationDelay: `${i * 0.2}s`,
+        }} />
+      ))}
+      <style>{`@keyframes dot-pulse { 0%,80%,100%{opacity:.2;transform:scale(.8)} 40%{opacity:1;transform:scale(1)} }`}</style>
+    </span>
+  );
+}
+
+const fmt = (n: number) => "₹ " + Number(n).toLocaleString("en-IN");
+const fmtL = (n: number) => {
+  const l = n / 100000;
+  return l >= 1 ? `₹ ${l.toFixed(2)} L` : fmt(n);
+};
+
 export function MaterialCalculator() {
-  const [area, setArea] = useState(1500)
-  const [floors, setFloors] = useState(2)
-  const [qualityLevel, setQualityLevel] = useState("standard")
-  const [foundationType, setFoundationType] = useState("shallow")
-  const [city, setCity] = useState("hyderabad")
-  const [soilType, setSoilType] = useState("red")
-  const [brickType, setBrickType] = useState("red_brick")
-  const [cementType, setCementType] = useState("opc_43")
-  const [numRooms, setNumRooms] = useState(3)
-  const [estimate, setEstimate] = useState<MaterialEstimate | null>(null)
-  const [metadata, setMetadata] = useState<{confidence: number, margin: number} | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [projectName, setProjectName] = useState("My Project")
-  const [showChart, setShowChart] = useState(false)
-  const { toast } = useToast()
+  const [length, setLength] = useState("40");
+  const [width, setWidth] = useState("30");
+  const [floors, setFloors] = useState("1");
+  const [city, setCity] = useState("Hyderabad");
+  const [grade, setGrade] = useState("Standard");
+  const [direction, setDirection] = useState("North");
+  const [soil, setSoil] = useState("Red Soil");
+  const [cement, setCement] = useState("OPC 43 (Standard)");
+  const [steel, setSteel] = useState("TMT Fe415");
+  const [beds, setBeds] = useState("3");
+  const [baths, setBaths] = useState("3");
+  const [kitchenType, setKitchenType] = useState("Modular Island");
+  const [archStyle, setArchStyle] = useState("Modern / Contemporary");
+  const [amenities, setAmenities] = useState(new Set<string>());
+  const [compliances, setCompliances] = useState(new Set<string>(["vastu"]));
+  
+  const [minBudget, setMinBudget] = useState("5000000");
+  const [maxBudget, setMaxBudget] = useState("8000000");
 
-  const [isTraining, setIsTraining] = useState(false)
-  const [mlStatus, setMlStatus] = useState<any>(null)
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    calculateMaterials()
-  }, [])
+  const plotArea = (parseFloat(length) || 0) * (parseFloat(width) || 0);
 
-  const handleTrainModel = async () => {
-    setIsTraining(true)
+  const toggleAmenity = (id: string) => setAmenities(prev => {
+    const n = new Set(prev);
+    n.has(id) ? n.delete(id) : n.add(id);
+    return n;
+  });
+
+  const toggleCompliance = (id: string) => setCompliances(prev => {
+    const n = new Set(prev);
+    n.has(id) ? n.delete(id) : n.add(id);
+    return n;
+  });
+
+  const runEstimate = useCallback(async () => {
+    if (!length || !width || !plotArea) { setError("Please enter plot dimensions first."); return; }
+    setError("");
+    setLoading(true);
+    setResult(null);
+
     try {
-      const res = await fetch("/api/train-ml", { method: "POST" })
-      if (!res.ok) throw new Error("Training failed")
-      const data = await res.json()
-      setMlStatus(data)
-      toast({
-        title: "Model Trained",
-        description: `Version ${data.new_version} is now active with real-time dataset optimization.`,
-      })
-      // Recalculate with new weights
-      calculateMaterials()
-    } catch (err: any) {
-      toast({ title: "Training Error", description: err.message, variant: "destructive" })
-    } finally {
-      setIsTraining(false)
-    }
-  }
-
-  const calculateMaterials = async () => {
-    setIsLoading(true)
-    try {
-      const res = await fetch("/api/predict-materials", {
+      const res = await fetch("/api/ai-predict-materials", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ area, floors, qualityLevel, foundationType, city, soilType, brickType, cementType, numRooms })
-      })
-      if (!res.ok) throw new Error("Failed to calculate materials")
-      const prediction = await res.json()
+        body: JSON.stringify({
+          length: parseFloat(length),
+          width: parseFloat(width),
+          floors: parseInt(floors),
+          city, grade, direction, soil, cement, steel, beds, baths, kitchenType, archStyle,
+          amenities: Array.from(amenities),
+          compliances: Array.from(compliances),
+          minBudget: parseFloat(minBudget),
+          maxBudget: parseFloat(maxBudget)
+        }),
+      });
 
-      const cementBags = prediction.cement
-      const steelKg = prediction.steel
-      const brickCount = prediction.bricks
-      const sandCft = prediction.sand
-      const aggregateCft = prediction.aggregate
-
-      // Realistic 2024-2025 Market Prices (India)
-      const cementPrices: any = {
-        opc_43: qualityLevel === "premium" ? 420 : 380,
-        opc_53: qualityLevel === "premium" ? 450 : 410,
-        ppc: qualityLevel === "premium" ? 400 : 370
-      }
-
-      const prices: any = {
-        cement: cementPrices[cementType as keyof typeof cementPrices] || 400,
-        steel: qualityLevel === "premium" ? 82 : qualityLevel === "economy" ? 68 : 74, // per kg
-        bricks: {
-          red_brick: 9,
-          aac_block: 75,
-          fly_ash: 6.5,
-          wire_cut: 14
-        },
-        sand: 65,
-        aggregate: 52
-      }
-
-      const cementCost = cementBags * prices.cement
-      const steelCost = steelKg * prices.steel
-      const brickCost = brickCount * (prices.bricks[brickType as keyof typeof prices.bricks] || 9)
-      const sandCost = sandCft * prices.sand
-      const aggregateCost = aggregateCft * prices.aggregate
-
-
-      setEstimate({
-        cement: { bags: cementBags, cost: cementCost },
-        steel: { kg: steelKg, cost: steelCost },
-        bricks: { count: brickCount, cost: brickCost },
-        sand: { cft: sandCft, cost: sandCost },
-        aggregate: { cft: aggregateCft, cost: aggregateCost },
-        total: cementCost + steelCost + brickCost + sandCost + aggregateCost,
-      })
-      setShowChart(false)
+      if (!res.ok) throw new Error("Estimation engine failed to respond.");
       
-      setMetadata({
-        confidence: prediction.ml_metadata?.confidence ?? 0.96,
-        margin: (1 - (prediction.ml_metadata?.confidence ?? 0.96)) * 100
-      })
-
-    } catch (err: any) {
-      toast({ title: "Prediction Error", description: err.message, variant: "destructive" })
+      const parsed = await res.json();
+      setResult(parsed);
+    } catch (e: any) {
+      setError(e.message || "Something went wrong. Please try again.");
     } finally {
-      setIsLoading(false)
+      setLoading(false);
     }
-  }
+  }, [length, width, floors, city, grade, direction, soil, cement, steel, beds, baths, kitchenType, archStyle, amenities, compliances, minBudget, maxBudget, plotArea]);
 
-  const formatCurrency = (n: number) =>
-    new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n)
-
-  const exportToPDF = async () => {
-    if (!estimate) return
-
-    // Show graphical analytics view along with downloading
-    setShowChart(true)
-
-    try {
-      const { jsPDF } = await import("jspdf")
-
-      const pdf = new jsPDF()
-      const currentUser = JSON.parse(localStorage.getItem("user") || '{"name":"User"}')
-      const currentDate = new Date().toLocaleDateString()
-
-      // Header
-      pdf.setFontSize(20)
-      pdf.setTextColor(59, 130, 246) // Primary color
-      pdf.text("Material Estimate Report", 105, 20, { align: "center" })
-
-      // Project Info
-      pdf.setFontSize(12)
-      pdf.setTextColor(0, 0, 0)
-      pdf.text(`Project Name: ${projectName}`, 20, 40)
-      pdf.text(`Date: ${currentDate}`, 20, 48)
-      pdf.text(`Prepared By: ${currentUser.name}`, 20, 56)
-      pdf.text(`Plot Area: ${area} sqft`, 20, 64)
-      pdf.text(`Number of Floors: ${floors}`, 20, 72)
-      pdf.text(`Rooms: ${numRooms}`, 20, 80)
-      pdf.text(`Quality Level: ${qualityLevel.charAt(0).toUpperCase() + qualityLevel.slice(1)}`, 140, 64)
-      pdf.text(`Foundation: ${foundationType.charAt(0).toUpperCase() + foundationType.slice(1)}`, 140, 72)
-      pdf.text(`Brick Type: ${brickType.replace('_', ' ').toUpperCase()}`, 140, 80)
-
-      // Line separator
-      pdf.setDrawColor(200, 200, 200)
-      pdf.line(20, 84, 190, 84)
-
-      // Material Breakdown Header
-      pdf.setFontSize(14)
-      pdf.setTextColor(59, 130, 246)
-      pdf.text("Material Breakdown", 20, 94)
-
-      // Material Details
-      pdf.setFontSize(11)
-      pdf.setTextColor(0, 0, 0)
-      let yPos = 106
-
-      const materials = [
-        { name: "Cement", quantity: `${estimate.cement.bags} bags`, cost: formatCurrency(estimate.cement.cost) },
-        { name: "Steel", quantity: `${estimate.steel.kg} kg`, cost: formatCurrency(estimate.steel.cost) },
-        {
-          name: "Bricks/Blocks",
-          quantity: `${estimate.bricks.count.toLocaleString()} units`,
-          cost: formatCurrency(estimate.bricks.cost),
-        },
-        { name: "Sand", quantity: `${estimate.sand.cft} cft`, cost: formatCurrency(estimate.sand.cost) },
-        { name: "Aggregate", quantity: `${estimate.aggregate.cft} cft`, cost: formatCurrency(estimate.aggregate.cost) },
-      ]
-
-      materials.forEach((material) => {
-        pdf.setFontSize(11)
-        pdf.text(material.name, 20, yPos)
-        pdf.text(material.quantity, 80, yPos)
-        pdf.text(material.cost, 140, yPos)
-        yPos += 10
-      })
-
-      // Total Cost
-      pdf.line(20, yPos, 190, yPos)
-      yPos += 10
-      pdf.setFontSize(14)
-      pdf.setTextColor(59, 130, 246)
-      pdf.text("Total Material Cost:", 20, yPos)
-      pdf.text(formatCurrency(estimate.total), 140, yPos)
-
-      // Footer
-      pdf.setFontSize(9)
-      pdf.setTextColor(128, 128, 128)
-      pdf.text("Generated by SIID - Smart Integrated Infrastructure Design", 105, 280, { align: "center" })
-      pdf.text("This is a computer-generated estimate. Actual costs may vary.", 105, 285, { align: "center" })
-
-      // Save PDF
-      pdf.save(`Material-Estimate-${projectName}-${currentDate}.pdf`)
-
-      toast({
-        title: "PDF Exported",
-        description: "Material estimate has been downloaded successfully",
-      })
-    } catch (error) {
-      console.error("PDF Export Error:", error)
-      toast({
-        title: "PDF Export Failed",
-        description: "Unable to export PDF. Please try again.",
-        variant: "destructive",
-      })
-    }
-  }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+       if (plotArea > 0) runEstimate();
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [length, width, floors, grade, city, amenities, compliances]);
 
   return (
-    <Card className="p-6 border-border">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <Card className="p-4 sm:p-6 md:p-8 lg:p-10 bg-white border-slate-100 shadow-2xl rounded-2xl sm:rounded-[2.5rem] overflow-hidden relative">
+      <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-600 to-blue-400" />
+      
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 md:mb-10 gap-4">
+        <div className="flex items-center gap-3 sm:gap-5">
+          <div className="p-3 sm:p-4 bg-blue-50 rounded-xl sm:rounded-2xl text-blue-600 shadow-sm">
+            <Calculator className="w-6 h-6 sm:w-8 sm:w-8" />
+          </div>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">AI Material Estimator</h2>
+            <p className="text-[9px] sm:text-[10px] text-slate-400 uppercase font-bold tracking-widest mt-1">Deep Learning · Hyderabad Market Rates v2.4</p>
+          </div>
+        </div>
         <div className="flex items-center gap-2">
-          <Calculator className="w-5 h-5 text-primary" />
-          <h3 className="text-lg font-semibold">Material Calculator (Real-Time Precision)</h3>
+           <div className="px-3 sm:px-4 py-1 sm:py-1.5 bg-emerald-50 text-emerald-600 text-[10px] sm:text-[11px] font-black uppercase rounded-full border border-emerald-100 flex items-center gap-2">
+             <CheckCircle2 className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
+             AI Calibrated
+           </div>
         </div>
-        <Button 
-          onClick={handleTrainModel} 
-          variant="secondary" 
-          size="sm" 
-          disabled={isTraining}
-          className="bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 border-blue-500/30"
-        >
-          {isTraining ? <><Loader2 className="w-3 h-3 mr-2 animate-spin" /> Training...</> : <><BarChart3 className="w-3 h-3 mr-2" /> Train ML Algorithm</>}
-        </Button>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <div>
-            <Label>Project Name</Label>
-            <Input
-              type="text"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              placeholder="Enter project name"
-            />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label>Plot Area (sqft)</Label>
-              <Input type="number" value={area} onChange={(e) => setArea(Number(e.target.value))} min={100} max={50000} />
-            </div>
-            <div>
-              <Label>Number of Floors</Label>
-              <Input type="number" value={floors} onChange={(e) => setFloors(Number(e.target.value))} min={1} max={10} />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label>Number of Rooms</Label>
-              <Input type="number" value={numRooms} onChange={(e) => setNumRooms(Number(e.target.value))} min={1} max={50} />
-            </div>
-            <div>
-              <Label>Building Type</Label>
-              <Select value={qualityLevel} onValueChange={setQualityLevel}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select quality level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="economy">Economy Tier</SelectItem>
-                  <SelectItem value="standard">Standard Tier</SelectItem>
-                  <SelectItem value="premium">Premium Tier</SelectItem>
-                  <SelectItem value="luxury">Luxury Tier</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <div>
-            <Label>Type of Cement</Label>
-            <Select value={cementType} onValueChange={setCementType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select cement type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="opc_43">OPC 43 Grade (Standard)</SelectItem>
-                <SelectItem value="opc_53">OPC 53 Grade (High Strength)</SelectItem>
-                <SelectItem value="ppc">PPC (Fly Ash based)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Type of Bricks / Blocks</Label>
-            <Select value={brickType} onValueChange={setBrickType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select brick type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="red_brick">Standard Red Bricks</SelectItem>
-                <SelectItem value="aac_block">AAC Blocks (Lightweight)</SelectItem>
-                <SelectItem value="fly_ash">Fly Ash Bricks</SelectItem>
-                <SelectItem value="wire_cut">Wire Cut Bricks</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label>Foundation Type</Label>
-            <Select value={foundationType} onValueChange={setFoundationType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select foundation type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="shallow">Shallow (Normal Foundation)</SelectItem>
-                <SelectItem value="deep">Deep (Soft Soil/Raft)</SelectItem>
-                <SelectItem value="pile">Pile (Weak Soil/High Rise)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <Label>City (Cost Index)</Label>
-              <Input value={city} onChange={(e) => setCity(e.target.value)} placeholder="e.g. Mumbai" />
-            </div>
-            <div>
-              <Label>Soil Type</Label>
-              <Select value={soilType} onValueChange={setSoilType}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="red">Red Soil</SelectItem>
-                  <SelectItem value="black">Black Soil (Expansive)</SelectItem>
-                  <SelectItem value="clay">Clay Soil</SelectItem>
-                  <SelectItem value="rocky">Rocky Terrain</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <Button onClick={calculateMaterials} className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-            {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Analyzing Real-Time Data...</> : "Calculate Accurate Estimate"}
-          </Button>
-          
-          {mlStatus && (
-            <div className="mt-2 p-2 rounded bg-green-500/10 border border-green-500/20 text-[10px] text-green-400 flex justify-between">
-              <span>ML Engine: v{mlStatus.new_version}</span>
-              <span>Last Trained: {mlStatus.last_trained}</span>
-              <span>Confidence: {(mlStatus.metrics.confidence * 100).toFixed(1)}%</span>
-            </div>
-          )}
-        </div>
-
-        {estimate && (
-          <div className="space-y-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Card className="p-3 bg-muted">
-                <div className="text-xs text-muted-foreground">Cement</div>
-                <div className="font-semibold">{estimate.cement.bags} bags</div>
-                <div className="text-sm text-primary">{formatCurrency(estimate.cement.cost)}</div>
-              </Card>
-              <Card className="p-3 bg-muted">
-                <div className="text-xs text-muted-foreground">Steel</div>
-                <div className="font-semibold">{estimate.steel.kg} kg</div>
-                <div className="text-sm text-primary">{formatCurrency(estimate.steel.cost)}</div>
-              </Card>
-              <Card className="p-3 bg-muted">
-                <div className="text-xs text-muted-foreground">Bricks</div>
-                <div className="font-semibold">{estimate.bricks.count.toLocaleString()}</div>
-                <div className="text-sm text-primary">{formatCurrency(estimate.bricks.cost)}</div>
-              </Card>
-              <Card className="p-3 bg-muted">
-                <div className="text-xs text-muted-foreground">Sand</div>
-                <div className="font-semibold">{estimate.sand.cft} cft</div>
-                <div className="text-sm text-primary">{formatCurrency(estimate.sand.cost)}</div>
-              </Card>
-            </div>
-            <Card className="p-4 bg-primary/10 border-primary relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-2 opacity-10 pointer-events-none text-primary">
-                <Calculator className="w-16 h-16" />
-              </div>
-              <div className="text-sm text-muted-foreground relative z-10">Total ML Estimated Cost</div>
-              <div className="text-2xl font-bold text-primary relative z-10">{formatCurrency(estimate.total)}</div>
-              {metadata && (
-                <div className="flex justify-between items-center text-xs text-muted-foreground mt-2 relative z-10">
-                  <span>ML Confidence: {((metadata.confidence || 0) * 100).toFixed(1)}%</span>
-              <span>Margin of Error: ±{(metadata.margin || 0).toFixed(1)}%</span>
-            </div>
-          )}
-        </Card>
-        <Button variant="outline" className="w-full bg-transparent" size="sm" onClick={exportToPDF}>
-          <Download className="w-4 h-4 mr-2" />
-          Export Detailed Estimate (PDF)
-        </Button>
-      </div>
-    )}
-  </div>
-
-  {showChart && estimate && (
-    <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex items-center gap-2 mb-4">
-        <BarChart3 className="w-5 h-5 text-primary" />
-        <h4 className="text-lg font-semibold">Real-Time Analytical View</h4>
-      </div>
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card className="p-4 border-border bg-muted/20">
-          <h5 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Cost Distribution (₹)</h5>
-          <div className="h-[250px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={[
-                    { name: "Cement", value: estimate.cement.cost },
-                    { name: "Steel", value: estimate.steel.cost },
-                    { name: "Bricks", value: estimate.bricks.cost },
-                    { name: "Sand", value: estimate.sand.cost },
-                    { name: "Aggregate", value: estimate.aggregate.cost },
-                  ]}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  <Cell fill="#3b82f6" />
-                  <Cell fill="#8b5cf6" />
-                  <Cell fill="#f59e0b" />
-                  <Cell fill="#10b981" />
-                  <Cell fill="#ef4444" />
-                </Pie>
-                <Tooltip
-                  formatter={(value: any) => formatCurrency(Number(value) || 0)}
-                  contentStyle={{ backgroundColor: "#0f172a", border: "1px solid #1e293b", borderRadius: "8px" }}
-                />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_400px] gap-8 md:gap-12">
         
-        <Card className="p-4 border-border bg-muted/20">
-          <h5 className="text-sm font-semibold text-muted-foreground mb-4 text-center">Quantity Analytics</h5>
-          <div className="space-y-4 pt-4">
-            <div>
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-muted-foreground">Cement Bags Volume</span>
-                <span className="font-bold text-primary">{estimate.cement.bags} Bags</span>
-              </div>
-              <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-blue-500" style={{ width: '85%' }}></div>
-              </div>
+        {/* LEFT PANEL: INPUTS */}
+        <div className="space-y-10">
+          
+          {/* Plot Details */}
+          <section>
+            <div className="flex items-center gap-2 mb-6 border-b border-slate-50 pb-2">
+               <MapPin className="w-4 h-4 text-blue-500" />
+               <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-widest">01. Terrain & Layout</h3>
             </div>
-            <div>
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-muted-foreground">Steel reinforcement weight</span>
-                <span className="font-bold text-purple-500">{estimate.steel.kg} Kg</span>
-              </div>
-              <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-purple-500" style={{ width: '70%' }}></div>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <Field label="Length (ft)"><Input value={length} onChange={setLength} /></Field>
+              <Field label="Width (ft)"><Input value={width} onChange={setWidth} /></Field>
+              <Field label="Total Plot Area">
+                <div className="h-[42px] rounded-xl border border-blue-100 bg-blue-50/30 flex items-center px-4 font-mono font-bold text-blue-600 text-sm">
+                  {plotArea.toLocaleString()} SQ FT
+                </div>
+              </Field>
             </div>
-            <div>
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-muted-foreground">Structural Bricks Usage</span>
-                <span className="font-bold text-amber-500">{estimate.bricks.count.toLocaleString()} Nos</span>
-              </div>
-              <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-amber-500" style={{ width: '92%' }}></div>
-              </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-4">
+              <Field label="City / Region"><Input value={city} onChange={setCity} type="text" /></Field>
+              <Field label="Total Floors"><Input value={floors} onChange={setFloors} /></Field>
+              <Field label="Vastu Direction"><Select value={direction} onChange={setDirection} options={DIRECTIONS} /></Field>
             </div>
-            <div className="text-[10px] text-muted-foreground italic text-center mt-6">
-              * Analytics are dynamically generated based on your material ML estimation scale.
+            <Field label="Geotechnical Soil Profile"><Select value={soil} onChange={setSoil} options={SOILS} /></Field>
+          </section>
+
+          {/* Construction Specs */}
+          <section>
+            <div className="flex items-center gap-2 mb-6 border-b border-slate-50 pb-2">
+               <Box className="w-4 h-4 text-blue-500" />
+               <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-widest">02. Engineering Standards</h3>
             </div>
-          </div>
-        </Card>
+            <Field label="Project Grade Finish"><SelectBtn options={GRADES} value={grade} onChange={setGrade} /></Field>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
+              <Field label="Primary Cement Specification"><Select value={cement} onChange={setCement} options={CEMENTS} /></Field>
+              <Field label="Structural Steel Rebar"><Select value={steel} onChange={setSteel} options={STEELS} /></Field>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <Field label="Target Minimum Budget (₹)"><Input value={minBudget} onChange={setMinBudget} /></Field>
+              <Field label="Target Maximum Budget (₹)"><Input value={maxBudget} onChange={setMaxBudget} /></Field>
+            </div>
+          </section>
+
+          {/* Lifestyle & Architecture */}
+          <section>
+            <div className="flex items-center gap-2 mb-6 border-b border-slate-50 pb-2">
+               <Zap className="w-4 h-4 text-blue-500" />
+               <h3 className="text-[13px] font-black text-slate-400 uppercase tracking-widest">03. Lifestyle Architecture</h3>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <Field label="Beds"><Input value={beds} onChange={setBeds} /></Field>
+              <Field label="Baths"><Input value={baths} onChange={setBaths} /></Field>
+              <Field label="Kitchen Style"><Select value={kitchenType} onChange={setKitchenType} options={KITCHEN_TYPES} /></Field>
+            </div>
+            <Field label="Architectural Design Language"><Select value={archStyle} onChange={setArchStyle} options={ARCH_STYLES} /></Field>
+            
+            <Field label="Premium Amenities">
+              <div className="flex flex-wrap gap-2">
+                {AMENITIES.map(a => (
+                  <Chip key={a.id} label={a.label} icon={a.icon} active={amenities.has(a.id)} onClick={() => toggleAmenity(a.id)} />
+                ))}
+              </div>
+            </Field>
+
+            <Field label="Structural Compliances">
+              <div className="flex flex-wrap gap-2">
+                {COMPLIANCES.map(c => (
+                  <Chip key={c.id} label={c.label} icon={c.icon} active={compliances.has(c.id)} onClick={() => toggleCompliance(c.id)} />
+                ))}
+              </div>
+            </Field>
+          </section>
+
+          <button
+            onClick={runEstimate}
+            disabled={loading || !plotArea}
+            className="w-full h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-xl shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+          >
+            {loading ? (<>Computing Intelligent Estimate <StreamingDots /></>) : "⚡ Generate AI Project Manifest"}
+          </button>
+        </div>
+
+        {/* RIGHT PANEL: RESULTS */}
+        <div className="space-y-6">
+          {!result && !loading && (
+            <div className="bg-slate-50 rounded-[2rem] border-2 border-dashed border-slate-200 p-12 text-center h-full flex flex-col items-center justify-center">
+              <div className="text-5xl mb-6 opacity-40">🏗️</div>
+              <h4 className="text-lg font-bold text-slate-900 mb-2">Awaiting Input Parameters</h4>
+              <p className="text-sm text-slate-400 max-w-[200px]">Define your terrain and specs to see the AI breakdown.</p>
+            </div>
+          )}
+
+          {loading && (
+            <div className="bg-white rounded-[2rem] border border-slate-100 p-10 text-center shadow-lg h-full flex flex-col items-center justify-center">
+               <div className="w-16 h-16 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin mb-6" />
+               <h4 className="text-lg font-bold text-slate-900">AI Engine Running</h4>
+               <p className="text-sm text-slate-400 mt-2">Simulating {plotArea.toLocaleString()} sq ft build in {city}...</p>
+            </div>
+          )}
+
+          {result && (
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+               {/* Main Cost Card */}
+               <div className="bg-slate-900 rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-8 text-white shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16" />
+                  <div className="text-[9px] sm:text-[10px] font-black text-blue-400 uppercase tracking-widest mb-2">Total Project Investment</div>
+                  <div className="text-3xl sm:text-4xl font-black font-mono mb-2">{fmtL(result.totalCost)}</div>
+                  <div className="text-[10px] sm:text-xs text-slate-500 font-bold mb-6 sm:mb-8">
+                    {fmt(result.costPerSqFt)} / sq ft · {result.builtUpArea} sq ft Built-up
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                     <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                        <div className="text-[9px] text-slate-500 font-black uppercase mb-1">Timeline</div>
+                        <div className="text-sm font-bold">{result.timeline}</div>
+                     </div>
+                     <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                        <div className="text-[9px] text-slate-500 font-black uppercase mb-1">Status</div>
+                        <div className={`text-sm font-bold ${result.feasibility.includes("Over") ? "text-orange-400" : "text-emerald-400"}`}>
+                          {result.feasibility}
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               {/* Breakdown List */}
+               <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest">Financial Breakdown</h4>
+                    <BarChart3 className="w-4 h-4 text-blue-500" />
+                  </div>
+                  <div className="space-y-1">
+                    {Object.entries(result.breakdown).map(([k, v]) => (
+                      <CostRow key={k} label={k.replace(/_/g, " ").toUpperCase()} value={fmtL(v as number)} />
+                    ))}
+                    <div className="pt-4 mt-2 border-t border-slate-100">
+                      <CostRow label="TOTAL PROJECT VALUE" value={fmtL(result.totalCost)} highlight />
+                    </div>
+                  </div>
+               </div>
+
+               {/* Material Detail */}
+               <div className="bg-slate-50 rounded-3xl p-8 border border-slate-100">
+                  <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Material Quantities</h4>
+                  <div className="space-y-4">
+                    {Object.entries(result.materials).map(([k, v]) => (
+                      <div key={k} className="flex flex-col gap-1 border-b border-slate-200/50 pb-3 last:border-0">
+                         <span className="text-[10px] font-black text-slate-400 uppercase">{k}</span>
+                         <span className="text-sm font-bold text-slate-800 font-mono">{v as string}</span>
+                      </div>
+                    ))}
+                  </div>
+               </div>
+
+               {/* AI Intelligence Tips */}
+               <div className="bg-blue-600 rounded-[2rem] p-8 text-white">
+                  <div className="flex items-center gap-2 mb-4">
+                    <ShieldCheck className="w-5 h-5 text-blue-200" />
+                    <h4 className="text-xs font-black uppercase tracking-widest">AI Intelligence Tips</h4>
+                  </div>
+                  <div className="space-y-3">
+                    {result.alerts.map((a: string, i: number) => (
+                      <div key={i} className="text-xs leading-relaxed opacity-90 flex gap-2">
+                        <span>•</span> {a}
+                      </div>
+                    ))}
+                  </div>
+               </div>
+
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  )}
-</Card>
-  )
+    </Card>
+  );
 }
